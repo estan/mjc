@@ -10,7 +10,6 @@ Building / Running
 
 Type `ant` in the top-level directory. This will build the compiler
 and unit tests, and produce `mjc.jar`. To run the compiler, type
-To run the compiler, type
 
     java -cp mjc.jar:lib/* mjc.ARMMain foo.java -S
 
