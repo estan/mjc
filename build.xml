@@ -4,7 +4,6 @@
 
     <description>Compiler for the MiniJava language</description>
 
-
     <!-- Settings  -->
 
     <property file="build.properties"/>
@@ -17,7 +16,6 @@
         <pathelement location="${parser-classes-dir}"/>
         <pathelement location="${test-classes-dir}"/>
     </path>
-
 
     <!-- Internal Targets -->
 
@@ -36,12 +34,9 @@
         </java>
     </target>
 
-
     <!-- Public Targets -->
 
-    <target name="compile"
-            description="Compile the compiler and unit tests"
-            depends="generate-parser">
+    <target name="compile" description="Compile all sources" depends="generate-parser">
 
         <mkdir dir="${parser-classes-dir}"/>
         <javac srcdir="${parser-src-dir}"
@@ -89,9 +84,7 @@
         </jar>
     </target>
 
-    <target name="tar"
-            description="Build compressed source-only TAR archive"
-            depends="test">
+    <target name="tar" description="Build compressed source-only TAR archive" depends="test">
         <fail message="Missing property tigris.id!" unless="tigris.id"/>
 
         <!-- Prepare TAR file contents in a temporary directory -->
