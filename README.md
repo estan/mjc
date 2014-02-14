@@ -2,8 +2,9 @@ MiniJava Compiler (`mjc`)
 =========================
 
 This is a compiler for a slightly modified version of the MiniJava
-language described in Appel's *Modern Compiler Implementation in Java*,
-created as part of the course DD2488 Compiler Construction at KTH.
+language described in Appel's *Modern Compiler Implementation in Java*.
+It was created as part of the course DD2488 Compiler Construction at
+KTH.
 
 Building / Running
 ------------------
