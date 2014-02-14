@@ -1,5 +1,5 @@
-MiniJava Compiler
-=================
+MiniJava Compiler (`mjc`)
+=========================
 
 This is a compiler for a slightly modified version of the MiniJava
 language described in Appel's *Modern Compiler Implementation in Java*,
@@ -9,8 +9,7 @@ Building / Running
 ------------------
 
 Type `ant` in the top-level directory. This will build the compiler
-and unit tests, and produce `xjc.jar` in the top-level directory.
-To run the compiler, type
+and unit tests, and produce `xjc.jar`. To run the compiler, type
 
     java -cp xjc.jar:lib/* mjc.ARMMain foo.java -S
 
