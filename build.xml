@@ -15,7 +15,7 @@
         <pathelement location="${test-classes-dir}"/>
     </path>
 
-    <target name="init">
+    <target name="init" description="Initialize build">
         <mkdir dir="${build-dir}"/>
         <mkdir dir="${main-classes-dir}"/>
         <mkdir dir="${test-classes-dir}"/>
@@ -28,7 +28,10 @@
         </uptodate>
     </target>
 
-    <target name="generate-parser" if="parser-out-of-date" depends="init">
+    <target name="generate-parser"
+            description="Generate lexer/parser using SableCC"
+            if="parser-out-of-date"
+            depends="init">
         <java jar="${lib-dir}/sablecc.jar" fork="true" failonerror="true">
             <arg value="-d"/>
             <arg value="${parser-src-dir}"/>
@@ -36,7 +39,9 @@
         </java>
     </target>
 
-    <target name="compile" depends="generate-parser">
+    <target name="compile"
+            description="Compile the parser, compiler and unit tests"
+            depends="generate-parser">
         <javac srcdir="${parser-src-dir}"
                destdir="${parser-classes-dir}"
                classpathref="project-classpath"
@@ -60,57 +65,62 @@
         </copy>
     </target>
 
-    <target name="test" depends="compile">
+    <target name="test" description="Run the unit tests" depends="compile">
         <junit printsummary="yes" haltonfailure="yes">
             <classpath refid="project-classpath"/>
             <formatter type="plain"/>
             <batchtest fork="yes" todir="${test-reports-dir}">
-                <fileset dir="${test-src-dir}">
-                    <include name="**/*Test.java"/>
-                </fileset>
+                <fileset dir="${test-src-dir}" includes="**/*Test.java"/>
             </batchtest>
         </junit>
     </target>
 
-    <target name="jar" depends="test">
+    <target name="jar" description="Build runnable JAR file" depends="test">
         <jar destfile="${output-jar}">
             <fileset dir="${main-classes-dir}"/>
             <fileset dir="${parser-classes-dir}"/>
         </jar>
     </target>
 
-    <target name="tar" depends="jar">
-        <fail message="Usage: ant tar -Dtigris.id=MY_ID" unless="tigris.id"/>
+    <target name="tar"
+            description="Build compressed source only TAR archive"
+            depends="test">
+        <fail message="Missing property tigris.id!" unless="tigris.id"/>
 
-        <!-- Create temporary directory -->
+        <!-- Prepare TAR file contents in a temporary directory -->
         <tempfile property="temp-dir"
                   destDir="${java.io.tmpdir}"
-                  prefix="mjc"/>
-        <mkdir dir="${temp-dir}/mjc"/>
-
-        <!-- Copy base directory contents to temporary directory -->
-        <copy todir="${temp-dir}/mjc">
-            <fileset dir="${basedir}"
-                     excludes="**/${build-dir}/**,**/*.swp"
-                     id="tar-fileset"/>
+                  prefix="${ant.project.name}"/>
+        <mkdir dir="${temp-dir}/${ant.project.name}"/>
+        <copy todir="${temp-dir}/${ant.project.name}">
+            <fileset dir="${basedir}" id="tar-fileset">
+                <exclude name="**/${build-dir}/**"/>
+                <exclude name="${output-jar}"/>
+                <exclude name="${output-tar}"/>
+                <exclude name="**/*.swp"/>
+            </fileset>
         </copy>
-
-        <!-- Add Tigris ID to DESC -->
-        <replace file="${temp-dir}/mjc/DESC" token="@ID@" value="${tigris.id}"/>
+        <replace file="${temp-dir}/${ant.project.name}/DESC"
+                 token="@ID@"
+                 value="${tigris.id}"/>
 
         <!-- Create compressed TAR file and print what we included -->
-        <tar destfile="${output-tar}" basedir="${temp-dir}" compression="gzip"/>
-        <pathconvert pathsep="${line.separator}    " property="contents" refid="tar-fileset"/>
-        <echo message="Contents of ${output-tar} is:"/>
-        <echo message="    ${contents}"/>
+        <tar destfile="${output-tar}"
+             basedir="${temp-dir}"
+             compression="gzip"/>
+        <pathconvert pathsep="${line.separator}  "
+                     property="tar-fileset-formatted"
+                     refid="tar-fileset"/>
+        <echo message="Included files:"/>
+        <echo message="  ${tar-fileset-formatted}"/>
 
-        <!-- Clean up -->
         <delete dir="${temp-dir}"/>
     </target>
 
-    <target name="clean">
+    <target name="clean" description="Delete all generated files">
         <delete dir="${build-dir}"/>
         <delete file="${output-jar}"/>
+        <delete file="${output-tar}"/>
     </target>
 
 </project>
