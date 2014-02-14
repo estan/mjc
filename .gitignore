@@ -1,6 +1,10 @@
-*.class
+# Ant
+mjc.jar
+dist/
+build/
 
-# Package Files #
-*.jar
-*.war
-*.ear
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
