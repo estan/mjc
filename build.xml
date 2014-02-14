@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+
+<project name="mjc" default="jar">
+
+    <description>Compiler for the MiniJava language</description>
+
+    <property file="build.properties"/>
+
+    <path id="project-classpath">
+        <fileset dir="${lib-dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <pathelement location="${main-classes-dir}"/>
+        <pathelement location="${parser-classes-dir}"/>
+        <pathelement location="${test-classes-dir}"/>
+    </path>
+
+    <target name="init">
+        <mkdir dir="${build-dir}"/>
+        <mkdir dir="${main-classes-dir}"/>
+        <mkdir dir="${test-classes-dir}"/>
+        <mkdir dir="${test-reports-dir}"/>
+        <mkdir dir="${parser-classes-dir}"/>
+        <mkdir dir="${parser-src-dir}"/>
+
+        <uptodate property="parser-out-of-date" targetfile="${parser-grammar}">
+            <srcfiles dir="${parser-src-dir}" includes="**/*.java"/>
+        </uptodate>
+    </target>
+
+    <target name="generate-parser" if="parser-out-of-date" depends="init">
+        <java jar="${lib-dir}/sablecc.jar" fork="true" failonerror="true">
+            <arg value="-d"/>
+            <arg value="${parser-src-dir}"/>
+            <arg value="${parser-grammar}"/>
+        </java>
+    </target>
+
+    <target name="compile" depends="generate-parser">
+        <javac srcdir="${parser-src-dir}"
+               destdir="${parser-classes-dir}"
+               classpathref="project-classpath"
+               includeAntRuntime="false"
+               debug="on"/>
+        <javac srcdir="${main-src-dir}"
+               destdir="${main-classes-dir}"
+               classpathref="project-classpath"
+               includeAntRuntime="false"
+               debug="on"/>
+        <javac srcdir="${test-src-dir}"
+               destdir="${test-classes-dir}"
+               classpathref="project-classpath"
+               includeAntRuntime="false"
+               debug="on"/>
+        <copy todir="${parser-classes-dir}">
+            <fileset dir="${parser-src-dir}" includes="**/*.dat"/>
+        </copy>
+        <copy todir="${main-classes-dir}">
+            <fileset dir="${basedir}" includes="log4j.properties"/>
+        </copy>
+    </target>
+
+    <target name="test" depends="compile">
+        <junit printsummary="yes" haltonfailure="yes">
+            <classpath refid="project-classpath"/>
+            <formatter type="plain"/>
+            <batchtest fork="yes" todir="${test-reports-dir}">
+                <fileset dir="${test-src-dir}">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="jar" depends="test">
+        <jar destfile="${output-jar}">
+            <fileset dir="${main-classes-dir}"/>
+            <fileset dir="${parser-classes-dir}"/>
+        </jar>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build-dir}"/>
+        <delete file="${output-jar}"/>
+    </target>
+
+</project>

@@ -1,0 +1,79 @@
+Package mjc;
+
+Helpers
+
+    unicode = [0..0xffff];
+
+    letter = ['a' .. 'z'] | ['A' .. 'Z'];
+    digit = ['0' .. '9'];
+
+    space = ' ';
+    underscore = '_';
+
+    lf = 0x000a;
+    cr = 0x000d;
+    ht = 0x0009;
+    ff = 0x000c;
+
+    eol = lf | cr | cr lf;
+    whitespace = space | ht | ff | eol;
+
+    not_star = [unicode - '*'];
+    not_star_not_slash = [unicode - ['*' + '/']];
+
+    long_comment = '/*' not_star* ('*' (not_star_not_slash not_star*)?)* '*/';
+    short_comment = '//' [unicode - [cr + lf]]* eol?;
+
+Tokens
+
+    comment = long_comment | short_comment;
+
+    class = 'class';
+    public = 'public';
+    static = 'static';
+    void = 'void';
+    main = 'main';
+    string = 'String';
+    return = 'return';
+    int = 'int';
+    boolean = 'boolean';
+    if = 'if';
+    else = 'else';
+    while = 'while';
+    println = 'System.out.println';
+    length = 'length';
+    true = 'true';
+    false = 'false';
+    this = 'this';
+    new = 'new';
+
+    identifier = letter (letter | digit | underscore)*;
+    integer = digit+;
+
+    plus = '+';
+    minus = '-';
+    star = '*';
+    less_than = '<';
+    equal = '=';
+    and = '&&';
+    not = '!';
+    comma = ',';
+    period = '.';
+    semicolon = ';';
+
+    lparen = '(';
+    rparen = ')';
+    lbrack = '[';
+    rbrack = ']';
+    lbrace = '{';
+    rbrace = '}';
+
+    whitespaces = whitespace+;
+
+Ignored Tokens
+
+    whitespaces, comment;
+
+/*
+ * TODO: Write "Productions" and "Abstract Syntax Tree" sections.
+ */
