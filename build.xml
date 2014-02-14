@@ -77,7 +77,7 @@
         </junit>
     </target>
 
-    <target name="jar" description="Build runnable JAR file" depends="test">
+    <target name="jar" description="Build compiler JAR file" depends="test">
         <jar destfile="${output-jar}">
             <fileset dir="${main-classes-dir}"/>
             <fileset dir="${parser-classes-dir}"/>
