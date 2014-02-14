@@ -3,10 +3,8 @@ Package mjc;
 Helpers
 
     unicode = [0..0xffff];
-
     letter = ['a' .. 'z'] | ['A' .. 'Z'];
     digit = ['0' .. '9'];
-    underscore = '_';
 
     lf = 0x000a;
     cr = 0x000d;
@@ -61,7 +59,7 @@ Tokens
 
     comment = long_comment | short_comment;
     whitespace = (' ' | ht | ff | eol)+;
-    identifier = letter (letter | digit | underscore)*;
+    identifier = letter (letter | digit | '_')*;
     integer = digit+;
 
 Ignored Tokens
