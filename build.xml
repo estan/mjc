@@ -4,6 +4,9 @@
 
     <description>Compiler for the MiniJava language</description>
 
+
+    <!-- Settings  -->
+
     <property file="build.properties"/>
 
     <path id="project-classpath">
@@ -15,23 +18,17 @@
         <pathelement location="${test-classes-dir}"/>
     </path>
 
-    <target name="init" description="Initialize build">
-        <mkdir dir="${build-dir}"/>
-        <mkdir dir="${main-classes-dir}"/>
-        <mkdir dir="${test-classes-dir}"/>
-        <mkdir dir="${test-reports-dir}"/>
-        <mkdir dir="${parser-classes-dir}"/>
-        <mkdir dir="${parser-src-dir}"/>
 
+    <!-- Internal Targets -->
+
+    <target name="init">
+        <mkdir dir="${parser-src-dir}"/>
         <uptodate property="parser-out-of-date" targetfile="${parser-grammar}">
             <srcfiles dir="${parser-src-dir}" includes="**/*.java"/>
         </uptodate>
     </target>
 
-    <target name="generate-parser"
-            description="Generate lexer/parser using SableCC"
-            if="parser-out-of-date"
-            depends="init">
+    <target name="generate-parser" if="parser-out-of-date" depends="init">
         <java jar="${lib-dir}/sablecc.jar" fork="true" failonerror="true">
             <arg value="-d"/>
             <arg value="${parser-src-dir}"/>
@@ -39,33 +36,43 @@
         </java>
     </target>
 
+
+    <!-- Public Targets -->
+
     <target name="compile"
-            description="Compile the parser, compiler and unit tests"
+            description="Compile the compiler and unit tests"
             depends="generate-parser">
+
+        <mkdir dir="${parser-classes-dir}"/>
         <javac srcdir="${parser-src-dir}"
                destdir="${parser-classes-dir}"
-               classpathref="project-classpath"
-               includeAntRuntime="false"
-               debug="on"/>
-        <javac srcdir="${main-src-dir}"
-               destdir="${main-classes-dir}"
-               classpathref="project-classpath"
-               includeAntRuntime="false"
-               debug="on"/>
-        <javac srcdir="${test-src-dir}"
-               destdir="${test-classes-dir}"
                classpathref="project-classpath"
                includeAntRuntime="false"
                debug="on"/>
         <copy todir="${parser-classes-dir}">
             <fileset dir="${parser-src-dir}" includes="**/*.dat"/>
         </copy>
+
+        <mkdir dir="${main-classes-dir}"/>
+        <javac srcdir="${main-src-dir}"
+               destdir="${main-classes-dir}"
+               classpathref="project-classpath"
+               includeAntRuntime="false"
+               debug="on"/>
         <copy todir="${main-classes-dir}">
             <fileset dir="${basedir}" includes="log4j.properties"/>
         </copy>
+
+        <mkdir dir="${test-classes-dir}"/>
+        <javac srcdir="${test-src-dir}"
+               destdir="${test-classes-dir}"
+               classpathref="project-classpath"
+               includeAntRuntime="false"
+               debug="on"/>
     </target>
 
     <target name="test" description="Run the unit tests" depends="compile">
+        <mkdir dir="${test-reports-dir}"/>
         <junit printsummary="yes" haltonfailure="yes">
             <classpath refid="project-classpath"/>
             <formatter type="plain"/>
@@ -83,7 +90,7 @@
     </target>
 
     <target name="tar"
-            description="Build compressed source only TAR archive"
+            description="Build compressed source-only TAR archive"
             depends="test">
         <fail message="Missing property tigris.id!" unless="tigris.id"/>
 
