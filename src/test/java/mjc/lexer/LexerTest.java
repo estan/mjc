@@ -13,7 +13,7 @@ import mjc.node.*;
  */
 public class LexerTest {
     // To save some typing in the tests below.
-    private final static Class<?> w = TWhitespaces.class;
+    private final static Class<?> w = TWhitespace.class;
 
     /**
      * Test tokenization of comments.

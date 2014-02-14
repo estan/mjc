@@ -6,17 +6,13 @@ Helpers
 
     letter = ['a' .. 'z'] | ['A' .. 'Z'];
     digit = ['0' .. '9'];
-
-    space = ' ';
     underscore = '_';
 
     lf = 0x000a;
     cr = 0x000d;
     ht = 0x0009;
     ff = 0x000c;
-
     eol = lf | cr | cr lf;
-    whitespace = space | ht | ff | eol;
 
     not_star = [unicode - '*'];
     not_star_not_slash = [unicode - ['*' + '/']];
@@ -64,13 +60,13 @@ Tokens
     rbrace = '}';
 
     comment = long_comment | short_comment;
-    whitespaces = whitespace+;
+    whitespace = (' ' | ht | ff | eol)+;
     identifier = letter (letter | digit | underscore)*;
     integer = digit+;
 
 Ignored Tokens
 
-    whitespaces, comment;
+    whitespace, comment;
 
 /*
  * TODO: Write "Productions" and "Abstract Syntax Tree" sections.
