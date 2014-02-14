@@ -79,6 +79,35 @@
         </jar>
     </target>
 
+    <target name="tar" depends="jar">
+        <fail message="Usage: ant tar -Dtigris.id=MY_ID" unless="tigris.id"/>
+
+        <!-- Create temporary directory -->
+        <tempfile property="temp-dir"
+                  destDir="${java.io.tmpdir}"
+                  prefix="mjc"/>
+        <mkdir dir="${temp-dir}/mjc"/>
+
+        <!-- Copy base directory contents to temporary directory -->
+        <copy todir="${temp-dir}/mjc">
+            <fileset dir="${basedir}"
+                     excludes="**/${build-dir}/**,**/*.swp"
+                     id="tar-fileset"/>
+        </copy>
+
+        <!-- Add Tigris ID to DESC -->
+        <replace file="${temp-dir}/mjc/DESC" token="@ID@" value="${tigris.id}"/>
+
+        <!-- Create compressed TAR file and print what we included -->
+        <tar destfile="${output-tar}" basedir="${temp-dir}" compression="gzip"/>
+        <pathconvert pathsep="${line.separator}    " property="contents" refid="tar-fileset"/>
+        <echo message="Contents of ${output-tar} is:"/>
+        <echo message="    ${contents}"/>
+
+        <!-- Clean up -->
+        <delete dir="${temp-dir}"/>
+    </target>
+
     <target name="clean">
         <delete dir="${build-dir}"/>
         <delete file="${output-jar}"/>
