@@ -35,7 +35,7 @@ the Ant configuration. To accomplish this:
    **Java Build Path → Source**:
   1. Check the **Allow output folders for source folders** checkbox.
   2. Change the **Target folder** for each of the source folders to
-    * **build/parser-classes** for **build/parser-src**
+    * **build/parser-classes** for **mjc/build/parser-src**
     * **build/main-classes** for **mjc/src/main/java**, and
     * **build/test-classes** for **mjc/src/test/java**.
   3. Click **OK**.
