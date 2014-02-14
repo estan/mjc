@@ -26,8 +26,6 @@ Helpers
 
 Tokens
 
-    comment = long_comment | short_comment;
-
     class = 'class';
     public = 'public';
     static = 'static';
@@ -47,9 +45,6 @@ Tokens
     this = 'this';
     new = 'new';
 
-    identifier = letter (letter | digit | underscore)*;
-    integer = digit+;
-
     plus = '+';
     minus = '-';
     star = '*';
@@ -68,7 +63,10 @@ Tokens
     lbrace = '{';
     rbrace = '}';
 
+    comment = long_comment | short_comment;
     whitespaces = whitespace+;
+    identifier = letter (letter | digit | underscore)*;
+    integer = digit+;
 
 Ignored Tokens
 
