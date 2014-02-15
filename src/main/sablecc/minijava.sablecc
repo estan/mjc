@@ -15,8 +15,8 @@ Helpers
     not_star = [unicode - '*'];
     not_star_not_slash = [unicode - ['*' + '/']];
 
-    long_comment = '/*' not_star* ('*' (not_star_not_slash not_star*)?)* '*/';
-    short_comment = '//' [unicode - [cr + lf]]* eol?;
+    block_comment = '/*' not_star* ('*' (not_star_not_slash not_star*)?)* '*/';
+    line_comment = '//' [unicode - [cr + lf]]* eol?;
 
 Tokens
 
@@ -57,7 +57,7 @@ Tokens
     lbrace = '{';
     rbrace = '}';
 
-    comment = long_comment | short_comment;
+    comment = block_comment | line_comment;
     whitespace = (' ' | ht | ff | eol)+;
     identifier = letter (letter | digit | '_')*;
     integer = digit+;
