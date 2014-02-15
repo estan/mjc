@@ -20,36 +20,41 @@ Helpers
 
 Tokens
 
-    class = 'class';
-    public = 'public';
-    static = 'static';
-    void = 'void';
-    main = 'main';
-    string = 'String';
-    return = 'return';
-    int = 'int';
-    boolean = 'boolean';
-    if = 'if';
-    else = 'else';
-    while = 'while';
-    println = 'System.out.println';
-    length = 'length';
-    true = 'true';
-    false = 'false';
-    this = 'this';
-    new = 'new';
+    // Keywords
+    class_keyword = 'class';
+    public_keyword = 'public';
+    static_keyword = 'static';
+    void_keyword = 'void';
+    main_keyword = 'main';
+    string_keyword = 'String';
+    return_keyword = 'return';
+    int_keyword = 'int';
+    boolean_keyword = 'boolean';
+    if_keyword = 'if';
+    else_keyword = 'else';
+    while_keyword = 'while';
+    println_keyword = 'System.out.println';
+    length_keyword = 'length';
+    true_keyword = 'true';
+    false_keyword = 'false';
+    this_keyword = 'this';
+    new_keyword = 'new';
 
+    // Operators
     plus = '+';
     minus = '-';
     star = '*';
     less_than = '<';
-    equal = '=';
+    assign = '=';
     and = '&&';
     not = '!';
+
+    // Punctuation
     comma = ',';
     period = '.';
     semicolon = ';';
 
+    // Bracketing
     lparen = '(';
     rparen = ')';
     lbrack = '[';
@@ -57,6 +62,7 @@ Tokens
     lbrace = '{';
     rbrace = '}';
 
+    // Miscellaneous
     comment = block_comment | line_comment;
     whitespace = (' ' | ht | ff | eol)+;
     identifier = letter (letter | digit | '_')*;

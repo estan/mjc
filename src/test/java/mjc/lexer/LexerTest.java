@@ -49,12 +49,12 @@ public class LexerTest {
         assertTokens("class public static void main String return int " +
                      "boolean if else while System.out.println length " +
                      "true false this new",
-                TClass.class, w, TPublic.class, w, TStatic.class, w,
-                TVoid.class, w, TMain.class, w, TString.class, w,
-                TReturn.class, w, TInt.class, w, TBoolean.class, w,
-                TIf.class, w, TElse.class, w, TWhile.class, w,
-                TPrintln.class, w, TLength.class, w, TTrue.class, w,
-                TFalse.class, w, TThis.class, w, TNew.class);
+                TClassKeyword.class, w, TPublicKeyword.class, w, TStaticKeyword.class, w,
+                TVoidKeyword.class, w, TMainKeyword.class, w, TStringKeyword.class, w,
+                TReturnKeyword.class, w, TIntKeyword.class, w, TBooleanKeyword.class, w,
+                TIfKeyword.class, w, TElseKeyword.class, w, TWhileKeyword.class, w,
+                TPrintlnKeyword.class, w, TLengthKeyword.class, w, TTrueKeyword.class, w,
+                TFalseKeyword.class, w, TThisKeyword.class, w, TNewKeyword.class);
     }
 
     /**
@@ -65,7 +65,7 @@ public class LexerTest {
         assertTokens("this_is0_anIdentifier andthis but not this",
                 TIdentifier.class, w, TIdentifier.class, w,
                 TIdentifier.class, w, TIdentifier.class, w,
-                TThis.class);
+                TThisKeyword.class);
         assertTokens("03foo", TInteger.class, TIdentifier.class);
     }
 
@@ -96,7 +96,7 @@ public class LexerTest {
                 TLbrack.class, TStar.class, TPlus.class, TMinus.class,
                 TRbrace.class, TRbrack.class, TAnd.class, TIdentifier.class,
                 TNot.class, w, TComma.class, TComma.class, TLparen.class,
-                TLessThan.class, TRparen.class, TPeriod.class, TEqual.class,
+                TLessThan.class, TRparen.class, TPeriod.class, TAssign.class,
                 TSemicolon.class);
     }
 
