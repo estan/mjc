@@ -116,8 +116,8 @@ Productions
         {formal_parameters} formal_parameter_list comma formal_parameter;
 
     type =
-        {array} int_keyword |
-        {int} int_keyword lbrack rbrack |
+        {int} int_keyword |
+        {array} int_keyword lbrack rbrack |
         {boolean} boolean_keyword |
         {object} identifier;
 
