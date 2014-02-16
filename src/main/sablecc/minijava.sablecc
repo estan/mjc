@@ -25,7 +25,6 @@ Tokens
     public_keyword = 'public';
     static_keyword = 'static';
     void_keyword = 'void';
-    main_keyword = 'main';
     string_keyword = 'String';
     return_keyword = 'return';
     int_keyword = 'int';
@@ -39,6 +38,8 @@ Tokens
     false_keyword = 'false';
     this_keyword = 'this';
     new_keyword = 'new';
+
+    main_literal = 'main';
 
     // Operators
     plus = '+';
@@ -72,6 +73,124 @@ Ignored Tokens
 
     whitespace, comment;
 
+Productions
+
+    program = main_class class_declaration*;
+
+    main_class =
+        class_keyword [name]:identifier
+            [class_begin]:lbrace
+                main_prolog lparen string_keyword lbrack rbrack [arg]:identifier rparen
+                [method_begin]:lbrace
+                    variable_declaration*
+                    statement*
+                [method_end]:rbrace
+            [class_end]:rbrace;
+
+    main_prolog =
+        public_keyword static_keyword void_keyword main_literal;
+
+    class_declaration =
+        class_keyword identifier
+        lbrace
+            variable_declaration*
+            method_declaration*
+        rbrace;
+
+    method_declaration =
+        public_keyword type identifier lparen formal_parameter_list? rparen
+        lbrace
+            variable_declaration*
+            statement*
+            return_keyword expression semicolon
+        rbrace;
+
+    variable_declaration =
+        type identifier semicolon;
+
+    formal_parameter =
+        type identifier;
+
+    formal_parameter_list =
+        {formal_parameter} formal_parameter |
+        {formal_parameters} formal_parameter_list comma formal_parameter;
+
+    type =
+        {array} int_keyword |
+        {int} int_keyword lbrack rbrack |
+        {boolean} boolean_keyword |
+        {object} identifier;
+
+    statement =
+        {block} lbrace statement* rbrace |
+        {if_else} if_keyword lparen expression rparen [true]:statement else_keyword [false]:statement |
+        {while} while_keyword lparen expression rparen statement |
+        {println} println_keyword lparen expression rparen semicolon |
+        {assign} identifier assign expression semicolon |
+        {array_assign} identifier lbrack [index]:expression rbrack assign expression semicolon;
+
+    literal_expression =
+        {integer} integer |
+        {true} true_keyword |
+        {false} false_keyword;
+
+    primary_expression =
+        {literal} literal_expression |
+        {identifier} identifier |
+        {this} this_keyword |
+        {array} array_creation_expression |
+        {instance} class_instance_creation_expression |
+        {field} field_access |
+        {array_access} array_access |
+        {method} method_invocation |
+        {expression} lparen expression rparen;
+
+    array_creation_expression =
+        new_keyword int_keyword lbrack rbrack;
+
+    class_instance_creation_expression =
+        new_keyword identifier lparen expression_list* rparen;
+
+    field_access =
+        primary_expression period length_keyword;
+
+    array_access =
+        primary_expression lbrack expression rbrack;
+
+    method_invocation =
+        primary_expression period identifier lparen expression_list* rparen;
+
+    unary_expression =
+        {primary} primary_expression |
+        {negation} not primary_expression;
+
+    multiplicative_expression =
+        {unary} unary_expression |
+        {star} multiplicative_expression star unary_expression;
+
+    additive_expression =
+        {multiplicative} multiplicative_expression |
+        {plus} additive_expression plus multiplicative_expression |
+        {minus} additive_expression minus multiplicative_expression;
+
+    relational_expression =
+        {additive} additive_expression |
+        {less_than} relational_expression less_than additive_expression;
+
+    conditional_and_expression =
+        {relational} relational_expression |
+        {and} conditional_and_expression and relational_expression;
+
+    conditional_expression =
+        conditional_and_expression;
+
+    expression =
+        conditional_expression;
+
+    expression_list =
+        {expression} expression |
+        {expressions} expression_list comma expression;
+
 /*
- * TODO: Write "Productions" and "Abstract Syntax Tree" sections.
+ * TODO: Write "Abstract Syntax Tree" section and transformation rules.
  */

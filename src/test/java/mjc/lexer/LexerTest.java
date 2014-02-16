@@ -50,7 +50,7 @@ public class LexerTest {
                      "boolean if else while System.out.println length " +
                      "true false this new",
                 TClassKeyword.class, w, TPublicKeyword.class, w, TStaticKeyword.class, w,
-                TVoidKeyword.class, w, TMainKeyword.class, w, TStringKeyword.class, w,
+                TVoidKeyword.class, w, TMainLiteral.class, w, TStringKeyword.class, w,
                 TReturnKeyword.class, w, TIntKeyword.class, w, TBooleanKeyword.class, w,
                 TIfKeyword.class, w, TElseKeyword.class, w, TWhileKeyword.class, w,
                 TPrintlnKeyword.class, w, TLengthKeyword.class, w, TTrueKeyword.class, w,
