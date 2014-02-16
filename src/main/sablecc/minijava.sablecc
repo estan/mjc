@@ -75,9 +75,9 @@ Ignored Tokens
 
 Productions
 
-    program = main_class class_declaration*;
+    program = main_class_declaration class_declaration*;
 
-    main_class =
+    main_class_declaration =
         class_keyword [name]:identifier
             [class_begin]:lbrace
                 main_prolog lparen string_keyword lbrack rbrack [arg]:identifier rparen
@@ -194,3 +194,5 @@ Productions
 /*
  * TODO: Write "Abstract Syntax Tree" section and transformation rules.
  */
+
+
