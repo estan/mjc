@@ -46,15 +46,15 @@ public class LexerTest {
      */
     @Test
     public void testKeywords() throws Exception {
-        assertTokens("class public static void main String return int " +
+        assertTokens("class public static void String return int " +
                      "boolean if else while System.out.println length " +
                      "true false this new",
                 TClassKeyword.class, w, TPublicKeyword.class, w, TStaticKeyword.class, w,
-                TVoidKeyword.class, w, TMainLiteral.class, w, TStringKeyword.class, w,
-                TReturnKeyword.class, w, TIntKeyword.class, w, TBooleanKeyword.class, w,
-                TIfKeyword.class, w, TElseKeyword.class, w, TWhileKeyword.class, w,
-                TPrintlnKeyword.class, w, TLengthKeyword.class, w, TTrueKeyword.class, w,
-                TFalseKeyword.class, w, TThisKeyword.class, w, TNewKeyword.class);
+                TVoidKeyword.class, w, w, TStringKeyword.class, w, TReturnKeyword.class, w,
+                TIntKeyword.class, w, TBooleanKeyword.class, w, TIfKeyword.class, w,
+                TElseKeyword.class, w, TWhileKeyword.class, w, TPrintlnKeyword.class, w,
+                TLengthKeyword.class, w, TTrueKeyword.class, w, TFalseKeyword.class, w,
+                TThisKeyword.class, w, TNewKeyword.class);
     }
 
     /**

@@ -45,9 +45,6 @@ Tokens
     this_keyword = 'this';
     new_keyword = 'new';
 
-    // FIXME: Should "main" be handled as an identifier instead?
-    main_literal = 'main';
-
     // Operators
     plus = '+';
     minus = '-';
@@ -93,15 +90,12 @@ Productions
     main_class_declaration =
         class_keyword [name]:identifier
             [class_begin]:lbrace
-                main_prolog lparen string_keyword lbrack rbrack [arg]:identifier rparen
+                public_keyword static_keyword void_keyword identifier lparen string_keyword lbrack rbrack [arg]:identifier rparen
                 [method_begin]:lbrace
                     variable_declaration*
                     statement*
                 [method_end]:rbrace
             [class_end]:rbrace;
-
-    main_prolog =
-        public_keyword static_keyword void_keyword main_literal;
 
     /*
      * Class declaration
