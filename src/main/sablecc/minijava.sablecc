@@ -275,7 +275,7 @@ Productions
      *     myObj.add(1, foo)
      */
     method_invocation =
-        primary_expression period identifier lparen expression_list* rparen;
+        primary_expression period identifier lparen expression_list? rparen;
 
     /*
      * Unary expression
