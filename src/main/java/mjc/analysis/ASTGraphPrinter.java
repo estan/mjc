@@ -1,10 +1,9 @@
 package mjc.analysis;
 
+import mjc.node.EOF;
 import mjc.node.Node;
 import mjc.node.Start;
-import mjc.node.AFalseExpression;
-import mjc.node.AIntegerExpression;
-import mjc.node.ATrueExpression;
+import mjc.node.Token;
 
 /**
  * Simple visitor to print AST in GraphViz format on standard output.
@@ -28,20 +27,26 @@ public class ASTGraphPrinter extends DepthFirstAdapter {
 
     @Override
     public void defaultIn(final Node node) {
-        String label = null;
-        if (node instanceof AIntegerExpression ||
-            node instanceof ATrueExpression ||
-            node instanceof AFalseExpression)
-            label = node.toString();
-        else
-            label = node.getClass().getSimpleName();
-        String name = node.getClass().getSimpleName() + node.hashCode();
-        System.out.println(name + "[label=" + label + "];");
+        printNode(node, node.getClass().getSimpleName());
+    }
 
-        if (node.parent() != null) {
-            String parentLabel = node.parent().getClass().getSimpleName();
-            String parentName = parentLabel + node.parent().hashCode();
-            System.out.println(parentName + " -> " + name + ";");
-        }
+    @Override
+    public void defaultCase(Node node) {
+        if (!(node instanceof EOF))
+            printNode(node, ((Token) node).getText());
+    }
+
+    private void printNode(Node node, String label) {
+        System.out.println(uniqueName(node) + "[label=" + label + "];");
+        if (node.parent() != null)
+            printEdge(node.parent(), node);
+    }
+
+    private void printEdge(Node from, Node to) {
+        System.out.println(uniqueName(from) + " -> " + uniqueName(to) + ";");
+    }
+
+    private String uniqueName(Node node) {
+        return node.getClass().getSimpleName() + node.hashCode();
     }
 }
