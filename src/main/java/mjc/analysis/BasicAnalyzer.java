@@ -3,13 +3,16 @@ package mjc.analysis;
 import org.apache.log4j.Logger;
 
 import mjc.node.AMainClassDeclaration;
+import mjc.node.Start;
 
-public class BasicAnalysisVisitor extends DepthFirstAdapter {
-    private static final Logger log = Logger.getLogger(BasicAnalysisVisitor.class);
+public class BasicAnalyzer extends DepthFirstAdapter {
+    private static final Logger log = Logger.getLogger(BasicAnalyzer.class);
 
     private boolean success = true;
 
-    public boolean success() {
+    public boolean analyze(Start tree) {
+        success = true;
+        tree.apply(this);
         return success;
     }
 

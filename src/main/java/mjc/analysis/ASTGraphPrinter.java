@@ -9,7 +9,12 @@ import mjc.node.ATrueExpression;
 /**
  * Simple visitor to print AST in GraphViz format on standard output.
  */
-public class GraphPrintVisitor extends DepthFirstAdapter {
+public class ASTGraphPrinter extends DepthFirstAdapter {
+
+    public void print(Start tree) {
+        tree.apply(this);
+    }
+
     @Override
     public void inStart(final Start node) {
         System.out.println("digraph G {");

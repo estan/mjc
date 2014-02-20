@@ -6,13 +6,20 @@ import mjc.node.Node;
 import mjc.node.AFalseExpression;
 import mjc.node.AIntegerExpression;
 import mjc.node.ATrueExpression;
+import mjc.node.Start;
 
 /**
  * Simple visitor to print AST to log.
  */
-public class LogPrintVisitor extends DepthFirstAdapter {
-    private static final Logger logger = Logger.getLogger(LogPrintVisitor.class);
+public class ASTPrinter extends DepthFirstAdapter {
+    private static final Logger logger = Logger.getLogger(ASTPrinter.class);
+
     private int i = 1; // Indentation level.
+
+    public void print(Start tree) {
+        i = 1;
+        tree.apply(this);
+    }
 
     @Override
     public void defaultIn(final Node node) {
