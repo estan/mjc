@@ -2,7 +2,7 @@
  * Grammar for the MiniJava language.
  *
  * This is a grammar for a slightly modified version of the MiniJava language [1].
- * 
+ *
  * [1] http://www.csc.kth.se/utbildning/kth/kurser/DD2488/komp14/project/grammar14v1.pdf
  */
 
@@ -81,121 +81,264 @@ Ignored Tokens
 
 Productions
 
-    program = main_class_declaration class_declaration*;
+    program =
+        [main_class_declaration]:main_class_declaration [class_declarations]:class_declaration*
+            {-> New program(
+                    main_class_declaration,
+                    [class_declarations]
+                )
+            };
 
     main_class_declaration =
         class_keyword [name]:identifier
-            [class_begin]:lbrace
-                public_keyword static_keyword void_keyword identifier lparen string_keyword lbrack rbrack [arg]:identifier rparen
-                [method_begin]:lbrace
-                    variable_declaration*
-                    statement*
-                [method_end]:rbrace
-            [class_end]:rbrace;
+        [class_begin]:lbrace
+            public_keyword static_keyword void_keyword identifier
+                lparen string_keyword lbrack rbrack [arguments]:identifier rparen
+            [method_begin]:lbrace
+                [variable_declarations]:variable_declaration*
+                [statements]:statement*
+            [method_end]:rbrace
+        [class_end]:rbrace
+            {-> New main_class_declaration(
+                    name,
+                    arguments,
+                    [variable_declarations],
+                    [statements]
+                )
+            };
 
     class_declaration =
-        class_keyword identifier
+        class_keyword [name]:identifier
         lbrace
-            variable_declaration*
-            method_declaration*
-        rbrace;
+            [variable_declarations]:variable_declaration*
+            [method_declarations]:method_declaration*
+        rbrace
+            {-> New class_declaration(
+                    name,
+                    [variable_declarations],
+                    [method_declarations]
+                )
+            };
 
     method_declaration =
-        public_keyword type identifier lparen formal_parameter_list? rparen
+        public_keyword [return_type]:type [name]:identifier
+            lparen [formal_parameters]:formal_parameter_list? rparen
         lbrace
-            variable_declaration*
-            statement*
-            return_keyword expression semicolon
-        rbrace;
+            [variable_declarations]:variable_declaration*
+            [statements]:statement*
+            return_keyword [return_expression]:expression semicolon
+        rbrace
+            {-> New method_declaration(
+                    return_type, name, [formal_parameters.formal_parameter], [variable_declarations],
+                    [statements], return_expression)
+            };
 
     variable_declaration =
-        type identifier semicolon;
+        [type]:type [name]:identifier semicolon
+            {-> New variable_declaration(
+                    type,
+                    name
+                )
+            };
 
     formal_parameter =
-        type identifier;
+        [type]:type [name]:identifier
+            {-> New formal_parameter(
+                    type,
+                    name
+                )
+            };
 
-    formal_parameter_list =
-        {formal_parameter} formal_parameter |
-        {formal_parameters} formal_parameter_list comma formal_parameter;
+    formal_parameter_list {-> formal_parameter* } =
+        {formal_parameter} formal_parameter
+            {-> [formal_parameter.formal_parameter] } |
+        {formal_parameters} formal_parameter_list comma formal_parameter
+            {-> [formal_parameter_list.formal_parameter, formal_parameter.formal_parameter] };
 
     type =
-        {int} int_keyword |
-        {array} int_keyword lbrack rbrack |
-        {boolean} boolean_keyword |
-        {object} identifier;
+        {int} int_keyword
+            {-> New type.int(int_keyword)} |
+        {array} int_keyword lbrack rbrack
+            {-> New type.array(int_keyword)} |
+        {boolean} boolean_keyword
+            {-> New type.boolean(boolean_keyword)} |
+        {class} identifier
+            {-> New type.class(identifier)};
 
     statement =
-        {block} lbrace statement* rbrace |
-        {if_else} if_keyword lparen expression rparen [true]:statement else_keyword [false]:statement |
-        {while} while_keyword lparen expression rparen statement |
-        {println} println_keyword lparen expression rparen semicolon |
-        {assign} identifier assign expression semicolon |
-        {array_assign} identifier lbrack [index]:expression rbrack assign expression semicolon;
+        {block} lbrace [statements]:statement* rbrace
+            {-> New statement.block([statements])} |
+        {if_else}
+            if_keyword lparen [condition]:expression rparen
+                [then_statement]:statement
+            else_keyword
+                [else_statement]:statement
+            {-> New statement.if_else(condition, then_statement, else_statement)} |
+        {while} while_keyword lparen [condition]:expression rparen [statement]:statement
+            {-> New statement.while(condition, statement)} |
+        {println} println_keyword lparen [value]:expression rparen semicolon
+            {-> New statement.println(value)} |
+        {assign} [variable]:identifier assign [value]:expression semicolon
+            {-> New statement.assign(variable, value)} |
+        {array_assign} [variable]:identifier lbrack [index]:expression rbrack assign [value]:expression semicolon
+            {-> New statement.array_assign(variable, index, value)};
 
     expression =
-        conditional_expression;
+        conditional_expression
+            {-> conditional_expression.expression};
 
-    expression_list =
-        {expression} expression |
-        {expressions} expression_list comma expression;
+    expression_list {-> expression*} =
+        {expression} expression
+            {-> [expression.expression]} |
+        {expressions} expression_list comma expression
+            {-> [expression_list.expression, expression.expression]};
 
-    conditional_expression =
-        conditional_and_expression;
+    conditional_expression {-> expression} =
+        conditional_and_expression
+            {-> conditional_and_expression.expression };
 
-    conditional_and_expression =
-        {relational} relational_expression |
-        {and} conditional_and_expression and relational_expression;
+    conditional_and_expression {-> expression} =
+        {relational} relational_expression
+            {-> relational_expression.expression} |
+        {and} [left]:conditional_and_expression and [right]:relational_expression
+            {-> New expression.and(left.expression, right.expression)};
 
-    relational_expression =
-        {additive} additive_expression |
-        {less_than} relational_expression less_than additive_expression;
+    relational_expression {-> expression} =
+        {additive} additive_expression
+            {-> additive_expression.expression } |
+        {less_than} [left]:relational_expression less_than [right]:additive_expression
+            {-> New expression.less_than(left.expression, right.expression)};
 
-    additive_expression =
-        {multiplicative} multiplicative_expression |
-        {plus} additive_expression plus multiplicative_expression |
-        {minus} additive_expression minus multiplicative_expression;
+    additive_expression {-> expression} =
+        {multiplicative} multiplicative_expression
+            {-> multiplicative_expression.expression} |
+        {plus} [left]:additive_expression plus [right]:multiplicative_expression
+            {-> New expression.plus(left.expression, right.expression)} |
+        {minus} [left]:additive_expression minus [right]:multiplicative_expression
+            {-> New expression.minus(left.expression, right.expression)};
 
-    multiplicative_expression =
-        {unary} unary_expression |
-        {star} multiplicative_expression star unary_expression;
+    multiplicative_expression {-> expression} =
+        {unary} unary_expression
+            {-> unary_expression.expression} |
+        {star} [left]:multiplicative_expression star [right]:unary_expression
+            {-> New expression.times(left.expression, right.expression)};
 
-    unary_expression =
-        {primary} primary_expression |
-        {negation} not primary_expression;
+    unary_expression {-> expression} =
+        {primary} primary_expression
+            {-> primary_expression.expression} |
+        {negation} not primary_expression
+            {-> New expression.not(primary_expression.expression)};
 
-    method_invocation =
-        primary_expression period identifier lparen expression_list? rparen;
+    method_invocation {-> expression} =
+        [instance]:primary_expression period [name]:identifier lparen [actual_parameters]:expression_list? rparen
+            {-> New expression.method_invocation(instance.expression, name, [actual_parameters.expression])};
 
-    array_access =
-        primary_expression lbrack expression rbrack;
+    array_access {-> expression} =
+        [array]:primary_expression lbrack [index]:expression rbrack
+            {-> New expression.array_access(array.expression, index)};
 
-    field_access =
-        primary_expression period length_keyword;
+    field_access {-> expression} =
+        [instance]:primary_expression period length_keyword
+            {-> New expression.field_access(instance.expression)};
 
-    class_instance_creation_expression =
-        new_keyword identifier lparen expression_list* rparen;
+    class_instance_creation_expression {-> expression} =
+        new_keyword [class_name]:identifier lparen [actual_parameters]:expression_list* rparen
+            {-> New expression.new_instance(class_name, [actual_parameters.expression])};
 
-    array_creation_expression =
-        new_keyword int_keyword lbrack expression rbrack;
+    array_creation_expression {-> expression} =
+        new_keyword int_keyword lbrack [size]:expression rbrack
+            {-> New expression.new_array(size)};
 
-    primary_expression =
-        {literal} literal_expression |
-        {identifier} identifier |
-        {this} this_keyword |
-        {array} array_creation_expression |
-        {instance} class_instance_creation_expression |
-        {field} field_access |
-        {array_access} array_access |
-        {method} method_invocation |
-        {expression} lparen expression rparen;
+    primary_expression {-> expression} =
+        {literal} literal_expression
+            {-> literal_expression.expression} |
+        {identifier} identifier
+            {-> New expression.identifier(identifier)} |
+        {this} this_keyword
+            {-> New expression.this(this_keyword)} |
+        {array} array_creation_expression
+            {-> array_creation_expression.expression} |
+        {instance} class_instance_creation_expression
+            {-> class_instance_creation_expression.expression} |
+        {field} field_access
+            {-> field_access.expression} |
+        {array_access} array_access
+            {-> array_access.expression} |
+        {method} method_invocation
+            {-> method_invocation.expression} |
+        {expression} lparen expression rparen
+            {-> expression.expression};
 
-    literal_expression =
-        {integer} integer |
-        {true} true_keyword |
-        {false} false_keyword;
+    literal_expression {-> expression} =
+        {integer} integer
+            {-> New expression.integer(integer)} |
+        {true} true_keyword
+            {-> New expression.true(true_keyword)} |
+        {false} false_keyword
+            {-> New expression.false(false_keyword)};
 
-/*
- * TODO: Write "Abstract Syntax Tree" section and transformation rules.
- */
 
+Abstract Syntax Tree
+
+    program =
+        main_class_declaration [class_declarations]:class_declaration*;
+
+    main_class_declaration =
+        [name]:identifier
+        [arguments]:identifier
+        [local_variables]:variable_declaration*
+        [statements]:statement*;
+
+    class_declaration =
+        [name]:identifier
+        [variable_declarations]:variable_declaration*
+        [method_declarations]:method_declaration*;
+
+    method_declaration =
+        [return_type]:type
+        [name]:identifier
+        [formal_parameters]:formal_parameter*
+        [variable_declarations]:variable_declaration*
+        [statements]:statement*
+        [return_expression]:expression;
+
+    variable_declaration =
+        [type]:type
+        [name]:identifier;
+
+    formal_parameter =
+        [type]:type
+        [name]:identifier;
+
+    type =
+        {int} [name]:int_keyword |
+        {array} [name]:int_keyword |
+        {boolean} [name]:boolean_keyword |
+        {class} [name]:identifier;
+
+    statement =
+        {block} [statements]:statement* |
+        {if_else} [condition]:expression [then_statement]:statement [else_statement]:statement |
+        {while} [condition]:expression [statement]:statement |
+        {println} [value]:expression |
+        {assign} [variable]:identifier [value]:expression |
+        {array_assign} [variable]:identifier [index]:expression [value]:expression;
+
+    expression =
+        {and} [left]:expression [right]:expression |
+        {less_than} [left]:expression [right]:expression |
+        {plus} [left]:expression [right]:expression |
+        {minus} [left]:expression [right]:expression |
+        {times} [left]:expression [right]:expression |
+        {not} [expression]:expression |
+        {method_invocation} [instance]:expression [name]:identifier [actual_parameters]:expression* |
+        {array_access} [array]:expression [index]:expression |
+        {field_access} [instance]:expression |
+        {new_instance} [class_name]:identifier [actual_parameters]:expression* |
+        {new_array} [size]:expression |
+        {integer} [value]:integer |
+        {true} [value]:true_keyword |
+        {false} [value]:false_keyword |
+        {identifier} [value]:identifier |
+        {this} [value]:this_keyword; // Can we leave out value for this/true/false?
 
