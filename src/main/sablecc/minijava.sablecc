@@ -216,7 +216,7 @@ Productions
             {-> New expression.field_access(instance.expression)};
 
     class_instance_creation_expression {-> expression} =
-        new_keyword [class_name]:identifier lparen [actual_parameters]:expression_list* rparen
+        new_keyword [class_name]:identifier lparen [actual_parameters]:expression_list? rparen
             {-> New expression.new_instance(class_name, [actual_parameters.expression])};
 
     array_creation_expression {-> expression} =
