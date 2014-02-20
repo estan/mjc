@@ -28,7 +28,7 @@ then perform the following steps in a new or existing Eclipse workspace:
 3. Uncheck **Use default location** and pick the **mjc** folder as **Location**.
 4. Click **Next** and then **Finish**.
 
-It's important that the output folder for each source folder matches
+It's important that the **Output folder** for each source folder matches
 the Ant configuration. To accomplish this:
 
 1. In the project properties for the **mjc** project, under
