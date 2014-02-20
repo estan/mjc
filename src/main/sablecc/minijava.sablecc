@@ -83,11 +83,7 @@ Productions
 
     program =
         [main_class_declaration]:main_class_declaration [class_declarations]:class_declaration*
-            {-> New program(
-                    main_class_declaration,
-                    [class_declarations]
-                )
-            };
+            {-> New program(main_class_declaration, [class_declarations])};
 
     main_class_declaration =
         class_keyword [name]:identifier
@@ -99,13 +95,7 @@ Productions
                 [statements]:statement*
             [method_end]:rbrace
         [class_end]:rbrace
-            {-> New main_class_declaration(
-                    name,
-                    arguments,
-                    [variable_declarations],
-                    [statements]
-                )
-            };
+            {-> New main_class_declaration(name, arguments, [variable_declarations], [statements])};
 
     class_declaration =
         class_keyword [name]:identifier
@@ -113,12 +103,7 @@ Productions
             [variable_declarations]:variable_declaration*
             [method_declarations]:method_declaration*
         rbrace
-            {-> New class_declaration(
-                    name,
-                    [variable_declarations],
-                    [method_declarations]
-                )
-            };
+            {-> New class_declaration(name, [variable_declarations], [method_declarations])};
 
     method_declaration =
         public_keyword [return_type]:type [name]:identifier
@@ -128,26 +113,15 @@ Productions
             [statements]:statement*
             return_keyword [return_expression]:expression semicolon
         rbrace
-            {-> New method_declaration(
-                    return_type, name, [formal_parameters.formal_parameter], [variable_declarations],
-                    [statements], return_expression)
-            };
+            {-> New method_declaration(return_type, name, [formal_parameters.formal_parameter], [variable_declarations], [statements], return_expression)};
 
     variable_declaration =
         [type]:type [name]:identifier semicolon
-            {-> New variable_declaration(
-                    type,
-                    name
-                )
-            };
+            {-> New variable_declaration(type, name)};
 
     formal_parameter =
         [type]:type [name]:identifier
-            {-> New formal_parameter(
-                    type,
-                    name
-                )
-            };
+            {-> New formal_parameter(type, name)};
 
     formal_parameter_list {-> formal_parameter* } =
         {formal_parameter} formal_parameter
