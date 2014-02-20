@@ -19,7 +19,7 @@ public class BasicAnalyzer extends DepthFirstAdapter {
     @Override
     public void caseAMainClassDeclaration(AMainClassDeclaration node) {
         final String className = node.getName().getText();
-        final String methodName = node.getMainMethodName().toString().trim();
+        final String methodName = node.getMainMethodName().getText();
 
         // The single method on the main class must be called "main".
         if (methodName.compareTo("main") != 0) {
