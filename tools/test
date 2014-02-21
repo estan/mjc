@@ -3,7 +3,8 @@
 # The following script can be used to either compile and run a MiniJava source
 # file locally using the Java compiler/runtime (the "test java" subcommand), or
 # compile it using the mjc compiler, then upload and assemble it on a remote
-# host and run it there (the "test mjc" subcommand). All subcommands clean up
+# host and run it there (the "test mjc" subcommand). Or it can do both, and then
+# compare the results (the "test compare" subcommand). All subcommands clean up
 # completely after themselves.
 #
 # Usage: test java <infile> [class]
