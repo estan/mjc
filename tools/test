@@ -1,0 +1,152 @@
+#!/bin/sh
+#
+# The following script can be used to either compile and run a MiniJava source
+# file locally using the Java compiler/runtime (the "test java" subcommand), or
+# compile it using the mjc compiler, then upload and assemble it on a remote
+# host and run it there (the "test mjc" subcommand). All subcommands clean up
+# completely after themselves.
+#
+# Usage: test java <infile> [class]
+#        test mjc <infile> <host>
+#        test compare <infile> <host> [class]
+#
+# Available subcommands:
+#    java     Compile/run <infile> locally using Java.
+#    mjc      Compile <infile> using mjc, then assemble/run on <host>.
+#    compare  Run above commands and compare results.
+#
+# The optional class parameter specifies which class to run when invoking the
+# Java VM. If unspecified, it will be deduced from the input file name
+#
+
+MJC_DIR=$(dirname "$(cd "$(dirname "$0")" && pwd)")
+LIBSRC_DIR=$MJC_DIR/lib/libsrc
+
+#
+# Prints usage information.
+#
+function usage {
+    echo "Usage: test java <infile> [class]"
+    echo "       test mjc <infile> <host>"
+    echo "       test compare <infile> <host> [class]"
+    echo ""
+    echo "Available subcommands:"
+    echo "   java     Compile/run <infile> locally using Java."
+    echo "   mjc      Compile <infile> using mjc, then assemble/run on <host>."
+    echo "   compare  Run above commands and compare results."
+    echo ""
+    echo "The optional class parameter specifies which class to run."
+    echo "If unspecified, it will be deduced from the input file name"
+}
+
+#
+# Compiles $1 in a temporary directory using the Java compiler, runs
+# the class $2 (or `basename $1 | cut -d. -f1` if unspecified), prints
+# the result, and then cleans everything up.
+#
+function run_java {
+    if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+        usage
+        exit 1
+    fi
+
+    local tmpdir=$(mktemp -d)
+    local path=$1
+    local file=$(basename $path)
+    local base=$(echo $file | cut -d. -f1)
+    local class=$base
+
+    if [ $# -eq 2 ]; then
+        class=$2
+    fi
+
+    cp $path $tmpdir
+    javac $tmpdir/*
+    java -cp $tmpdir $class
+
+    rm -rf $tmpdir
+}
+
+#
+# Compiles $1 in a temporary local directory, then copies the resulting assembly
+# code along with libsrc to the remote host $2, where and executable is assembled
+# using GCC. The execulable is executed and the result printed. Finally everything
+# (local and remote) is cleaned up.
+#
+function run_mjc {
+    if [ $# -ne 2 ]; then
+        usage
+        exit 1
+    fi
+
+    local local_tmpdir=$(mktemp -d)
+    local local_path=$1
+    local local_file=$(basename $local_path)
+    local local_base=$(echo $local_file | cut -d. -f1)
+    local local_asmfile=$local_tmpdir/${local_base}.s
+
+    local remote_host=$2
+    local remote_tmpdir=$(ssh $remote_host "mktemp -d")
+    local remote_path=$remote_tmpdir/$local_file
+    local remote_asmfile=$remote_tmpdir/${local_base}.s
+    local remote_output=$remote_tmpdir/$local_base
+
+    # Build with mjc.
+    $MJC_DIR/mjc $local_path -S > $local_asmfile
+
+    # Copy to remote host.
+    scp -q $local_asmfile $remote_host:$remote_asmfile
+    scp -q -r $LIBSRC_DIR $remote_host:$remote_tmpdir
+
+    # Compile libsrc, assemble the executable and run it.
+    ssh $remote_host "cd $remote_tmpdir/libsrc && make -s"
+    ssh $remote_host "gcc -L$remote_tmpdir/libsrc -o $remote_output $remote_asmfile -lminijava"
+    ssh $remote_host "$remote_output"
+
+    # Clean up
+    ssh $remote_host "rm -rf $remote_tmpdir"
+    rm -rf $local_tmpdir
+}
+
+
+#
+# Run the requested command.
+#
+cmd=$1
+shift
+case $cmd in
+    java)
+        echo "$(run_java "$@")"
+        ;;
+    mjc)
+        echo "$(run_mjc "$@")"
+        ;;
+    compare)
+        if [ $# -eq 2 ]; then
+            java_result="$(run_java "$1")"
+        elif [ $# -eq 3 ]; then
+            java_result="$(run_java "$1" "$3")"
+        else
+            usage
+            exit 1
+        fi
+        mjc_result="$(run_mjc "$1" "$2")"
+
+        if [ x"$mjc_result" != x"$java_result" ]; then
+            echo "On input $1:"
+            echo "Expected:"
+            echo "$java_result"
+            echo "Actual:"
+            echo "$mjc_result"
+            exit 1
+        else
+            echo "No difference"
+        fi
+        ;;
+    *)
+        usage
+        exit 1
+        ;;
+esac
+
+exit 0

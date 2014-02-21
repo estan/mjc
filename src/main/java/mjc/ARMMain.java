@@ -53,13 +53,43 @@ public class ARMMain {
             // Print AST to log.
             if (commandLine.hasOption("p")) {
                 astPrinter.print(tree);
-            }
-
-            // Print AST in GraphViz format.
-            if (commandLine.hasOption("g")) {
+            } else if (commandLine.hasOption("g")) {
+                // Print AST in GraphViz format.
                 graphPrinter.print(tree);
+            } else {
+                // Lets just print "42", code courtesy of GCC :)
+                System.out.println(
+                    "        .arch armv6\n" +
+                    "        .eabi_attribute 27, 3\n" +
+                    "        .eabi_attribute 28, 1\n" +
+                    "        .fpu vfp\n" +
+                    "        .eabi_attribute 20, 1\n" +
+                    "        .eabi_attribute 21, 1\n" +
+                    "        .eabi_attribute 23, 3\n" +
+                    "        .eabi_attribute 24, 1\n" +
+                    "        .eabi_attribute 25, 1\n" +
+                    "        .eabi_attribute 26, 2\n" +
+                    "        .eabi_attribute 30, 6\n" +
+                    "        .eabi_attribute 34, 1\n" +
+                    "        .eabi_attribute 18, 4\n" +
+                    "        .file   \"test.c\"\n" +
+                    "        .text\n" +
+                    "        .align  2\n" +
+                    "        .global main\n" +
+                    "        .type   main, %function\n" +
+                    "main:\n" +
+                    "        @ args = 0, pretend = 0, frame = 0\n" +
+                    "        @ frame_needed = 1, uses_anonymous_args = 0\n" +
+                    "        stmfd   sp!, {fp, lr}\n" +
+                    "        add     fp, sp, #4\n" +
+                    "        mov     r0, #42\n" +
+                    "        bl      _minijavalib_println\n" +
+                    "        mov     r0, r3\n" +
+                    "        ldmfd   sp!, {fp, pc}\n" +
+                    "        .size   main, .-main\n" +
+                    "        .ident  \"GCC: (GNU) 4.7.2\"\n" +
+                    "        .section        .note.GNU-stack,\"\",%progbits");
             }
-
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
