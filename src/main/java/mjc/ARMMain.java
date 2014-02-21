@@ -8,7 +8,6 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
 import mjc.lexer.Lexer;
 import mjc.parser.Parser;
@@ -61,10 +60,8 @@ public class ARMMain {
                 graphPrinter.print(tree);
             }
 
-        } catch (ParseException e) {
-            System.err.println(e.getMessage());
         } catch (Exception e) {
-            System.err.println(e);
+            System.err.println(e.getMessage());
         }
     }
 
