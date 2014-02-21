@@ -18,6 +18,10 @@
 # The optional class parameter specifies which class to run when invoking the
 # Java VM. If unspecified, it will be deduced from the input file name
 #
+# It is a very good idea to first generate an SSH key with empty passphrase
+# and install on the remote machine, to avoid having to type in the password
+# for each ssh command executed by the script.
+#
 
 MJC_DIR=$(dirname "$(cd "$(dirname "$0")" && pwd)")
 LIBSRC_DIR=$MJC_DIR/lib/libsrc
