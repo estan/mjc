@@ -73,10 +73,10 @@ function run_java {
 }
 
 #
-# Compiles $1 in a temporary local directory, then copies the resulting assembly
-# code along with libsrc to the remote host $2, where an executable is assembled
-# using GCC. The execulable is then executed and the result printed. Finally
-# everything (local and remote) is cleaned up.
+# Compiles $1 in a temporary local directory using mjc, then copies the resulting
+# assembly code along with libsrc to the remote host $2, where an executable is
+# assembled using GCC. The execulable is then executed and the result printed.
+# Finally everything (local and remote) is cleaned up.
 #
 function run_mjc {
     if [ $# -ne 2 ]; then
