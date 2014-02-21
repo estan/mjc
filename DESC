@@ -1,4 +1,4 @@
-MAIL=stansvik@kth.se
+MAIL=@EMAIL@
 ID=@ID@
 LANG=java
 ARM

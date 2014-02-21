@@ -86,6 +86,7 @@
 
     <target name="tar" description="Build compressed source-only TAR archive" depends="test">
         <fail message="Missing property tigris.id!" unless="tigris.id"/>
+        <fail message="Missing property tigris.email!" unless="tigris.email"/>
 
         <!-- Prepare TAR file contents in a temporary directory -->
         <tempfile property="temp-dir"
@@ -103,6 +104,9 @@
         <replace file="${temp-dir}/${ant.project.name}/DESC"
                  token="@ID@"
                  value="${tigris.id}"/>
+        <replace file="${temp-dir}/${ant.project.name}/DESC"
+                 token="@EMAIL@"
+                 value="${tigris.email}"/>
 
         <!-- Create compressed TAR file and print what we included -->
         <tar destfile="${output-tar}"
