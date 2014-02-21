@@ -36,7 +36,7 @@ public class ARMMain {
             CommandLine commandLine = commandLineParser.parse(options, args);
 
             if (commandLine.hasOption("h") || commandLine.getArgs().length != 1) {
-                helpFormatter.printHelp("java ARMMain <file> <options>", options);
+                helpFormatter.printHelp("mjc infile [options]", options);
                 System.exit(1);
             }
 
