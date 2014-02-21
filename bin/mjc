@@ -1,0 +1,5 @@
+#!/bin/sh
+
+MJC_ROOT=$(dirname "$(cd "$(dirname "$0")" && pwd)")
+
+java -cp "$MJC_ROOT/mjc.jar:$MJC_ROOT/lib/*" mjc.ARMMain $@
