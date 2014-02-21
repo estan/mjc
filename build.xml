@@ -30,6 +30,7 @@
         <java jar="${lib-dir}/sablecc.jar" fork="true" failonerror="true">
             <arg value="-d"/>
             <arg value="${parser-src-dir}"/>
+            <arg value="--no-inline"/>
             <arg value="${parser-grammar}"/>
         </java>
     </target>
