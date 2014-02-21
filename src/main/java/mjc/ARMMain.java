@@ -92,6 +92,7 @@ public class ARMMain {
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());
+            System.exit(1);
         }
     }
 
