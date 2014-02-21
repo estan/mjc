@@ -50,8 +50,8 @@ public class ARMMain {
                 System.exit(1);
             }
 
-            // Print AST to log.
             if (commandLine.hasOption("p")) {
+                // Print AST to log.
                 astPrinter.print(tree);
             } else if (commandLine.hasOption("g")) {
                 // Print AST in GraphViz format.
