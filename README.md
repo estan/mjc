@@ -28,7 +28,7 @@ To run the compiler, type
     java -cp mjc.jar:lib/* mjc.ARMMain foo.java -S
 
 where `foo.java` is the MiniJava source file to be compiled, or use the
-`bin/mjc` script. The availble command line options are:
+`mjc` script. The availble command line options are:
 
     usage: java ARMMain <file> <options>
      -g         print abstract syntax tree (GraphViz)
