@@ -30,7 +30,7 @@ To run the compiler, type
 where `foo.java` is the MiniJava source file to be compiled, or use the
 `mjc` script. The availble command line options are:
 
-    usage: java ARMMain <file> <options>
+    usage: mjc infile [options]
      -g         print abstract syntax tree (GraphViz)
      -h         show help message
      -o <arg>   output file
