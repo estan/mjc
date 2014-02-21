@@ -55,7 +55,7 @@ public class ParserValidInputTest {
      * Provides the absolute path of each *.java file in dataDir as input to
      * testValid().
      *
-     * @return an iterable over Path instances.
+     * @return an iterable over paths.
      * @throws IOException if an I/O error occurred.
      */
     @Parameters(name = "{0}")
