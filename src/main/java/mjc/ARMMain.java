@@ -32,7 +32,6 @@ public class ARMMain {
 
         CommandLineParser commandLineParser = new GnuParser();
         HelpFormatter helpFormatter = new HelpFormatter();
-        helpFormatter.setOptionComparator(null);
 
         try {
             CommandLine commandLine = commandLineParser.parse(options, args);
