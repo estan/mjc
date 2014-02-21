@@ -64,9 +64,6 @@
                classpathref="project-classpath"
                includeAntRuntime="false"
                debug="on"/>
-        <copy todir="${test-classes-dir}">
-            <fileset dir="${src-dir}/test/resources"/>
-        </copy>
     </target>
 
     <target name="test" description="Run the unit tests" depends="compile">
