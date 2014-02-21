@@ -98,6 +98,9 @@
                 <exclude name="**/${build-dir}/**"/>
                 <exclude name="${output-jar}"/>
                 <exclude name="${output-tar}"/>
+                <exclude name="**/*.classpath"/>
+                <exclude name="**/*.project"/>
+                <exclude name="**/*.settings"/>
                 <exclude name="**/*.swp"/>
             </fileset>
         </copy>
