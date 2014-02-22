@@ -83,6 +83,10 @@ function run_mjc {
         usage
         exit 1
     fi
+    if [ ! -f "$MJC_DIR/mjc.jar" ]; then
+        echo "mjc.jar not found, run 'ant' to build it!"
+        exit 1
+    fi
 
     local local_tmpdir=$(mktemp -d)
     local local_path=$1
