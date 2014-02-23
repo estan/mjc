@@ -1,29 +1,42 @@
 package mjc.analysis;
 
-import org.apache.log4j.Logger;
-
 import mjc.node.EOF;
 import mjc.node.Node;
 import mjc.node.Start;
 import mjc.node.Token;
 
 /**
- * Simple visitor to print AST to log.
+ * Simple visitor to print AST to standard output.
  */
 public class ASTPrinter extends DepthFirstAdapter {
-    private static final Logger logger = Logger.getLogger(ASTPrinter.class);
-
-    private int i = 1; // Indentation level.
+    private int indent;            // Indentation level.
+    private StringBuilder builder; // Builder for the output.
 
     public void print(Start tree) {
-        i = 1;
         tree.apply(this);
     }
 
     @Override
+    public void inStart(Start node) {
+        indent = 0;
+        builder = new StringBuilder();
+    }
+
+    @Override
+    public void outStart(Start node) {
+        System.out.print(builder.toString());
+    }
+
+    @Override
     public void defaultIn(final Node node) {
-        logger.info(String.format("%" + i + "s%s", "", node.getClass().getSimpleName()));
-        i += 2;
+        indent();
+        builder.append(node.getClass().getSimpleName() + '\n');
+        indent += 2;
+    }
+
+    @Override
+    public void defaultOut(final Node node) {
+        indent -= 2;
     }
 
     @Override
@@ -31,14 +44,16 @@ public class ASTPrinter extends DepthFirstAdapter {
         if (node instanceof EOF)
             return;
 
-        // For tokens, we print both their name and value.
+        indent();
+
         Token token = (Token) node;
-        logger.info(String.format("%" + i + "s%s(%s)", "",
-                token.getClass().getSimpleName(), token.getText()));
+        String name = token.getClass().getSimpleName();
+        String text = token.getText();
+        builder.append(String.format("%s(%s)\n", name, text));
     }
 
-    @Override
-    public void defaultOut(final Node node) {
-        i -= 2;
+    private void indent() {
+        for (int i = 0; i < indent; ++i)
+            builder.append(' ');
     }
 }
