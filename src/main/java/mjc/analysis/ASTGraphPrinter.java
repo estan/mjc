@@ -9,6 +9,7 @@ import mjc.node.Token;
  * Simple visitor to print AST in GraphViz format on standard output.
  */
 public class ASTGraphPrinter extends DepthFirstAdapter {
+    private StringBuilder builder;
 
     public void print(Start tree) {
         tree.apply(this);
@@ -16,13 +17,15 @@ public class ASTGraphPrinter extends DepthFirstAdapter {
 
     @Override
     public void inStart(final Start node) {
-        System.out.println("digraph G {");
-        System.out.println("Start" + node.hashCode() + "[label=Start];");
+        builder = new StringBuilder();
+        builder.append("digraph G {\n");
+        printNode(node, node.getClass().getSimpleName());
     }
 
     @Override
     public void outStart(final Start node) {
-        System.out.println("}");
+        builder.append("}\n");
+        System.out.print(builder.toString());
     }
 
     @Override
@@ -37,13 +40,13 @@ public class ASTGraphPrinter extends DepthFirstAdapter {
     }
 
     private void printNode(Node node, String label) {
-        System.out.println(uniqueName(node) + "[label=" + label + "];");
+        builder.append(String.format("%s[label=%s];\n", uniqueName(node), label));
         if (node.parent() != null)
             printEdge(node.parent(), node);
     }
 
     private void printEdge(Node from, Node to) {
-        System.out.println(uniqueName(from) + " -> " + uniqueName(to) + ";");
+        builder.append(uniqueName(from) + " -> " + uniqueName(to) + ";\n");
     }
 
     private String uniqueName(Node node) {
