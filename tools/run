@@ -8,8 +8,8 @@
 # completely after themselves.
 #
 # Usage: run java <infile> [class]
-#        run mjc <infile> <host>
-#        run compare <infile> <host> [class]
+#        run mjc <host> <infile>
+#        run compare <host> <infile> [class]
 #
 # Available subcommands:
 #    java     Compile/run <infile> locally using Java.
