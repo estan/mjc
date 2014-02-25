@@ -10,7 +10,7 @@ Package mjc;
 
 Helpers
 
-    unicode = [0..0xffff];
+    unicode = [0 .. 0xffff];
     letter = ['a' .. 'z'] | ['A' .. 'Z'];
     digit = ['0' .. '9'];
 
