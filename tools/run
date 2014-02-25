@@ -32,8 +32,8 @@ LIBSRC_DIR=$MJC_DIR/lib/libsrc
 #
 function usage {
     echo "Usage: run java <infile> [class]"
-    echo "       run mjc <infile> <host>"
-    echo "       run compare <infile> <host> [class]"
+    echo "       run mjc <host> <infile>"
+    echo "       run compare <host> <infile> [class]"
     echo ""
     echo "Available subcommands:"
     echo "   java     Compile/run <infile> locally using Java."
@@ -73,8 +73,8 @@ function run_java {
 }
 
 #
-# Compiles $1 in a temporary local directory using mjc, then copies the resulting
-# assembly code along with libsrc to the remote host $2, where an executable is
+# Compiles $2 in a temporary local directory using mjc, then copies the resulting
+# assembly code along with libsrc to the remote host $1, where an executable is
 # assembled using GCC. The execulable is then executed and the result printed.
 # Finally everything (local and remote) is cleaned up.
 #
@@ -89,12 +89,12 @@ function run_mjc {
     fi
 
     local local_tmpdir=$(mktemp -d)
-    local local_path=$1
+    local local_path=$2
     local local_file=$(basename $local_path)
     local local_base=$(echo $local_file | cut -d. -f1)
     local local_asmfile=$local_tmpdir/${local_base}.s
 
-    local remote_host=$2
+    local remote_host=$1
     local remote_tmpdir=$(ssh $remote_host "mktemp -d")
     local remote_path=$remote_tmpdir/$local_file
     local remote_asmfile=$remote_tmpdir/${local_base}.s
@@ -132,9 +132,9 @@ case $cmd in
         ;;
     compare)
         if [ $# -eq 2 ]; then
-            java_result="$(run_java "$1")"
+            java_result="$(run_java "$2")"
         elif [ $# -eq 3 ]; then
-            java_result="$(run_java "$1" "$3")"
+            java_result="$(run_java "$2" "$3")"
         else
             usage
             exit 1
