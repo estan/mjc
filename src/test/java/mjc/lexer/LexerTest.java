@@ -30,6 +30,8 @@ public class LexerTest {
                 TIdentifier.class, w, TComment.class);
         assertTokens("foo// but \nthis_is_not_a_comment",
                 TIdentifier.class, TComment.class, TIdentifier.class);
+        assertTokens("/* this comment /* // /** ends here: */",
+                TComment.class);
     }
 
     /**
