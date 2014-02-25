@@ -110,7 +110,7 @@ function run_mjc {
     # Compile libsrc, assemble the executable and run it.
     local libdir="$remote_tmpdir/$(basename $LIBSRC_DIR)"
     local build_cmd="gcc -L$libdir -o $remote_output $remote_asmfile -lminijava"
-    ssh $remote_host "cd $remote_tmpdir/libsrc && make -s"
+    ssh $remote_host "cd $libdir && make -s"
     ssh $remote_host "$build_cmd"
     ssh $remote_host "$remote_output"
 
