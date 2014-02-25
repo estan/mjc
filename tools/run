@@ -7,9 +7,9 @@
 # compare the results (the "test compare" subcommand). All subcommands clean up
 # completely after themselves.
 #
-# Usage: test java <infile> [class]
-#        test mjc <infile> <host>
-#        test compare <infile> <host> [class]
+# Usage: run java <infile> [class]
+#        run mjc <infile> <host>
+#        run compare <infile> <host> [class]
 #
 # Available subcommands:
 #    java     Compile/run <infile> locally using Java.
@@ -31,9 +31,9 @@ LIBSRC_DIR=$MJC_DIR/lib/libsrc
 # Prints usage information.
 #
 function usage {
-    echo "Usage: test java <infile> [class]"
-    echo "       test mjc <infile> <host>"
-    echo "       test compare <infile> <host> [class]"
+    echo "Usage: run java <infile> [class]"
+    echo "       run mjc <infile> <host>"
+    echo "       run compare <infile> <host> [class]"
     echo ""
     echo "Available subcommands:"
     echo "   java     Compile/run <infile> locally using Java."
