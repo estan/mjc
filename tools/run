@@ -108,8 +108,10 @@ function run_mjc {
     scp -q -r $LIBSRC_DIR $remote_host:$remote_tmpdir
 
     # Compile libsrc, assemble the executable and run it.
+    local libdir="$remote_tmpdir/$(basename $LIBSRC_DIR)"
+    local build_cmd="gcc -L$libdir -o $remote_output $remote_asmfile -lminijava"
     ssh $remote_host "cd $remote_tmpdir/libsrc && make -s"
-    ssh $remote_host "gcc -L$remote_tmpdir/libsrc -o $remote_output $remote_asmfile -lminijava"
+    ssh $remote_host "$build_cmd"
     ssh $remote_host "$remote_output"
 
     # Clean up
@@ -117,6 +119,31 @@ function run_mjc {
     rm -rf $local_tmpdir
 }
 
+#
+# Calls run_java and run_mjc, compares results and print differences.
+#
+function compare {
+    if [ $# -eq 2 ]; then
+        java_result="$(run_java "$2")"
+    elif [ $# -eq 3 ]; then
+        java_result="$(run_java "$2" "$3")"
+    else
+        usage
+        exit 1
+    fi
+    mjc_result="$(run_mjc "$1" "$2")"
+
+    if [ x"$mjc_result" != x"$java_result" ]; then
+        echo "On input $2:"
+        echo "Expected:"
+        echo "$java_result"
+        echo "Actual:"
+        echo "$mjc_result"
+        exit 1
+    else
+        echo "No difference"
+    fi
+}
 
 #
 # Run the requested command.
@@ -131,26 +158,7 @@ case $cmd in
         echo "$(run_mjc "$@")"
         ;;
     compare)
-        if [ $# -eq 2 ]; then
-            java_result="$(run_java "$2")"
-        elif [ $# -eq 3 ]; then
-            java_result="$(run_java "$2" "$3")"
-        else
-            usage
-            exit 1
-        fi
-        mjc_result="$(run_mjc "$1" "$2")"
-
-        if [ x"$mjc_result" != x"$java_result" ]; then
-            echo "On input $1:"
-            echo "Expected:"
-            echo "$java_result"
-            echo "Actual:"
-            echo "$mjc_result"
-            exit 1
-        else
-            echo "No difference"
-        fi
+        echo "$(compare "$@")"
         ;;
     *)
         usage
