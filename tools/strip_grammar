@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# This script just strips out names ("[foo]") and transformation directives
+# ("{-> foo}") from the given SableCC grammar file.
+#
+# It can help when you're reading the grammar without being interested in
+# names/transformations.
+#
+# Usage: strip_grammar [-n | -t] <infile>
+#    -n    Strip names (e.g. [foo]:bar -> bar)
+#    -t    Strip transformations (e.g. foo {->bar} -> foo)
+#
+# Default is to strip both names and transformations
+#
+
+if [ $# -eq 2 ] && [ $1 = "-n" ]; then
+    # Strip names.
+    cat $2 | sed 's/\[[^]]\+\]://g'
+elif [ $# -eq 2 ] && [ $1 = "-t" ]; then
+    # Strip transformations.
+    cat $2 | sed 's/{[^}]\+} =/ =/g' | perl -0777 -pi -e 's/\n[ ]+{->[^}]+}//g'
+elif [ $# -eq 1 ]; then
+    # Strip both names and transformations. 
+    cat $1 | sed 's/\[[^]]\+\]://g' | sed 's/{[^}]\+} =/ =/g' | perl -0777 -pi -e 's/\n[ ]+{->[^}]+}//g'
+else
+    echo "Usage: strip_grammar [-n | -t] <infile>"
+    echo "    -n    Strip names (e.g. [foo]:bar -> bar)"
+    echo "    -t    Strip transformations (e.g. foo {->bar} -> foo)"
+    echo "Default is to strip both names and transformations"
+    exit 1
+fi
