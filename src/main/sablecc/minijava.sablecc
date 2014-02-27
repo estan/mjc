@@ -209,7 +209,7 @@ Productions
             {-> New expression.method_invocation(instance.expression, name, [actual_parameters.expression])};
 
     array_access {-> expression} =
-        [array]:primary_expression lbrack [index]:expression rbrack
+        [array]:primary_no_array_creation_expression lbrack [index]:expression rbrack
             {-> New expression.array_access(array.expression, index)};
 
     field_access {-> expression} =
@@ -225,14 +225,18 @@ Productions
             {-> New expression.new_array(size)};
 
     primary_expression {-> expression} =
+        {array} array_creation_expression
+            {-> array_creation_expression.expression} |
+        {primary} primary_no_array_creation_expression
+            {-> primary_no_array_creation_expression.expression};
+
+    primary_no_array_creation_expression {-> expression} =
         {literal} literal_expression
             {-> literal_expression.expression} |
         {identifier} identifier
             {-> New expression.identifier(identifier)} |
         {this} this_keyword
             {-> New expression.this(this_keyword)} |
-        {array} array_creation_expression
-            {-> array_creation_expression.expression} |
         {instance} class_instance_creation_expression
             {-> class_instance_creation_expression.expression} |
         {field} field_access
