@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # The following script can be used to either compile and run a MiniJava source
 # file locally using the Java compiler/runtime (the "test java" subcommand), or
