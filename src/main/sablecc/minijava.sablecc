@@ -13,6 +13,7 @@ Helpers
     unicode = [0 .. 0xffff];
     letter = ['a' .. 'z'] | ['A' .. 'Z'];
     digit = ['0' .. '9'];
+    non_zero_digit = ['1' .. '9'];
 
     lf = 0x000a;
     cr = 0x000d;
@@ -73,7 +74,7 @@ Tokens
     comment = block_comment | line_comment;
     whitespace = (' ' | ht | ff | eol)+;
     identifier = letter (letter | digit | '_')*;
-    integer = digit+;
+    integer = ('0' | non_zero_digit digit*);
 
 Ignored Tokens
 

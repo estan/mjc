@@ -68,7 +68,7 @@ public class LexerTest {
                 TIdentifier.class, w, TIdentifier.class, w,
                 TIdentifier.class, w, TIdentifier.class, w,
                 TThisKeyword.class);
-        assertTokens("03foo", TInteger.class, TIdentifier.class);
+        assertTokens("3foo", TInteger.class, TIdentifier.class);
     }
 
     /**
@@ -84,8 +84,8 @@ public class LexerTest {
      */
     @Test
     public void testInteger() throws Exception {
-        assertTokens("022 263575432",
-                TInteger.class, w, TInteger.class);
+        assertTokens("0 22 263575432 322348235682746587002346",
+                TInteger.class, w, TInteger.class, w, TInteger.class, w, TInteger.class);
     }
 
     /**
