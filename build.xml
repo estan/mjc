@@ -86,8 +86,18 @@
     </target>
 
     <target name="tar" description="Build compressed source-only TAR archive" depends="test">
-        <fail message="Missing property tigris.id!" unless="tigris.id"/>
-        <fail message="Missing property tigris.email!" unless="tigris.email"/>
+        <!-- If tigris.id/email is unset, use environment variables. -->
+        <property environment="env"/>
+        <condition property="tigris.id" value="${env.TIGRIS_ID}">
+            <isset property="env.TIGRIS_ID"/>
+        </condition>
+        <condition property="tigris.email" value="${env.TIGRIS_EMAIL}">
+            <isset property="env.TIGRIS_EMAIL"/>
+        </condition>
+
+        <!-- Fail unless we have both tigris.id/email. -->
+        <fail message="Use -Dtigris.id=YOUR_ID or set TIGRIS_ID environment variable!" unless="tigris.id"/>
+        <fail message="Use -Dtigris.email=YOUR_EMAIL or set TIGRIS_EMAIL environment variable!" unless="tigris.email"/>
 
         <!-- Prepare TAR file contents in a temporary directory -->
         <tempfile property="temp-dir"
