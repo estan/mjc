@@ -75,4 +75,7 @@ To create a compressed source-only TAR archive for submission to TIGRIS, type
 
 Where `ID` and `EMAIL` are the TIGRIS ID and e-mail address you want to use.
 The Ant target will automatically put these into the `DESC` file before
-assembling all source files into the output file `mjc.tar.gz`.
+assembling all source files into the output file `mjc.tar.gz`. It is also
+possible to specify ID and e-mail to use more permanenty via the TIGRIS_ID
+and TIGRIS_EMAIL environment variables. The -D options takes precedence over
+the environment variables.
