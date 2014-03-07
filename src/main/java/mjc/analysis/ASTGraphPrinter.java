@@ -40,7 +40,7 @@ public class ASTGraphPrinter extends DepthFirstAdapter {
     }
 
     private void printNode(Node node, String label) {
-        builder.append(String.format("%s[label=%s];\n", uniqueName(node), label));
+        builder.append(String.format("%s[label=\"%s\"];\n", uniqueName(node), label));
         if (node.parent() != null)
             printEdge(node.parent(), node);
     }
