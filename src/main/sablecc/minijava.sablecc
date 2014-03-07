@@ -299,7 +299,7 @@ Productions
     literal_expression {-> expression} =
         {integer} integer
             {-> New expression.integer(integer)} |
-        {long} long 
+        {long} long
             {-> New expression.long(long)} |
         {true} true_keyword
             {-> New expression.true(true_keyword)} |
