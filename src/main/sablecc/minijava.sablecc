@@ -50,18 +50,18 @@ Tokens
     new_keyword = 'new';
 
     // Operators
+    assign = '=';
+    or = '||';
+    and = '&&';
+    equal = '==';
+    not_equal = '!=';
+    less_than = '<';
+    greater_than = '>';
+    less_equal_than = '<=';
+    greater_equal_than = '>=';
     plus = '+';
     minus = '-';
     star = '*';
-    less_than = '<';
-    greater_than = '>';
-    greater_equal_than = '>=';
-    less_equal_than = '<=';
-    equal = '==';
-    not_equal = '!=';
-    assign = '=';
-    and = '&&';
-    or = '||';
     not = '!';
 
     // Punctuation
