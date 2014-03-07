@@ -37,6 +37,7 @@ Tokens
     string_keyword = 'String';
     return_keyword = 'return';
     int_keyword = 'int';
+    long_keyword = 'long';
     boolean_keyword = 'boolean';
     if_keyword = 'if';
     else_keyword = 'else';
@@ -53,8 +54,14 @@ Tokens
     minus = '-';
     star = '*';
     less_than = '<';
+    greater_than = '>';
+    greater_equal_than = '>=';
+    less_equal_than = '<=';
+    equal = '==';
+    not_equal = '!=';
     assign = '=';
     and = '&&';
+    or = '||';
     not = '!';
 
     // Punctuation
@@ -75,6 +82,7 @@ Tokens
     whitespace = (' ' | ht | ff | eol)+;
     identifier = letter (letter | digit | '_')*;
     integer = ('0' | non_zero_digit digit*);
+    long = ('0' | non_zero_digit digit*) ('L' | 'l');
 
 Ignored Tokens
 
@@ -133,24 +141,46 @@ Productions
     type =
         {int} int_keyword
             {-> New type.int(int_keyword)} |
-        {array} int_keyword lbrack rbrack
-            {-> New type.array(int_keyword)} |
+        {long} long_keyword
+            {-> New type.long(long_keyword)} |
+        {int_array} int_keyword lbrack rbrack
+            {-> New type.int_array(int_keyword)} |
+        {long_array} long_keyword lbrack rbrack
+            {-> New type.long_array(long_keyword)} |
         {boolean} boolean_keyword
             {-> New type.boolean(boolean_keyword)} |
         {class} identifier
             {-> New type.class(identifier)};
 
     statement =
-        {block} lbrace [statements]:statement* rbrace
-            {-> New statement.block([statements])} |
+        {without_trailing_substatement} statement_without_trailing_substatement
+            {-> statement_without_trailing_substatement.statement} |
+        {if} if_keyword lparen [condition]:expression rparen [statement]:statement
+            {-> New statement.if(condition, statement)} |
         {if_else}
             if_keyword lparen [condition]:expression rparen
-                [then_statement]:statement
+                [then_statement]:statement_no_short_if
             else_keyword
                 [else_statement]:statement
-            {-> New statement.if_else(condition, then_statement, else_statement)} |
+            {-> New statement.if_else(condition, then_statement.statement, else_statement)} |
         {while} while_keyword lparen [condition]:expression rparen [statement]:statement
-            {-> New statement.while(condition, statement)} |
+            {-> New statement.while(condition, statement)};
+
+    statement_no_short_if {-> statement} =
+        {without_trailing_substatement} statement_without_trailing_substatement
+            {-> statement_without_trailing_substatement.statement} |
+        {if_else}
+            if_keyword lparen [condition]:expression rparen
+                [then_statement]:statement_no_short_if
+            else_keyword
+                [else_statement]:statement_no_short_if
+            {-> New statement.if_else(condition, then_statement.statement, else_statement.statement)} |
+        {while} while_keyword lparen [condition]:expression rparen [statement]:statement_no_short_if
+            {-> New statement.while(condition, statement.statement)};
+
+    statement_without_trailing_substatement {->statement} = 
+        {block} lbrace [variable_declarations]:variable_declaration* [statements]:statement* rbrace
+            {-> New statement.block([variable_declarations], [statements])} |
         {println} println_keyword lparen [value]:expression rparen semicolon
             {-> New statement.println(value)} |
         {assign} [variable]:identifier assign [value]:expression semicolon
@@ -159,8 +189,8 @@ Productions
             {-> New statement.array_assign(variable, index, value)};
 
     expression =
-        conditional_expression
-            {-> conditional_expression.expression};
+        conditional_or_expression
+            {-> conditional_or_expression.expression};
 
     expression_list {-> expression*} =
         {expression} expression
@@ -168,21 +198,37 @@ Productions
         {expressions} expression_list comma expression
             {-> [expression_list.expression, expression.expression]};
 
-    conditional_expression {-> expression} =
-        conditional_and_expression
-            {-> conditional_and_expression.expression };
+    conditional_or_expression {-> expression} =
+        {and} conditional_and_expression
+            {-> conditional_and_expression.expression} |
+        {or} [left]:conditional_or_expression or [right]:conditional_and_expression
+            {-> New expression.or(left.expression, right.expression)};
 
     conditional_and_expression {-> expression} =
+        {comparative} comparative_expression
+            {-> comparative_expression.expression} |
+        {and} [left]:conditional_and_expression and [right]:comparative_expression
+            {-> New expression.and(left.expression, right.expression)};
+
+    comparative_expression {-> expression} =
         {relational} relational_expression
             {-> relational_expression.expression} |
-        {and} [left]:conditional_and_expression and [right]:relational_expression
-            {-> New expression.and(left.expression, right.expression)};
+        {equal} [left]:comparative_expression equal [right]:relational_expression
+            {-> New expression.equal(left.expression, right.expression)} |
+        {not_equal} [left]:comparative_expression not_equal [right]:relational_expression
+            {-> New expression.not_equal(left.expression, right.expression)};
 
     relational_expression {-> expression} =
         {additive} additive_expression
             {-> additive_expression.expression } |
         {less_than} [left]:relational_expression less_than [right]:additive_expression
-            {-> New expression.less_than(left.expression, right.expression)};
+            {-> New expression.less_than(left.expression, right.expression)} |
+        {greater_than} [left]:relational_expression greater_than [right]:additive_expression
+            {-> New expression.greater_than(left.expression, right.expression)} |
+        {greater_equal_than} [left]:relational_expression greater_equal_than [right]:additive_expression
+            {-> New expression.greater_equal_than(left.expression, right.expression)} |
+        {less_equal_than} [left]:relational_expression less_equal_than [right]:additive_expression
+            {-> New expression.less_equal_than(left.expression, right.expression)};
 
     additive_expression {-> expression} =
         {multiplicative} multiplicative_expression
@@ -221,8 +267,10 @@ Productions
             {-> New expression.new_instance(class_name, [actual_parameters.expression])};
 
     array_creation_expression {-> expression} =
-        new_keyword int_keyword lbrack [size]:expression rbrack
-            {-> New expression.new_array(size)};
+        {new_int_array} new_keyword int_keyword lbrack [size]:expression rbrack
+            {-> New expression.new_int_array(size)} |
+        {new_long_array} new_keyword long_keyword lbrack [size]:expression rbrack
+            {-> New expression.new_long_array(size)};
 
     primary_expression {-> expression} =
         {array} array_creation_expression
@@ -251,6 +299,8 @@ Productions
     literal_expression {-> expression} =
         {integer} integer
             {-> New expression.integer(integer)} |
+        {long} long 
+            {-> New expression.long(long)} |
         {true} true_keyword
             {-> New expression.true(true_keyword)} |
         {false} false_keyword
@@ -292,12 +342,15 @@ Abstract Syntax Tree
 
     type =
         {int} [name]:int_keyword |
-        {array} [name]:int_keyword |
+        {long} [name]:long_keyword |
+        {int_array} [name]:int_keyword |
+        {long_array} [name]:long_keyword |
         {boolean} [name]:boolean_keyword |
         {class} [name]:identifier;
 
     statement =
-        {block} [statements]:statement* |
+        {block} [variable_declarations]:variable_declaration* [statements]:statement* |
+        {if} [condition]:expression [statement]:statement |
         {if_else} [condition]:expression [then_statement]:statement [else_statement]:statement |
         {while} [condition]:expression [statement]:statement |
         {println} [value]:expression |
@@ -306,7 +359,13 @@ Abstract Syntax Tree
 
     expression =
         {and} [left]:expression [right]:expression |
+        {or} [left]:expression [right]:expression |
         {less_than} [left]:expression [right]:expression |
+        {greater_than} [left]:expression [right]:expression |
+        {greater_equal_than} [left]:expression [right]:expression |
+        {less_equal_than} [left]:expression [right]:expression |
+        {equal} [left]:expression [right]:expression |
+        {not_equal} [left]:expression [right]:expression |
         {plus} [left]:expression [right]:expression |
         {minus} [left]:expression [right]:expression |
         {times} [left]:expression [right]:expression |
@@ -315,8 +374,10 @@ Abstract Syntax Tree
         {array_access} [array]:expression [index]:expression |
         {field_access} [instance]:expression |
         {new_instance} [class_name]:identifier [actual_parameters]:expression* |
-        {new_array} [size]:expression |
+        {new_int_array} [size]:expression |
+        {new_long_array} [size]:expression |
         {integer} [value]:integer |
+        {long} [value]:long |
         {true} [value]:true_keyword |
         {false} [value]:false_keyword |
         {identifier} [value]:identifier |

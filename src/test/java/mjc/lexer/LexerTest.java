@@ -50,13 +50,13 @@ public class LexerTest {
     public void testKeywords() throws Exception {
         assertTokens("class public static void String return int " +
                      "boolean if else while System.out.println length " +
-                     "true false this new",
+                     "true false this new long",
                 TClassKeyword.class, w, TPublicKeyword.class, w, TStaticKeyword.class, w,
                 TVoidKeyword.class, w, TStringKeyword.class, w, TReturnKeyword.class, w,
                 TIntKeyword.class, w, TBooleanKeyword.class, w, TIfKeyword.class, w,
                 TElseKeyword.class, w, TWhileKeyword.class, w, TPrintlnKeyword.class, w,
                 TLengthKeyword.class, w, TTrueKeyword.class, w, TFalseKeyword.class, w,
-                TThisKeyword.class, w, TNewKeyword.class);
+                TThisKeyword.class, w, TNewKeyword.class, w, TLongKeyword.class);
     }
 
     /**
@@ -84,8 +84,9 @@ public class LexerTest {
      */
     @Test
     public void testInteger() throws Exception {
-        assertTokens("0 22 263575432 322348235682746587002346",
-                TInteger.class, w, TInteger.class, w, TInteger.class, w, TInteger.class);
+        assertTokens("0 22 263575432 322348235682746587002346 4324l 23432L",
+                TInteger.class, w, TInteger.class, w, TInteger.class, w, TInteger.class,
+                w, TLong.class, w, TLong.class);
     }
 
     /**
@@ -93,13 +94,14 @@ public class LexerTest {
      */
     @Test
     public void testShortTokens() throws Exception {
-        assertTokens("asddf{ds[*+-}]&&bar! ,,(<).=;",
+        assertTokens("asddf{ds[*+-}]&&bar! ,,(<).=;>>=<= ||==!=",
                 TIdentifier.class, TLbrace.class, TIdentifier.class,
                 TLbrack.class, TStar.class, TPlus.class, TMinus.class,
                 TRbrace.class, TRbrack.class, TAnd.class, TIdentifier.class,
                 TNot.class, w, TComma.class, TComma.class, TLparen.class,
                 TLessThan.class, TRparen.class, TPeriod.class, TAssign.class,
-                TSemicolon.class);
+                TSemicolon.class, TGreaterThan.class, TGreaterEqualThan.class,
+                TLessEqualThan.class, w, TOr.class, TEqual.class, TNotEqual.class);
     }
 
     /**
