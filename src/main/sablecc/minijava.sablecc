@@ -109,10 +109,10 @@ Productions
     class_declaration =
         class_keyword [name]:identifier
         lbrace
-            [variable_declarations]:variable_declaration*
+            [field_declarations]:field_declaration*
             [method_declarations]:method_declaration*
         rbrace
-            {-> New class_declaration(name, [variable_declarations], [method_declarations])};
+            {-> New class_declaration(name, [field_declarations], [method_declarations])};
 
     method_declaration =
         public_keyword [return_type]:type [name]:identifier
@@ -123,6 +123,10 @@ Productions
             return_keyword [return_expression]:expression semicolon
         rbrace
             {-> New method_declaration(return_type, name, [formal_parameters.formal_parameter], [variable_declarations], [statements], return_expression)};
+
+    field_declaration =
+        [type]:type [name]:identifier semicolon
+            {-> New field_declaration(type, name)};
 
     variable_declaration =
         [type]:type [name]:identifier semicolon
@@ -321,7 +325,7 @@ Abstract Syntax Tree
 
     class_declaration =
         [name]:identifier
-        [variable_declarations]:variable_declaration*
+        [field_declarations]:field_declaration*
         [method_declarations]:method_declaration*;
 
     method_declaration =
@@ -331,6 +335,10 @@ Abstract Syntax Tree
         [variable_declarations]:variable_declaration*
         [statements]:statement*
         [return_expression]:expression;
+
+    field_declaration =
+        [type]:type
+        [name]:identifier;
 
     variable_declaration =
         [type]:type
