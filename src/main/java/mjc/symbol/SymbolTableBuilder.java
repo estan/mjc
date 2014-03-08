@@ -1,6 +1,7 @@
 package mjc.symbol;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import mjc.analysis.DepthFirstAdapter;
@@ -12,6 +13,7 @@ import mjc.node.AFormalParameter;
 import mjc.node.AMainClassDeclaration;
 import mjc.node.AMethodDeclaration;
 import mjc.node.AVariableDeclaration;
+import mjc.node.PFormalParameter;
 import mjc.node.PType;
 import mjc.node.Start;
 import mjc.node.TIdentifier;
@@ -162,8 +164,34 @@ public class SymbolTableBuilder {
             final int line = id.getLine();
             final int column = id.getPos();
 
+            boolean redeclaration = false;
+
             if (currentMethod != null) {
-                error("Redeclaration of method `" + id + "`", line, column);
+                /*
+                 * Another method with the same name exists. If the number and types of
+                 * parameters match, we have a redeclaration!
+                 */
+                if (node.getFormalParameters().size() == currentMethod.getParameters().size()) {
+
+                    Iterator<PFormalParameter> it1 = node.getFormalParameters().iterator();
+                    Iterator<VariableInfo> it2 = currentMethod.getParameters().iterator();
+
+                    redeclaration = true;
+                    while (it1.hasNext()) {
+                        AFormalParameter p1 = (AFormalParameter) it1.next();
+                        VariableInfo p2 = it2.next();
+
+                        if (!p1.getName().getText().equals(p2.getName()) ||
+                            !resolve(p1.getType()).equals(p2.getType())) {
+                            redeclaration = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (redeclaration) {
+                error("Redeclaration of method `" + id.getText() + "`", line, column);
                 currentMethod = MethodInfo.Undefined;
             } else {
                 currentMethod = new MethodInfo(id.getText(), resolve(node.getReturnType()),

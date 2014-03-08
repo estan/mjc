@@ -55,7 +55,7 @@ public class MethodInfo {
         return null;
     }
 
-    public Collection<VariableInfo> getParameters() {
+    public List<VariableInfo> getParameters() {
         return parameters;
     }
 
