@@ -72,7 +72,7 @@ public class SymbolTableBuilder {
 
             final TIdentifier methodId = node.getMainMethodName();
 
-            if (!node.getMainMethodName().getText().equals("main")) {
+            if (!methodId.getText().equals("main")) {
                 final int line = methodId.getLine();
                 final int column = methodId.getPos();
                 error("Main class method name must be `main`", line, column);
