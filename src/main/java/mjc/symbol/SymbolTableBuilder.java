@@ -168,8 +168,8 @@ public class SymbolTableBuilder {
 
             if (currentMethod != null) {
                 /*
-                 * Another method with the same name exists. If the number and types of
-                 * parameters match, we have a redeclaration!
+                 * Another method with the same name exists. If the number, types and order
+                 * of the parameters match, we have a redeclaration!
                  */
                 if (node.getFormalParameters().size() == currentMethod.getParameters().size()) {
 
@@ -180,9 +180,7 @@ public class SymbolTableBuilder {
                     while (it1.hasNext()) {
                         AFormalParameter p1 = (AFormalParameter) it1.next();
                         VariableInfo p2 = it2.next();
-
-                        if (!p1.getName().getText().equals(p2.getName()) ||
-                            !resolve(p1.getType()).equals(p2.getType())) {
+                        if (!resolve(p1.getType()).equals(p2.getType())) {
                             redeclaration = false;
                             break;
                         }
