@@ -88,6 +88,8 @@ public class MethodInfo {
     /**
      * Adds information about a parameter of the method.
      *
+     * The information is added to the end of the list of parameters.
+     *
      * @param parameter Information about the parameter.
      */
     public void addParameter(VariableInfo parameter) {
