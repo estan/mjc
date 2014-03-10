@@ -275,14 +275,28 @@ public class SymbolTableBuilder {
                 error("duplicate method `%s`", line, column, methodId.getText());
             }
 
-            // Add method to current class and enter method block.
+            // Add method to current class.
             currentClass.addMethod(currentMethod);
+
+            // Enter outermost block of the method.
             currentMethod.enterBlock();
         }
 
         @Override
         public void outAMethodDeclaration(final AMethodDeclaration declaration) {
-            // Leave method block.
+            // Leave outermost block within current method.
+            currentMethod.leaveBlock();
+        }
+
+        @Override
+        public void inABlockStatement(final ABlockStatement block) {
+            // Enter new block within current method.
+            currentMethod.enterBlock();
+        }
+
+        @Override
+        public void outABlockStatement(final ABlockStatement block) {
+            // Leave current block within current method.
             currentMethod.leaveBlock();
         }
 
@@ -331,18 +345,6 @@ public class SymbolTableBuilder {
                         line, column));
                 error("duplicate variable `%s`", line, column, variableId.getText());
             }
-        }
-
-        @Override
-        public void inABlockStatement(final ABlockStatement block) {
-            // Enter new block within current method.
-            currentMethod.enterBlock();
-        }
-
-        @Override
-        public void outABlockStatement(final ABlockStatement block) {
-            // Leave block within current method.
-            currentMethod.leaveBlock();
         }
 
         /**
