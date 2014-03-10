@@ -40,7 +40,6 @@ import mjc.types.UnsupportedType;
  */
 public class SymbolTableBuilder {
 
-    private SymbolTable symbolTable;
     private final List<String> errors = new ArrayList<>();
 
     /**
@@ -55,11 +54,11 @@ public class SymbolTableBuilder {
     public SymbolTable build(final Start tree) {
         errors.clear();
 
-        symbolTable = new SymbolTable();
+        SymbolTable symbolTable = new SymbolTable();
 
         // Run the two passes to construct table.
-        tree.apply(new FirstPass());
-        tree.apply(new SecondPass());
+        tree.apply(new FirstPass(symbolTable));
+        tree.apply(new SecondPass(symbolTable));
 
         return symbolTable;
     }
@@ -96,6 +95,12 @@ public class SymbolTableBuilder {
      * In the first pass, we only add information about declared classes.
      */
     private class FirstPass extends DepthFirstAdapter {
+
+        private final SymbolTable symbolTable;
+
+        public FirstPass(final SymbolTable symbolTable) {
+            this.symbolTable = symbolTable;
+        }
 
         @Override
         public void inAMainClassDeclaration(final AMainClassDeclaration declaration) {
@@ -161,8 +166,13 @@ public class SymbolTableBuilder {
      */
     private class SecondPass extends DepthFirstAdapter {
 
+        private final SymbolTable symbolTable;
         private ClassInfo currentClass;
         private MethodInfo currentMethod;
+
+        public SecondPass(final SymbolTable symbolTable) {
+            this.symbolTable = symbolTable;
+        }
 
         @Override
         public void inAMainClassDeclaration(final AMainClassDeclaration declaration) {
