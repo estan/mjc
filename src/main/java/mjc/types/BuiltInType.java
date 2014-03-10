@@ -7,6 +7,12 @@ import mjc.node.ALongArrayType;
 import mjc.node.ALongType;
 import mjc.node.PType;
 
+/**
+ * Represents a built-in type.
+ *
+ * There are only five static instances of this class, one for each of the built-in
+ * types int, int[], long, long[] and boolean.
+ */
 public class BuiltInType extends Type {
 
     public final static Type Integer = new BuiltInType("int");
@@ -17,8 +23,20 @@ public class BuiltInType extends Type {
 
     private final String name;
 
+    /**
+     * Construct a new built-in type with the given name.
+     *
+     * @param name Name of the type.
+     */
     private BuiltInType(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return Name of the built-in type.
+     */
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -31,15 +49,17 @@ public class BuiltInType extends Type {
         return false;
     }
 
-    public String getName() {
-        return name;
-    }
-
     @Override
     public String toString() {
         return name;
     }
 
+    /**
+     * Returns the built-in type corresponding to the given AST type.
+     *
+     * @param abstractType An AST type.
+     * @return Corresponding built-in type, or UndefinedType.Instance if there is none.
+     */
     public static Type fromAbstract(PType abstractType) {
         if (abstractType instanceof AIntType) {
             return BuiltInType.Integer;
