@@ -35,9 +35,8 @@ import mjc.types.UnsupportedType;
  * {@link hasErrors() hasErrors} and {@link getErrors() getErrors}.
  *
  * It is OK to proceed with type checking even if errors occurred during symbol table
- * construction: The constructed table is still complete, but will contain Undefined
- * information records for the wrongly declared symbols. However, later phases of
- * compilation should not proceed.
+ * construction: The constructed table is still complete, but the wrongly declared
+ * symbols will have Undefined type.
  */
 public class SymbolTableBuilder {
 
@@ -101,41 +100,54 @@ public class SymbolTableBuilder {
         @Override
         public void inAMainClassDeclaration(final AMainClassDeclaration declaration) {
             final TIdentifier classId = declaration.getName();
+            final int classLine = classId.getLine();
+            final int classColumn = classId.getPos();
+
             final TIdentifier methodId = declaration.getMainMethodName();
+            final int methodLine = methodId.getLine();
+            final int methodColumn = methodId.getPos();
 
             if (methodId.getText().equals("main")) {
                 // Add a new ClassInfo for the main class.
-                ClassInfo classInfo = new ClassInfo(classId.getText());
-                ClassType classType = new ClassType(classId.getText(), classInfo);
-                classInfo.setType(classType);
+                final ClassInfo classInfo = new ClassInfo(
+                        classId.getText(),
+                        new ClassType(classId.getText()),
+                        classLine, classColumn);
                 symbolTable.addClassInfo(classInfo.getName(), classInfo);
             } else {
-                // Wrong method name: Add class as Undefined.
-                final int line = methodId.getLine();
-                final int column = methodId.getPos();
-                symbolTable.addClassInfo(classId.getText(), ClassInfo.Undefined);
+                // Wrong method name: Add ClassInfo, but with Undefined type.
+                final ClassInfo classInfo = new ClassInfo(
+                        classId.getText(),
+                        UndefinedType.Instance,
+                        classLine, classColumn);
+                symbolTable.addClassInfo(classInfo.getName(), classInfo);
                 error("name of method in class `%s` must be \"main\"",
-                        line, column, classId.getText());
+                        methodLine, methodColumn, classId.getText());
             }
 
         }
 
         @Override
         public void inAClassDeclaration(final AClassDeclaration declaration) {
-            final TIdentifier id = declaration.getName();
+            final TIdentifier classId = declaration.getName();
+            final int line = classId.getLine();
+            final int column = classId.getPos();
 
-            if (symbolTable.getClassInfo(id.getText()) == null) {
+            if (symbolTable.getClassInfo(classId.getText()) == null) {
                 // Add a new ClassInfo for the class.
-                ClassInfo classInfo = new ClassInfo(id.getText());
-                ClassType classType = new ClassType(id.getText(), classInfo);
-                classInfo.setType(classType);
+                final ClassInfo classInfo = new ClassInfo(
+                        classId.getText(),
+                        new ClassType(classId.getText()),
+                        line, column);
                 symbolTable.addClassInfo(classInfo.getName(), classInfo);
             } else {
-                // Redeclaration: Add class as Undefined.
-                final int line = id.getLine();
-                final int column = id.getPos();
-                symbolTable.addClassInfo(id.getText(), ClassInfo.Undefined);
-                error("duplicate class `%s`", line, column, id.getText());
+                // Redeclaration: Add ClassInfo, but with Undefined type.
+                final ClassInfo classInfo = new ClassInfo(
+                        classId.getText(),
+                        UndefinedType.Instance,
+                        line, column);
+                symbolTable.addClassInfo(classInfo.getName(), classInfo);
+                error("duplicate class `%s`", line, column, classId.getText());
             }
         }
 
@@ -208,8 +220,11 @@ public class SymbolTableBuilder {
                         resolve(declaration.getType()),
                         line, column));
             } else {
-                // Redeclaration: Add field as Undefined.
-                currentClass.addField(VariableInfo.Undefined);
+                // Redeclaration: Add VariableInfo, but with Undefined type.
+                currentClass.addField(new VariableInfo(
+                        fieldId.getText(),
+                        UndefinedType.Instance,
+                        line, column));
                 error("duplicate field `%s`", line, column, fieldId.getText());
             }
         }
@@ -253,8 +268,10 @@ public class SymbolTableBuilder {
                         resolve(declaration.getReturnType()),
                         line, column);
             } else {
-                // Redeclaration: Create method as Undefined.
-                currentMethod = MethodInfo.Undefined;
+                // Redeclaration: Create MethodInfo, but with Undefined return type.
+                new MethodInfo(methodId.getText(),
+                        UndefinedType.Instance,
+                        line, column);
                 error("duplicate method `%s`", line, column, methodId.getText());
             }
 
@@ -282,8 +299,11 @@ public class SymbolTableBuilder {
                         resolve(declaration.getType()),
                         line, column));
             } else {
-                // Redeclaration: Add parameter as Undefined.
-                currentMethod.addParameter(VariableInfo.Undefined);
+                // Redeclaration: Add VariableInfo, but with Undefined type.
+                currentMethod.addParameter(new VariableInfo(
+                        paramId.getText(),
+                        UndefinedType.Instance,
+                        line, column));
                 error("duplicate parameter `%s`", line, column, paramId.getText());
             }
         }
@@ -304,8 +324,11 @@ public class SymbolTableBuilder {
                         resolve(declaration.getType()),
                         line, column));
             } else {
-                // Redeclaration: Add variable as Undefined.
-                currentMethod.addLocal(VariableInfo.Undefined);
+                // Redeclaration: Add VariableInfo, but with Undefined type.
+                currentMethod.addLocal(new VariableInfo(
+                        variableId.getText(),
+                        UndefinedType.Instance,
+                        line, column));
                 error("duplicate variable `%s`", line, column, variableId.getText());
             }
         }
@@ -339,7 +362,7 @@ public class SymbolTableBuilder {
                     // Class information found: Return its type.
                     return classInfo.getType();
                 } else {
-                    // Undeclared class: Return the Undefined type.
+                    // Undeclared class: Return Undefined type.
                     final int line = id.getLine();
                     final int column = id.getPos();
                     error("undeclared identifier `%s`", line, column, id.getText());

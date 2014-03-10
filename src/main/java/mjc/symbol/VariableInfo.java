@@ -1,11 +1,8 @@
 package mjc.symbol;
 
 import mjc.types.Type;
-import mjc.types.UndefinedType;
 
 public class VariableInfo {
-    public static final VariableInfo Undefined = new VariableInfo("$$$UndefinedVariableInfo$$$", UndefinedType.Instance, 0, 0);
-
     private final String name;
     private final Type type;
 

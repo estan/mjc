@@ -5,25 +5,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mjc.types.ClassType;
-import mjc.types.UndefinedType;
 
 public class ClassInfo {
-    public static final ClassInfo Undefined = new ClassInfo("$$$UndefinedClassInfo$$$", UndefinedType.Instance);
 
     private final String name;
-    private ClassType type;
+    private final ClassType type;
     private final Map<String, VariableInfo> fields;
     private final Map<String, MethodInfo> methods;
 
-    public ClassInfo(String name) {
-        this.name = name;
-        this.fields = new HashMap<>();
-        this.methods = new HashMap<>();
-    }
+    private final int line;
+    private final int column;
 
-    public ClassInfo(String name, ClassType type) {
-        this(name);
+    public ClassInfo(String name, ClassType type, int line, int column) {
+        this.name = name;
         this.type = type;
+        this.line = line;
+        this.column = column;
+
+        fields = new HashMap<>();
+        methods = new HashMap<>();
     }
 
     public String getName() {
@@ -34,8 +34,12 @@ public class ClassInfo {
         return type;
     }
 
-    public void setType(ClassType type) {
-        this.type = type;
+    public int getLine() {
+        return line;
+    }
+
+    public int getColumn() {
+        return column;
     }
 
     public VariableInfo getField(String name) {

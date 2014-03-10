@@ -6,12 +6,10 @@ import java.util.List;
 import java.util.Stack;
 
 import mjc.types.Type;
-import mjc.types.UndefinedType;
 
 import com.google.common.collect.ArrayListMultimap;
 
 public class MethodInfo {
-    public final static MethodInfo Undefined = new MethodInfo("$$$UndefinedMethodInfo$$$", UndefinedType.Instance, 0, 0);
 
     private final String name;
     private final Type returnType;

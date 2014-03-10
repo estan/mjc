@@ -1,22 +1,16 @@
 package mjc.types;
 
-import mjc.symbol.ClassInfo;
+//import mjc.symbol.ClassInfo;
 
 public class ClassType extends Type {
     private final String name;
-    private final ClassInfo info;
 
-    public ClassType(String name, ClassInfo info) {
+    public ClassType(String name) {
         this.name = name;
-        this.info = info;
     }
 
     public String getName() {
         return name;
-    }
-
-    public ClassInfo getInfo() {
-        return info;
     }
 
     @Override
