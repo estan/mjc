@@ -51,8 +51,16 @@ public class SymbolTableBuilder {
         return errors;
     }
 
-    private void error(String error, int line, int column) {
-        errors.add(String.format("[%d,%d] %s", line, column, error));
+    /**
+     * Add an error.
+     *
+     * args[0] and args[1] should be the line and column, respectively.
+     *
+     * @param format A formatted string referring to args[2], args[3], ...
+     * @param args The line and column, followed by arguments referred to in @a format.
+     */
+    private void error(String format, Object... args) {
+        errors.add(String.format("[%d,%d] " + format, args));
     }
 
     /**
@@ -89,7 +97,7 @@ public class SymbolTableBuilder {
             if (symbolTable.getClassInfo(id.getText()) != null) {
                 final int line = id.getLine();
                 final int column = id.getPos();
-                error("Redeclaration of class `" + id.getText() + "`", line, column);
+                error("Redeclaration of class `%s`", line, column, id.getText());
                 symbolTable.addClassInfo(ClassInfo.Undefined.getName(), ClassInfo.Undefined);
             } else {
                 ClassInfo classInfo = new ClassInfo(id.getText());
@@ -114,11 +122,10 @@ public class SymbolTableBuilder {
         public void inAMainClassDeclaration(AMainClassDeclaration node) {
             currentClass = symbolTable.getClassInfo(node.getName().getText());
 
-            final TIdentifier methodId = node.getMainMethodName();
-            final int methodLine = methodId.getLine();
-            final int methodColumn = methodId.getPos();
-            currentMethod = new MethodInfo(methodId.getText(), UnsupportedType.Void,
-                    methodLine, methodColumn);
+            final TIdentifier id = node.getMainMethodName();
+            final int line = id.getLine();
+            final int column = id.getPos();
+            currentMethod = new MethodInfo(id.getText(), UnsupportedType.Void, line, column);
 
             final TIdentifier argId = node.getArguments();
             final int argLine = argId.getLine();
@@ -148,7 +155,7 @@ public class SymbolTableBuilder {
             final int column = id.getPos();
 
             if (currentClass.getField(id.getText()) != null) {
-                error("Redeclaration of field `" + id.getText() + "`", line, column);
+                error("Redeclaration of field `%s`", line, column, id.getText());
                 currentClass.addField(VariableInfo.Undefined);
             } else {
                 currentClass.addField(new VariableInfo(id.getText(),
@@ -189,7 +196,7 @@ public class SymbolTableBuilder {
             }
 
             if (redeclaration) {
-                error("Redeclaration of method `" + id.getText() + "`", line, column);
+                error("Redeclaration of method `%s`", line, column, id.getText());
                 currentMethod = MethodInfo.Undefined;
             } else {
                 currentMethod = new MethodInfo(id.getText(), resolve(node.getReturnType()),
@@ -212,7 +219,7 @@ public class SymbolTableBuilder {
             final int column = id.getPos();
 
             if (currentMethod.getParameter(id.getText()) != null) {
-                error("Redeclaration of parameter `" + id.getText() + "`", line, column);
+                error("Redeclaration of parameter `%s`", line, column, id.getText());
                 currentMethod.addParameter(VariableInfo.Undefined);
             } else {
                 currentMethod.addParameter(new VariableInfo(id.getText(),
@@ -228,7 +235,7 @@ public class SymbolTableBuilder {
 
             if (currentMethod.getParameter(id.getText()) != null ||
                     currentMethod.getLocal(id.getText()) != null) {
-                error("Redeclaration of local variable `" + id.getText() + "`", line, column);
+                error("Redeclaration of local variable `%s`", line, column, id.getText());
                 currentMethod.addLocal(VariableInfo.Undefined);
             } else {
                 currentMethod.addLocal(new VariableInfo(id.getText(),
@@ -255,7 +262,7 @@ public class SymbolTableBuilder {
                 if (classInfo == null) {
                     final int line = id.getLine();
                     final int column = id.getPos();
-                    error("Undeclared identifier `" + id.getText() + "`", line, column);
+                    error("Undeclared identifier `%s`", line, column, id.getText());
                     return UndefinedType.Instance;
                 } else {
                     return classInfo.getType();
