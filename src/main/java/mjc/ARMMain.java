@@ -53,15 +53,15 @@ public class ARMMain {
                 graphPrinter.print(tree);
             } else {
                 // Build and print symbol table.
-                SymbolTable symbolTable = new SymbolTable();
                 SymbolTableBuilder symbolTableBuilder = new SymbolTableBuilder();
+                SymbolTable symbolTable = symbolTableBuilder.build(tree);
 
-                if (!symbolTableBuilder.build(tree, symbolTable)) {
+                if (!symbolTableBuilder.hasErrors()) {
+                    System.out.println(symbolTable);
+                } else {
                     for (String error : symbolTableBuilder.getErrors()) {
                         System.err.println(error);
                     }
-                } else {
-                    System.out.println(symbolTable);
                 }
             }
         } catch (Exception e) {

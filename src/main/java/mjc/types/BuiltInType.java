@@ -40,16 +40,16 @@ public class BuiltInType extends Type {
         return name;
     }
 
-    public static Type fromAbstract(PType type) {
-        if (type instanceof AIntType) {
+    public static Type fromAbstract(PType abstractType) {
+        if (abstractType instanceof AIntType) {
             return BuiltInType.Integer;
-        } else if (type instanceof AIntArrayType) {
+        } else if (abstractType instanceof AIntArrayType) {
             return BuiltInType.IntegerArray;
-        } else if (type instanceof ALongType) {
+        } else if (abstractType instanceof ALongType) {
             return BuiltInType.Long;
-        } else if (type instanceof ALongArrayType) {
+        } else if (abstractType instanceof ALongArrayType) {
             return BuiltInType.LongArray;
-        } else if (type instanceof ABooleanType) {
+        } else if (abstractType instanceof ABooleanType) {
             return BuiltInType.Boolean;
         } else {
             return UndefinedType.Instance;
