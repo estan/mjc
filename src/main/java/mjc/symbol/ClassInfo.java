@@ -120,8 +120,8 @@ public class ClassInfo {
      * @param name Name of the method.
      * @param method Information about the method.
      */
-    public void addMethod(String name, MethodInfo info) {
-        methods.put(name, info);
+    public void addMethod(MethodInfo method) {
+        methods.put(method.getName(), method);
     }
 
     @Override

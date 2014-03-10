@@ -189,7 +189,7 @@ public class SymbolTableBuilder {
                     paramLine, paramColumn));
 
             // Add MethodInfo to current (main) class.
-            currentClass.addMethod(methodInfo.getName(), methodInfo);
+            currentClass.addMethod(methodInfo);
 
             // Set main method as current method and enter its block.
             currentMethod = methodInfo;
@@ -276,7 +276,7 @@ public class SymbolTableBuilder {
             }
 
             // Add method to current class and enter method block.
-            currentClass.addMethod(methodId.getText(), currentMethod);
+            currentClass.addMethod(currentMethod);
             currentMethod.enterBlock();
         }
 
