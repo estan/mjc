@@ -279,7 +279,7 @@ public class SymbolTableBuilder {
                         line, column);
             } else {
                 // Redeclaration: Create MethodInfo, but with Undefined return type.
-                new MethodInfo(methodId.getText(),
+                currentMethod = new MethodInfo(methodId.getText(),
                         UndefinedType.Instance,
                         line, column);
                 error("duplicate method `%s`", line, column, methodId.getText());
