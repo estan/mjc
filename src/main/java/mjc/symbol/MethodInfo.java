@@ -63,8 +63,8 @@ public class MethodInfo {
      * Returns information about a parameter of the method.
      *
      * Since parameters are always visible within a method, the return value of
-     * this method is unaffected by calls to {@link enterBlock() enterBlock} and
-     * {@link leaveBlock() leaveBlock}.
+     * this method is unaffected by calls to {@link #enterBlock() enterBlock} and
+     * {@link #leaveBlock() leaveBlock}.
      *
      * @param name Parameter name.
      * @return Parameter information, or null if method has no such parameter.
@@ -101,7 +101,7 @@ public class MethodInfo {
      * Returns information about a currently visible local variable.
      *
      * The return value of this method depends on previous calls to
-     * {@link enterBlock() enterBlock} and {@link leaveBlock leaveBlock}.
+     * {@link #enterBlock() enterBlock} and {@link #leaveBlock leaveBlock}.
      *
      * @param name Variable name.
      * @return Variable information, or null if method has no such parameter or the
@@ -126,8 +126,8 @@ public class MethodInfo {
     /**
      * Adds information about a local variable declared in the current block.
      *
-     * Initially there is no block, so {@link enterBlock() enterBlock} must have been
-     * called more times than {@link leaveBlock() leaveBlock} before calling this method.
+     * Initially there is no block, so {@link #enterBlock() enterBlock} must have been
+     * called more times than {@link #leaveBlock() leaveBlock} before calling this method.
      *
      * @param local Variable information.
      * @see enterBlock()
@@ -155,8 +155,8 @@ public class MethodInfo {
     /**
      * Enter a new block.
      *
-     * This affects subsequent calls to {@link addLocal(VariableInfo) addLocal} and
-     * {@link getLocal(String) getLocal}. Previously declared variables will remain
+     * This affects subsequent calls to {@link #addLocal(VariableInfo) addLocal} and
+     * {@link #getLocal(String) getLocal}. Previously declared variables will remain
      * in scope.
      */
     public void enterBlock() {
@@ -166,8 +166,8 @@ public class MethodInfo {
     /**
      * Leave the current block.
      *
-     * This affects subsequent calls to {@link addLocal(VariableInfo) addLocal} and
-     * {@link getLocal(String) getLocal}. Variables declared in the current block
+     * This affects subsequent calls to {@link #addLocal(VariableInfo) addLocal} and
+     * {@link #getLocal(String) getLocal}. Variables declared in the current block
      * will go out of scope.
      */
     public void leaveBlock() {

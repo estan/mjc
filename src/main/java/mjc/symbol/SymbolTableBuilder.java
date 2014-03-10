@@ -32,7 +32,7 @@ import mjc.types.UnsupportedType;
  * variables.
  *
  * Errors are collected during the building process, and may be queried for using
- * {@link hasErrors() hasErrors} and {@link getErrors() getErrors}.
+ * {@link #hasErrors() hasErrors} and {@link #getErrors() getErrors}.
  *
  * It is OK to proceed with type checking even if errors occurred during symbol table
  * construction: The constructed table is still complete, but the wrongly declared
@@ -46,8 +46,8 @@ public class SymbolTableBuilder {
     /**
      * Builds and returns a symbol table from the given AST.
      *
-     * If errors occurred, they may be queried for using {@link hasErrors() hasErrors}
-     * and {@link getErrors() getErrors}.
+     * If errors occurred, they may be queried for using {@link #hasErrors() hasErrors}
+     * and {@link #getErrors() getErrors}.
      *
      * @param tree The input AST.
      * @return A symbol table constructed from the AST.
