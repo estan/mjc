@@ -204,8 +204,12 @@ public class MethodInfoTest {
 
         f.leaveBlock(); // Leave block 0.
 
-        // Everything is out of scope.
-        assertThat(f.getParameter("p1"), nullValue());
+        // Everything but p1 is out of scope.
+        p1 = f.getParameter("p1");
+        assertThat(p1, notNullValue());
+        assertThat(p1.getName(), is("p1"));
+        assertThat(p1.getType(), sameInstance(BuiltInType.Boolean));
+        assertThat(p1.getBlock(), is(0));
         assertThat(f.getLocal("l1"), nullValue());
         assertThat(f.getLocal("l2"), nullValue());
         assertThat(f.getLocal("l3"), nullValue());

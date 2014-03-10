@@ -9,6 +9,9 @@ import mjc.types.Type;
 
 import com.google.common.collect.ArrayListMultimap;
 
+/**
+ * MethodInfo represents information about a declared method.
+ */
 public class MethodInfo {
 
     private final String name;
@@ -24,6 +27,14 @@ public class MethodInfo {
 
     private int nextBlock = 0;
 
+    /**
+     * Construct a new MethodInfo.
+     *
+     * @param name Name of the method.
+     * @param returnType Return type of the method.
+     * @param line Line of declaration.
+     * @param column Column of declaration.
+     */
     public MethodInfo(String name, Type returnType, int line, int column) {
         this.name = name;
         this.parameters = new ArrayList<>();
@@ -34,34 +45,66 @@ public class MethodInfo {
         this.column = column;
     }
 
+    /**
+     * @return The method name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return The method return type.
+     */
     public Type getReturnType() {
         return returnType;
     }
 
+    /**
+     * Returns information about a parameter of the method.
+     *
+     * Since parameters are always visible within a method, the return value of
+     * this method is unaffected by calls to {@link enterBlock() enterBlock} and
+     * {@link leaveBlock() leaveBlock}.
+     *
+     * @param name Parameter name.
+     * @return Parameter information, or null if method has no such parameter.
+     */
     public VariableInfo getParameter(String name) {
-        if (!blocks.isEmpty()) {
-            for (VariableInfo info : parameters) {
-                if (info.getName().equals(name)) {
-                    return info;
-                }
+        for (VariableInfo info : parameters) {
+            if (info.getName().equals(name)) {
+                return info;
             }
         }
         return null;
     }
 
+    /**
+     * @return List of method parameters.
+     */
     public List<VariableInfo> getParameters() {
         return parameters;
     }
 
+    /**
+     * Adds information about a parameter of the method.
+     *
+     * @param parameter Information about the parameter.
+     */
     public void addParameter(VariableInfo parameter) {
         parameter.setBlock(0);
         parameters.add(parameter);
     }
 
+    /**
+     * Returns information about a currently visible local variable.
+     *
+     * The return value of this method depends on previous calls to
+     * {@link enterBlock() enterBlock} and {@link leaveBlock leaveBlock}.
+     *
+     * @param name Variable name.
+     * @return Variable information, or null if method has no such parameter or the
+     *         variable is out of scope.
+     */
     public VariableInfo getLocal(String name) {
         for (VariableInfo local : locals.get(name)) {
             if (local.getName().equals(name) && blocks.search(local.getBlock()) != -1) {
@@ -71,27 +114,60 @@ public class MethodInfo {
         return null;
     }
 
+    /**
+     * @return Collection of local variables of the method.
+     */
     public Collection<VariableInfo> getLocals() {
         return locals.values();
     }
 
+    /**
+     * Adds information about a local variable declared in the current block.
+     *
+     * Initially there is no block, so {@link enterBlock() enterBlock} must have been
+     * called more times than {@link leaveBlock() leaveBlock} before calling this method.
+     *
+     * @param local Variable information.
+     * @see enterBlock()
+     * @see leaveBlock()
+     */
     public void addLocal(VariableInfo local) {
         local.setBlock(blocks.peek());
         locals.put(local.getName(), local);
     }
 
+    /**
+     * @return Line where the method is declared.
+     */
     public int getLine() {
         return line;
     }
 
+    /**
+     * @return Column where the method is declared.
+     */
     public int getColumn() {
         return column;
     }
 
+    /**
+     * Enter a new block.
+     *
+     * This affects subsequent calls to {@link addLocal(VariableInfo) addLocal} and
+     * {@link getLocal(String) getLocal}. Previously declared variables will remain
+     * in scope.
+     */
     public void enterBlock() {
         blocks.push(nextBlock++);
     }
 
+    /**
+     * Leave the current block.
+     *
+     * This affects subsequent calls to {@link addLocal(VariableInfo) addLocal} and
+     * {@link getLocal(String) getLocal}. Variables declared in the current block
+     * will go out of scope.
+     */
     public void leaveBlock() {
         blocks.pop();
     }
