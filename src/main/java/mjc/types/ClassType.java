@@ -1,14 +1,23 @@
 package mjc.types;
 
-//import mjc.symbol.ClassInfo;
-
+/**
+ * ClassType represents a user-defined class type.
+ */
 public class ClassType extends Type {
     private final String name;
 
+    /**
+     * Construct a new class type.
+     *
+     * @param name Name of the type.
+     */
     public ClassType(String name) {
         this.name = name;
     }
 
+    /**
+     * @return Name of the type.
+     */
     public String getName() {
         return name;
     }
@@ -24,15 +33,15 @@ public class ClassType extends Type {
     }
 
     @Override
-    public boolean isAssignableTo(Type o) {
-        return equals(o);
+    public boolean isAssignableTo(Type type) {
+        return equals(type);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == this || o == UndefinedType.Instance)
+    public boolean equals(Object other) {
+        if (other == this || other == UndefinedType.Instance)
             return true;
-        if (o instanceof ClassType && ((ClassType)o).getName().equals(name))
+        if (other instanceof ClassType && ((ClassType)other).getName().equals(name))
             return true;
         return false;
     }
