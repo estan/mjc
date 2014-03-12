@@ -111,7 +111,7 @@ public class MethodInfo {
      */
     public VariableInfo getLocal(final String name) {
         for (VariableInfo local : locals.get(name)) {
-            if (local.getName().equals(name) && blocks.search(local.getBlock()) != -1) {
+            if (local.getName().equals(name) && isVisible(local)) {
                 return local;
             }
         }
@@ -176,6 +176,16 @@ public class MethodInfo {
      */
     public void leaveBlock() {
         blocks.pop();
+    }
+
+    /**
+     * Returns true if the local variable @a local is currently visible.
+     *
+     * @param local A local variable of this method.
+     * @return true if @a local is visible, otherwise false.
+     */
+    private boolean isVisible(final VariableInfo local) {
+        return blocks.search(local.getBlock()) != -1;
     }
 
     @Override
