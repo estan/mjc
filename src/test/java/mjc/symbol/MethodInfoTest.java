@@ -32,7 +32,6 @@ public class MethodInfoTest {
          *
          * And check at each block enter/leave that the correct variables are in scope.
          */
-
         MethodInfo f = new MethodInfo("f", BuiltInType.Integer, 1, 1);
         assertThat(f.getName(), is("f"));
         assertThat(f.getReturnType(), sameInstance(BuiltInType.Integer));
@@ -77,8 +76,7 @@ public class MethodInfoTest {
         assertThat(l2.getType(), sameInstance(BuiltInType.Integer));
         assertThat(l2.getBlock(), is(1));
 
-        // Enter block 2.
-        f.enterBlock();
+        f.enterBlock(); // Enter block 2.
 
         // p1, l1 and l2 still in scope.
         p1 = f.getParameter("p1");
@@ -154,6 +152,178 @@ public class MethodInfoTest {
         // Add local l4.
         f.addLocal(new VariableInfo("l4", BuiltInType.LongArray, 9, 12));
         VariableInfo l4 = f.getLocal("l4");
+        assertThat(l4, notNullValue());
+        assertThat(l4.getName(), is("l4"));
+        assertThat(l4.getType(), sameInstance(BuiltInType.LongArray));
+        assertThat(l4.getBlock(), is(3));
+
+        f.leaveBlock(); // Leave block 3.
+
+        // p1, l1 and l2 still in scope, but neither l3 nor l4 are in scope.
+        p1 = f.getParameter("p1");
+        assertThat(p1, notNullValue());
+        assertThat(p1.getName(), is("p1"));
+        assertThat(p1.getType(), sameInstance(BuiltInType.Boolean));
+        assertThat(p1.getBlock(), is(0));
+
+        l1 = f.getLocal("l1");
+        assertThat(l1, notNullValue());
+        assertThat(l1.getName(), is("l1"));
+        assertThat(l1.getType(), sameInstance(BuiltInType.Long));
+        assertThat(l1.getBlock(), is(0));
+
+        l2 = f.getLocal("l2");
+        assertThat(l2, notNullValue());
+        assertThat(l2.getName(), is("l2"));
+        assertThat(l2.getType(), sameInstance(BuiltInType.Integer));
+        assertThat(l2.getBlock(), is(1));
+
+        assertThat(f.getLocal("l3"), nullValue());
+        assertThat(f.getLocal("l4"), nullValue());
+
+        f.leaveBlock(); // Leave block 1.
+
+        // p1 and l1 still in scope, but neither l2, l3 nor l4 are in scope.
+        p1 = f.getParameter("p1");
+        assertThat(p1, notNullValue());
+        assertThat(p1.getName(), is("p1"));
+        assertThat(p1.getType(), sameInstance(BuiltInType.Boolean));
+        assertThat(p1.getBlock(), is(0));
+
+        l1 = f.getLocal("l1");
+        assertThat(l1, notNullValue());
+        assertThat(l1.getName(), is("l1"));
+        assertThat(l1.getType(), sameInstance(BuiltInType.Long));
+        assertThat(l1.getBlock(), is(0));
+
+        assertThat(f.getLocal("l2"), nullValue());
+        assertThat(f.getLocal("l3"), nullValue());
+        assertThat(f.getLocal("l4"), nullValue());
+
+        f.leaveBlock(); // Leave block 0.
+
+        // Everything but p1 is out of scope.
+        p1 = f.getParameter("p1");
+        assertThat(p1, notNullValue());
+        assertThat(p1.getName(), is("p1"));
+        assertThat(p1.getType(), sameInstance(BuiltInType.Boolean));
+        assertThat(p1.getBlock(), is(0));
+        assertThat(f.getLocal("l1"), nullValue());
+        assertThat(f.getLocal("l2"), nullValue());
+        assertThat(f.getLocal("l3"), nullValue());
+        assertThat(f.getLocal("l4"), nullValue());
+
+        /*
+         * Repeatability test:
+         *
+         * Finally, we do the same sequence of enterBlock() / leaveBlock() calls again,
+         * without adding anything, and make sure all info is still there / correct.
+         */
+
+        f.enterBlock(); // Enter block 0.
+
+        // p1 and l1 in scope.
+        p1 = f.getParameter("p1");
+        assertThat(p1, notNullValue());
+        assertThat(p1.getName(), is("p1"));
+        assertThat(p1.getType(), sameInstance(BuiltInType.Boolean));
+        assertThat(p1.getBlock(), is(0));
+        l1 = f.getLocal("l1");
+        assertThat(l1, notNullValue());
+        assertThat(l1.getName(), is("l1"));
+        assertThat(l1.getType(), sameInstance(BuiltInType.Long));
+        assertThat(l1.getBlock(), is(0));
+
+        f.enterBlock(); // Enter block 1.
+
+        // p1 and l1 still in scope, and now also l2.
+        p1 = f.getParameter("p1");
+        assertThat(p1, notNullValue());
+        assertThat(p1.getName(), is("p1"));
+        assertThat(p1.getType(), sameInstance(BuiltInType.Boolean));
+        assertThat(p1.getBlock(), is(0));
+        l1 = f.getLocal("l1");
+        assertThat(l1, notNullValue());
+        assertThat(l1.getName(), is("l1"));
+        assertThat(l1.getType(), sameInstance(BuiltInType.Long));
+        assertThat(l1.getBlock(), is(0));
+        l2 = f.getLocal("l2");
+        assertThat(l2, notNullValue());
+        assertThat(l2.getName(), is("l2"));
+        assertThat(l2.getType(), sameInstance(BuiltInType.Integer));
+        assertThat(l2.getBlock(), is(1));
+
+        f.enterBlock(); // Enter block 2.
+
+        // p1, l1 and l2 still in scope, and now also l3.
+        p1 = f.getParameter("p1");
+        assertThat(p1, notNullValue());
+        assertThat(p1.getName(), is("p1"));
+        assertThat(p1.getType(), sameInstance(BuiltInType.Boolean));
+        assertThat(p1.getBlock(), is(0));
+        l1 = f.getLocal("l1");
+        assertThat(l1, notNullValue());
+        assertThat(l1.getName(), is("l1"));
+        assertThat(l1.getType(), sameInstance(BuiltInType.Long));
+        assertThat(l1.getBlock(), is(0));
+        l2 = f.getLocal("l2");
+        assertThat(l2, notNullValue());
+        assertThat(l2.getName(), is("l2"));
+        assertThat(l2.getType(), sameInstance(BuiltInType.Integer));
+        assertThat(l2.getBlock(), is(1));
+        l3 = f.getLocal("l3");
+        assertThat(l3, notNullValue());
+        assertThat(l3.getName(), is("l3"));
+        assertThat(l3.getType(), sameInstance(BuiltInType.IntegerArray));
+        assertThat(l3.getBlock(), is(2));
+
+        f.leaveBlock(); // Leave block 2.
+
+        // p1, l1 and l2 still in scope, but not l3.
+        p1 = f.getParameter("p1");
+        assertThat(p1, notNullValue());
+        assertThat(p1.getName(), is("p1"));
+        assertThat(p1.getType(), sameInstance(BuiltInType.Boolean));
+        assertThat(p1.getBlock(), is(0));
+
+        l1 = f.getLocal("l1");
+        assertThat(l1, notNullValue());
+        assertThat(l1.getName(), is("l1"));
+        assertThat(l1.getType(), sameInstance(BuiltInType.Long));
+        assertThat(l1.getBlock(), is(0));
+
+        l2 = f.getLocal("l2");
+        assertThat(l2, notNullValue());
+        assertThat(l2.getName(), is("l2"));
+        assertThat(l2.getType(), sameInstance(BuiltInType.Integer));
+        assertThat(l2.getBlock(), is(1));
+
+        assertThat(f.getLocal("l3"), nullValue());
+
+        f.enterBlock(); // Enter block 3.
+
+        // p1, l1 and l2 still in scope, and now also l4, but not l3.
+        p1 = f.getParameter("p1");
+        assertThat(p1, notNullValue());
+        assertThat(p1.getName(), is("p1"));
+        assertThat(p1.getType(), sameInstance(BuiltInType.Boolean));
+        assertThat(p1.getBlock(), is(0));
+
+        l1 = f.getLocal("l1");
+        assertThat(l1, notNullValue());
+        assertThat(l1.getName(), is("l1"));
+        assertThat(l1.getType(), sameInstance(BuiltInType.Long));
+        assertThat(l1.getBlock(), is(0));
+
+        l2 = f.getLocal("l2");
+        assertThat(l2, notNullValue());
+        assertThat(l2.getName(), is("l2"));
+        assertThat(l2.getType(), sameInstance(BuiltInType.Integer));
+        assertThat(l2.getBlock(), is(1));
+
+        assertThat(f.getLocal("l3"), nullValue());
+
+        l4 = f.getLocal("l4");
         assertThat(l4, notNullValue());
         assertThat(l4.getName(), is("l4"));
         assertThat(l4.getType(), sameInstance(BuiltInType.LongArray));

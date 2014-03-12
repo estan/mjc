@@ -176,6 +176,8 @@ public class MethodInfo {
      */
     public void leaveBlock() {
         blocks.pop();
+        if (blocks.isEmpty())
+            nextBlock = 0;
     }
 
     /**
