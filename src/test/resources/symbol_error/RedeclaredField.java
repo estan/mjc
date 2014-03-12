@@ -5,7 +5,7 @@ class RedeclaredField {
 
 class RedeclaredFieldTest {
     int a;
-    int b; // Redeclared field.
+    long a; // Redeclared field.
     public int foo(int b, long[] c, boolean d) {
         return 2;
     }
