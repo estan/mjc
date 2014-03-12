@@ -331,9 +331,12 @@ public class SymbolTableBuilder {
         /**
          * Helper method to resolve an AST type to a Type.
          *
+         * If @a abstractType is of class type, but the class is undeclared, this method
+         * returns UndefinedType.Instance.
+         *
          * @param abstractType The input AST type.
          * @return The corresponding Type.
-         * @throws RuntimeException if @a abstractType is an unknown PType.
+         * @throws RuntimeException if @a abstractType is of unknown PType subclass.
          */
         private Type resolve(PType abstractType) {
             if (abstractType instanceof AClassType) {
