@@ -44,7 +44,7 @@ public class TypeValidTest {
     }
 
     /**
-     * Tests that the parser will parse the input without problems.
+     * Tests that the symbol table builder and type checker runs without problems.
      *
      * @throws IOException if an I/O error occurred.
      * @throws ParserException if parsing failed.
