@@ -23,7 +23,7 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public class ParserValidInputTest {
-    private static String dataDir = "src/test/resources/valid";
+    private static String dataDir = "src/test/resources/syntax_valid";
 
     private String path; // Set once for each file in dataDir.
 
