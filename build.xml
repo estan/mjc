@@ -42,6 +42,7 @@
         <mkdir dir="${parser-classes-dir}"/>
         <javac srcdir="${parser-src-dir}"
                destdir="${parser-classes-dir}"
+               encoding="utf8"
                classpathref="project-classpath"
                includeAntRuntime="false"
                debug="on"/>
@@ -52,6 +53,7 @@
         <mkdir dir="${main-classes-dir}"/>
         <javac srcdir="${main-src-dir}"
                destdir="${main-classes-dir}"
+               encoding="utf8"
                classpathref="project-classpath"
                includeAntRuntime="false"
                debug="on"/>
@@ -62,6 +64,7 @@
         <mkdir dir="${test-classes-dir}"/>
         <javac srcdir="${test-src-dir}"
                destdir="${test-classes-dir}"
+               encoding="utf8"
                classpathref="project-classpath"
                includeAntRuntime="false"
                debug="on"/>
