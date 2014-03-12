@@ -4,7 +4,7 @@ package mjc.types;
  * UndefinedType represents an undefined type.
  *
  * An UndefinedType is assignable to all other types and is both a built-in type
- * and a used-defined class type at the same time.
+ * and a user-defined class type at the same time.
  *
  * There is only a single static instance of this class.
  */
