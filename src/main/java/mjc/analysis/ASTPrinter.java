@@ -20,6 +20,7 @@ public class ASTPrinter extends DepthFirstAdapter {
     public void inStart(Start node) {
         indent = 0;
         builder = new StringBuilder();
+        builder.append("[Abstract Syntax Tree]\n");
     }
 
     @Override

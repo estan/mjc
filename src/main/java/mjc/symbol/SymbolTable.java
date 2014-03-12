@@ -45,18 +45,20 @@ public class SymbolTable {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("[Symbol Table]\n");
-        for (ClassInfo classInfo : classes.values()) {
-            builder.append("  [Class] " + classInfo.getName() + "\n");
-            for (VariableInfo field : classInfo.getFields()) {
-                builder.append("    [Field] " + field.toString() + "\n");
+        for (Map.Entry<String, ClassInfo> classEntry : classes.entrySet()) {
+            final String classKey = classEntry.getKey();
+            final ClassInfo classInfo = classEntry.getValue();
+
+            builder.append(String.format("[Class key=%s] %s\n", classKey, classInfo));
+            for (Map.Entry<String, VariableInfo> fieldEntry : classInfo.getFields().entrySet()) {
+                builder.append("    [Field] " + fieldEntry.getValue().getName() + "\n");
             }
-            for (MethodInfo method : classInfo.getMethods()) {
-                builder.append("    [Method] " + method.toString() + "\n");
-                for (VariableInfo param : method.getParameters()) {
-                    builder.append("      [Param] " + param.toString() + "\n");
-                }
-                for (VariableInfo local : method.getLocals()) {
-                    builder.append("      [LocalVar] " + local.toString() + "\n");
+            for (Map.Entry<String, MethodInfo> methodEntry : classInfo.getMethods().entrySet()) {
+                final String methodKey = methodEntry.getKey();
+                final MethodInfo methodInfo = methodEntry.getValue();
+                builder.append(String.format("    [Method key=%s] %s\n", methodKey, methodInfo));
+                for (VariableInfo local : methodInfo.getLocals()) {
+                    builder.append("      [Local] " + local + "\n");
                 }
             }
         }

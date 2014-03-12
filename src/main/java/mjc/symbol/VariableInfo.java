@@ -81,6 +81,6 @@ public class VariableInfo {
 
     @Override
     public String toString() {
-        return name + " (type: " + type + ", block: " + block + ", line: " + line + ", column: " + column + ")";
+        return type + " " + name;
     }
 }

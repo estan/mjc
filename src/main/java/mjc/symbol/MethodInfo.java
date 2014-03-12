@@ -35,7 +35,7 @@ public class MethodInfo {
      * @param line Line of declaration.
      * @param column Column of declaration.
      */
-    public MethodInfo(String name, Type returnType, int line, int column) {
+    public MethodInfo(final String name, final Type returnType, int line, int column) {
         this.name = name;
         this.parameters = new ArrayList<>();
         this.locals = ArrayListMultimap.create();
@@ -69,7 +69,7 @@ public class MethodInfo {
      * @param name Parameter name.
      * @return Parameter information, or null if method has no such parameter.
      */
-    public VariableInfo getParameter(String name) {
+    public VariableInfo getParameter(final String name) {
         for (VariableInfo info : parameters) {
             if (info.getName().equals(name)) {
                 return info;
@@ -91,10 +91,12 @@ public class MethodInfo {
      * The information is added to the end of the list of parameters.
      *
      * @param parameter Information about the parameter.
+     * @return The added VariableInfo.
      */
-    public void addParameter(VariableInfo parameter) {
+    public VariableInfo addParameter(final VariableInfo parameter) {
         parameter.setBlock(0);
         parameters.add(parameter);
+        return parameter;
     }
 
     /**
@@ -107,7 +109,7 @@ public class MethodInfo {
      * @return Variable information, or null if method has no such parameter or the
      *         variable is out of scope.
      */
-    public VariableInfo getLocal(String name) {
+    public VariableInfo getLocal(final String name) {
         for (VariableInfo local : locals.get(name)) {
             if (local.getName().equals(name) && blocks.search(local.getBlock()) != -1) {
                 return local;
@@ -130,12 +132,14 @@ public class MethodInfo {
      * called more times than {@link #leaveBlock() leaveBlock} before calling this method.
      *
      * @param local Variable information.
+     * @return The added VariableInfo.
      * @see enterBlock()
      * @see leaveBlock()
      */
-    public void addLocal(VariableInfo local) {
+    public VariableInfo addLocal(final VariableInfo local) {
         local.setBlock(blocks.peek());
         locals.put(local.getName(), local);
+        return local;
     }
 
     /**
@@ -157,7 +161,7 @@ public class MethodInfo {
      *
      * This affects subsequent calls to {@link #addLocal(VariableInfo) addLocal} and
      * {@link #getLocal(String) getLocal}. Previously declared variables will remain
-     * in scope.
+     * in scope after this method is called.
      */
     public void enterBlock() {
         blocks.push(nextBlock++);
@@ -168,7 +172,7 @@ public class MethodInfo {
      *
      * This affects subsequent calls to {@link #addLocal(VariableInfo) addLocal} and
      * {@link #getLocal(String) getLocal}. Variables declared in the current block
-     * will go out of scope.
+     * will go out of scope after this method is called.
      */
     public void leaveBlock() {
         blocks.pop();
@@ -176,6 +180,15 @@ public class MethodInfo {
 
     @Override
     public String toString() {
-        return name + " (return type: " + returnType + ", line: " + line + ", column: " + column + ")";
+        StringBuilder params = new StringBuilder();
+        for (VariableInfo param : parameters) {
+            params.append(String.format("%s %s, ", param.getType(), param.getName()));
+        }
+        if (!parameters.isEmpty()) {
+            // Remove trailing ", ".
+            params.deleteCharAt(params.length() - 1);
+            params.deleteCharAt(params.length() - 1);
+        }
+        return String.format("%s %s(%s)", returnType, name, params);
     }
 }

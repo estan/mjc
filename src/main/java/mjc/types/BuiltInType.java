@@ -1,12 +1,5 @@
 package mjc.types;
 
-import mjc.node.ABooleanType;
-import mjc.node.AIntArrayType;
-import mjc.node.AIntType;
-import mjc.node.ALongArrayType;
-import mjc.node.ALongType;
-import mjc.node.PType;
-
 /**
  * Represents a built-in type.
  *
@@ -52,27 +45,5 @@ public class BuiltInType extends Type {
     @Override
     public String toString() {
         return name;
-    }
-
-    /**
-     * Returns the built-in type corresponding to the given AST type.
-     *
-     * @param abstractType An AST type.
-     * @return Corresponding built-in type, or UndefinedType.Instance if there is none.
-     */
-    public static Type fromAbstract(PType abstractType) {
-        if (abstractType instanceof AIntType) {
-            return BuiltInType.Integer;
-        } else if (abstractType instanceof AIntArrayType) {
-            return BuiltInType.IntegerArray;
-        } else if (abstractType instanceof ALongType) {
-            return BuiltInType.Long;
-        } else if (abstractType instanceof ALongArrayType) {
-            return BuiltInType.LongArray;
-        } else if (abstractType instanceof ABooleanType) {
-            return BuiltInType.Boolean;
-        } else {
-            return UndefinedType.Instance;
-        }
     }
 }

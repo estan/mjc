@@ -56,13 +56,13 @@ public class ARMMain {
                 SymbolTableBuilder symbolTableBuilder = new SymbolTableBuilder();
                 SymbolTable symbolTable = symbolTableBuilder.build(tree);
 
-                if (!symbolTableBuilder.hasErrors()) {
-                    System.out.println(symbolTable);
-                } else {
+                if (symbolTableBuilder.hasErrors()) {
                     for (String error : symbolTableBuilder.getErrors()) {
                         System.err.println(error);
                     }
                 }
+
+                System.out.println(symbolTable);
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());

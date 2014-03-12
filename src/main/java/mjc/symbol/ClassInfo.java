@@ -1,6 +1,5 @@
 package mjc.symbol;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +26,7 @@ public class ClassInfo {
      * @param line Line of declaration.
      * @param column Column of declaration.
      */
-    public ClassInfo(String name, ClassType type, int line, int column) {
+    public ClassInfo(final String name, final ClassType type, int line, int column) {
         this.name = name;
         this.type = type;
         this.line = line;
@@ -71,15 +70,15 @@ public class ClassInfo {
      * @param name Name of the field.
      * @return Information about the field, or null if the class has no such field.
      */
-    public VariableInfo getField(String name) {
+    public VariableInfo getField(final String name) {
         return fields.get(name);
     }
 
     /**
-     * @return Collection of the fields of the class.
+     * @return Map of the fields of the class.
      */
-    public Collection<VariableInfo> getFields() {
-        return fields.values();
+    public Map<String, VariableInfo> getFields() {
+        return fields;
     }
 
     /**
@@ -89,9 +88,11 @@ public class ClassInfo {
      * replaced.
      *
      * @param field Information about the field.
+     * @return The added VariableInfo.
      */
-    public void addField(VariableInfo field) {
+    public VariableInfo addField(final VariableInfo field) {
         fields.put(field.getName(), field);
+        return field;
     }
 
     /**
@@ -100,15 +101,15 @@ public class ClassInfo {
      * @param name Name of the method.
      * @return Information about the method, or null if the class has no such method.
      */
-    public MethodInfo getMethod(String name) {
+    public MethodInfo getMethod(final String name) {
         return methods.get(name);
     }
 
     /**
-     * @return Collection of the methods of the class.
+     * @return Map of the methods of the class.
      */
-    public Collection<MethodInfo> getMethods() {
-        return methods.values();
+    public Map<String, MethodInfo> getMethods() {
+        return methods;
     }
 
     /**
@@ -119,13 +120,15 @@ public class ClassInfo {
      *
      * @param name Name of the method.
      * @param method Information about the method.
+     * @return The added MethodInfo.
      */
-    public void addMethod(MethodInfo method) {
-        methods.put(method.getName(), method);
+    public MethodInfo addMethod(final String name, final MethodInfo method) {
+        methods.put(name, method);
+        return method;
     }
 
     @Override
     public String toString() {
-        return "[Class] " + name;
+        return name;
     }
 }
