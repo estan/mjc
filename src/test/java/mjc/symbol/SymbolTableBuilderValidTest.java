@@ -20,17 +20,17 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import static org.junit.Assert.assertThat;
 
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.emptyIterable;
 
 /**
- * Tests the symbol table builder and type checker on invalid input.
+ * Tests the symbol table builder and type checker on valid input.
  *
  * The test case will run once on each *.java file in dataDir.
  */
 @RunWith(Parameterized.class)
-public class TypeInvalidTest {
-    private static String dataDir = "src/test/resources/type_invalid";
+public class SymbolTableBuilderValidTest {
+    private static String dataDir = "src/test/resources/valid";
 
     private String path; // Set once for each file in dataDir.
 
@@ -39,12 +39,12 @@ public class TypeInvalidTest {
      *
      * @param path Path of file to test on.
      */
-    public TypeInvalidTest(String path) {
+    public SymbolTableBuilderValidTest(String path) {
         this.path = path;
     }
 
     /**
-     * Tests that the symbol table builder and type checker finds problems.
+     * Tests that the symbol table builder runs without problems.
      *
      * @throws IOException if an I/O error occurred.
      * @throws ParserException if parsing failed.
@@ -58,12 +58,10 @@ public class TypeInvalidTest {
         Start tree = parser.parse();
         reader.close();
 
-        // Build symbol table and assert there were errors.
+        // Build symbol table and assert there were no errors.
         SymbolTableBuilder symbolTableBuilder = new SymbolTableBuilder();
         symbolTableBuilder.build(tree);
-        assertThat(symbolTableBuilder.getErrors(), not(emptyIterable()));
-
-        // TODO: Run type checker once we have it.
+        assertThat(symbolTableBuilder.getErrors(), is(emptyIterable()));
     }
 
     /**
