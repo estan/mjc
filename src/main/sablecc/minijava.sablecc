@@ -267,8 +267,8 @@ Productions
             {-> New expression.field_access(instance.expression)};
 
     class_instance_creation_expression {-> expression} =
-        new_keyword [class_name]:identifier lparen [actual_parameters]:expression_list? rparen
-            {-> New expression.new_instance(class_name, [actual_parameters.expression])};
+        new_keyword [class_name]:identifier lparen rparen
+            {-> New expression.new_instance(class_name)};
 
     array_creation_expression {-> expression} =
         {new_int_array} new_keyword int_keyword lbrack [size]:expression rbrack
@@ -381,7 +381,7 @@ Abstract Syntax Tree
         {method_invocation} [instance]:expression [name]:identifier [actual_parameters]:expression* |
         {array_access} [array]:expression [index]:expression |
         {field_access} [instance]:expression |
-        {new_instance} [class_name]:identifier [actual_parameters]:expression* |
+        {new_instance} [class_name]:identifier |
         {new_int_array} [size]:expression |
         {new_long_array} [size]:expression |
         {integer} [value]:integer |
