@@ -82,10 +82,10 @@ public class SymbolTableBuilder {
     /**
      * Add an encountered error to the list of errors.
      *
-     * args[0] and args[1] should be the line and column, respectively.
-     *
-     * @param format A formatted string referring to args[2], args[3], ...
-     * @param args The line and column, followed by arguments referred to in @a format.
+     * @param line Line of the error.
+     * @param column Column of the error.
+     * @param format Error message as a formatted string referring to argument in @a args.
+     * @param args Arguments referred to in @a format.
      */
     private void error(int line, int column, final String format, final Object... args) {
         errors.add("[" + line + "," + column + "] " + String.format(format, args));
