@@ -106,8 +106,8 @@ public class MethodInfo {
      * {@link #enterBlock() enterBlock} and {@link #leaveBlock leaveBlock}.
      *
      * @param name Variable name.
-     * @return Variable information, or null if method has no such parameter or the
-     *         variable is out of scope.
+     * @return Variable information, or null if method has no such local variable or the
+     *         local variable is out of scope.
      */
     public VariableInfo getLocal(final String name) {
         for (VariableInfo local : locals.get(name)) {
