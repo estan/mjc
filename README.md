@@ -17,6 +17,7 @@ different available targets. Here's a hopefully up to date list:
      clean    Delete all generated files
      compile  Compile all sources
      jar      Build compiler JAR file
+     submit   Submit TAR archive to TIGRIS
      tar      Build compressed source-only TAR archive
      test     Run the unit tests
     Default target: jar
