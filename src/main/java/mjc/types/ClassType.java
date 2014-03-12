@@ -34,16 +34,12 @@ public class ClassType extends Type {
 
     @Override
     public boolean isAssignableTo(Type type) {
-        return equals(type);
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (other == this || other == UndefinedType.Instance)
+        if (type == this || type == UndefinedType.Instance)
             return true;
-        if (other instanceof ClassType && ((ClassType)other).getName().equals(name))
+        if (type instanceof ClassType && ((ClassType)type).getName().equals(name))
             return true;
         return false;
+
     }
 
     @Override
