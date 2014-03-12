@@ -87,8 +87,8 @@ public class SymbolTableBuilder {
      * @param format A formatted string referring to args[2], args[3], ...
      * @param args The line and column, followed by arguments referred to in @a format.
      */
-    private void error(String format, Object... args) {
-        errors.add(String.format("[%d,%d] error: " + format, args));
+    private void error(int line, int column, final String format, final Object... args) {
+        errors.add("[" + line + "," + column + "] " + String.format(format, args));
     }
 
     /**
@@ -116,8 +116,8 @@ public class SymbolTableBuilder {
 
             // Check that main method name is "main".
             if (!methodId.getText().equals("main")) {
-                error("name of method in class `%s` must be \"main\"",
-                        methodId.getLine(), methodId.getPos(), classId.getText());
+                error(methodId.getLine(), methodId.getPos(), "missing main method in `%s`",
+                    classId.getText());
             }
 
             symbolTable.addClassInfo(classId.getText(), new ClassInfo(
@@ -138,7 +138,7 @@ public class SymbolTableBuilder {
                 // Redeclaration: Enter ClassInfo under new name, and update AST to match.
                 name = name + "-REDECLARED-" + UUID.randomUUID();
                 classId.replaceBy(new TIdentifier(name, line, column));
-                error("duplicate class `%s`", line, column, classId.getText());
+                error(line, column, "duplicate class `%s`", classId.getText());
             }
 
             symbolTable.addClassInfo(name, new ClassInfo(
@@ -215,7 +215,7 @@ public class SymbolTableBuilder {
                         Type.fromAbstract(declaration.getType(), symbolTable, errors),
                         line, column));
             } else {
-                error("duplicate field `%s`", line, column, fieldId.getText());
+                error(line, column, "duplicate field `%s`", fieldId.getText());
             }
         }
 
@@ -258,7 +258,7 @@ public class SymbolTableBuilder {
                 // Redeclaration: Use another name, and update AST to match.
                 name = name + "-REDECLARED-" + UUID.randomUUID();
                 methodId.replaceBy(new TIdentifier(name, line, column));
-                error("duplicate method `%s`", line, column, methodId.getText());
+                error(line, column, "duplicate method `%s`", methodId.getText());
             }
 
             currentMethod = currentClass.addMethod(name,
@@ -297,7 +297,7 @@ public class SymbolTableBuilder {
                         Type.fromAbstract(declaration.getType(), symbolTable, errors),
                         line, column));
             } else {
-                error("duplicate parameter `%s`", line, column, paramId.getText());
+                error(line, column, "duplicate parameter `%s`", paramId.getText());
             }
         }
 
@@ -316,7 +316,7 @@ public class SymbolTableBuilder {
                         Type.fromAbstract(declaration.getType(), symbolTable, errors),
                         line, column));
             } else {
-                error("duplicate variable `%s`", line, column, variableId.getText());
+                error(line, column, "duplicate variable `%s`", variableId.getText());
             }
         }
 
