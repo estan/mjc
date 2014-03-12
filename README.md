@@ -47,7 +47,7 @@ To get started in Eclipse, make an initial build with Ant by typing `ant`,
 then perform the following steps in a new or existing Eclipse workspace:
 
 1. **File → New → Java Project**.
-2. Enter **mjc** as Project name.
+2. Enter **mjc** as **Project name**.
 3. Uncheck **Use default location** and pick the **mjc** folder as **Location**.
 4. Click **Next**.
 7. Check the **Allow output folders for source folders** checkbox, and then press
