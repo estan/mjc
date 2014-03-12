@@ -7,26 +7,17 @@ import java.util.UUID;
 
 import mjc.analysis.DepthFirstAdapter;
 import mjc.node.ABlockStatement;
-import mjc.node.ABooleanType;
 import mjc.node.AClassDeclaration;
-import mjc.node.AClassType;
 import mjc.node.AFieldDeclaration;
 import mjc.node.AFormalParameter;
-import mjc.node.AIntArrayType;
-import mjc.node.AIntType;
-import mjc.node.ALongArrayType;
-import mjc.node.ALongType;
 import mjc.node.AMainClassDeclaration;
 import mjc.node.AMethodDeclaration;
 import mjc.node.AVariableDeclaration;
 import mjc.node.PFormalParameter;
-import mjc.node.PType;
 import mjc.node.Start;
 import mjc.node.TIdentifier;
-import mjc.types.BuiltInType;
 import mjc.types.ClassType;
 import mjc.types.Type;
-import mjc.types.UndefinedType;
 import mjc.types.UnsupportedType;
 
 /**
@@ -221,7 +212,7 @@ public class SymbolTableBuilder {
             if (currentClass.getField(fieldId.getText()) == null) {
                 currentClass.addField(new VariableInfo(
                         fieldId.getText(),
-                        resolve(declaration.getType()),
+                        Type.fromAbstract(declaration.getType(), symbolTable, errors),
                         line, column));
             } else {
                 error("duplicate field `%s`", line, column, fieldId.getText());
@@ -250,9 +241,10 @@ public class SymbolTableBuilder {
 
                     isRedeclaration = true;
                     while (it.hasNext()) {
-                        AFormalParameter param = (AFormalParameter) it.next();
-                        VariableInfo otherParam = otherIt.next();
-                        if (!resolve(param.getType()).equals(otherParam.getType())) {
+                        final AFormalParameter param = (AFormalParameter) it.next();
+                        final Type type = Type.fromAbstract(param.getType(), symbolTable, errors);
+                        final VariableInfo otherParam = otherIt.next();
+                        if (!type.equals(otherParam.getType())) {
                             // Type of at least one parameter differs.
                             isRedeclaration = false;
                             break;
@@ -271,7 +263,7 @@ public class SymbolTableBuilder {
 
             currentMethod = currentClass.addMethod(name,
                     new MethodInfo(methodId.getText(),
-                            resolve(declaration.getReturnType()),
+                            Type.fromAbstract(declaration.getReturnType(), symbolTable, errors),
                             line, column)
             );
 
@@ -302,7 +294,7 @@ public class SymbolTableBuilder {
             if (currentMethod.getParameter(paramId.getText()) == null) {
                 currentMethod.addParameter(new VariableInfo(
                         paramId.getText(),
-                        resolve(declaration.getType()),
+                        Type.fromAbstract(declaration.getType(), symbolTable, errors),
                         line, column));
             } else {
                 error("duplicate parameter `%s`", line, column, paramId.getText());
@@ -321,50 +313,10 @@ public class SymbolTableBuilder {
             if (otherVariable == null && otherParam == null) {
                 currentMethod.addLocal(new VariableInfo(
                         variableId.getText(),
-                        resolve(declaration.getType()),
+                        Type.fromAbstract(declaration.getType(), symbolTable, errors),
                         line, column));
             } else {
                 error("duplicate variable `%s`", line, column, variableId.getText());
-            }
-        }
-
-        /**
-         * Helper method to resolve an AST type to a Type.
-         *
-         * If @a abstractType is of class type, but the class is undeclared, this method
-         * returns UndefinedType.Instance.
-         *
-         * @param abstractType The input AST type.
-         * @return The corresponding Type.
-         * @throws RuntimeException if @a abstractType is of unknown PType subclass.
-         */
-        private Type resolve(PType abstractType) {
-            if (abstractType instanceof AClassType) {
-                // AST type is a class type.
-                final AClassType classType = (AClassType)abstractType;
-                final TIdentifier classId = classType.getName();
-                final ClassInfo classInfo = symbolTable.getClassInfo(classId.getText());
-
-                if (classInfo != null) {
-                    return classInfo.getType();
-                } else {
-                    final int line = classId.getLine();
-                    final int column = classId.getPos();
-                    error("undeclared identifier `%s`", line, column, classId.getText());
-                    return UndefinedType.Instance;
-                }
-            } else if (abstractType instanceof AIntType) {
-                return BuiltInType.Integer;
-            } else if (abstractType instanceof AIntArrayType) {
-                return BuiltInType.IntegerArray;
-            } else if (abstractType instanceof ALongType) {
-                return BuiltInType.Long;
-            } else if (abstractType instanceof ALongArrayType) {
-                return BuiltInType.LongArray;
-            } else if (abstractType instanceof ABooleanType) {
-                return BuiltInType.Boolean;
-            } else {
-                throw new RuntimeException("Unknown PType");
             }
         }
 
