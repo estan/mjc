@@ -81,13 +81,18 @@ though.)
 Submitting to TIGRIS
 --------------------
 
-To create a compressed source-only TAR archive for submission to TIGRIS, type
+To create a compressed source-only TAR archive and submit it by e-mail to
+the TIGRIS judging system, make sure the `TIGRIS_ID` and `TIGRIS_EMAIL`
+environment variables are set to your TIGRIS ID and submission e-mail, then
+type
 
-    ant tar -Dtigris.id=ID -Dtigris.email=EMAIL
+    ant submit
 
-Where `ID` and `EMAIL` are the TIGRIS ID and e-mail address you want to use.
-The Ant target will automatically put these into the `DESC` file before
-assembling all source files into the output file `mjc.tar.gz`. It is also
-possible to specify ID and e-mail to use more permanenty via the `TIGRIS_ID`
-and `TIGRIS_EMAIL` environment variables. The -D options takes precedence over
-the environment variables.
+You may also specify the ID and e-mail using the `-Dtigris.id` and
+`-Dtigris.email` ANT options. This will override the values set by the
+environment variables. By default the submission is sent to
+`submit@tigris.csc.kth.se`. This may be changed using the `-Dtigris.to` option.
+
+The target uses the script in `tools/submit`. The script depends on the
+`uuencode` command from GNU sharutils and uses the `mail` command to send the
+mail.
