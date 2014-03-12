@@ -75,13 +75,6 @@ public class ClassInfo {
     }
 
     /**
-     * @return Map of the fields of the class.
-     */
-    public Map<String, VariableInfo> getFields() {
-        return fields;
-    }
-
-    /**
      * Adds information about a field of the class.
      *
      * If there's already information about a field with the same name, it will be
@@ -106,13 +99,6 @@ public class ClassInfo {
     }
 
     /**
-     * @return Map of the methods of the class.
-     */
-    public Map<String, MethodInfo> getMethods() {
-        return methods;
-    }
-
-    /**
      * Adds information about a method of the class.
      *
      * If there's already information about a method with the same name, it will be
@@ -129,6 +115,15 @@ public class ClassInfo {
 
     @Override
     public String toString() {
-        return name;
+        StringBuilder builder = new StringBuilder();
+        builder.append("class " + name + " {");
+        for (VariableInfo field : fields.values()) {
+            builder.append("\n    " + field + ";");
+        }
+        for (Map.Entry<String, MethodInfo> methodEntry : methods.entrySet()) {
+            builder.append("\n    " + methodEntry.getValue() + " [KEY: " + methodEntry.getKey() + "]");
+        }
+        builder.append("\n}");
+        return builder.toString();
     }
 }

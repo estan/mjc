@@ -1,7 +1,6 @@
 package mjc.symbol;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
@@ -119,13 +118,6 @@ public class MethodInfo {
     }
 
     /**
-     * @return Collection of local variables of the method.
-     */
-    public Collection<VariableInfo> getLocals() {
-        return locals.values();
-    }
-
-    /**
      * Adds information about a local variable declared in the current block.
      *
      * Initially there is no block, so {@link #enterBlock() enterBlock} must have been
@@ -192,15 +184,29 @@ public class MethodInfo {
 
     @Override
     public String toString() {
-        StringBuilder params = new StringBuilder();
-        for (VariableInfo param : parameters) {
-            params.append(String.format("%s %s, ", param.getType(), param.getName()));
+        StringBuilder builder = new StringBuilder();
+        builder.append(returnType + " " + name + "(");
+
+        // Add parameters.
+        for (VariableInfo parameter : parameters) {
+            builder.append(parameter + ", ");
         }
         if (!parameters.isEmpty()) {
             // Remove trailing ", ".
-            params.deleteCharAt(params.length() - 1);
-            params.deleteCharAt(params.length() - 1);
+            builder.delete(builder.length() - 2, builder.length());
         }
-        return String.format("%s %s(%s)", returnType, name, params);
+
+        // Add local variables.
+        builder.append(") {");
+        for (VariableInfo local : locals.values()) {
+            builder.append(local + "; ");
+        }
+        if (!locals.isEmpty()) {
+            // Remove trailing ' '.
+            builder.deleteCharAt(builder.length() - 1);
+        }
+        builder.append("}");
+
+        return builder.toString();
     }
 }

@@ -46,23 +46,13 @@ public class SymbolTable {
         StringBuilder builder = new StringBuilder();
         builder.append("[Symbol Table]\n");
         for (Map.Entry<String, ClassInfo> classEntry : classes.entrySet()) {
-            final String classKey = classEntry.getKey();
-            final ClassInfo classInfo = classEntry.getValue();
-
-            builder.append(String.format("[Class key=%s] %s\n", classKey, classInfo));
-            for (Map.Entry<String, VariableInfo> fieldEntry : classInfo.getFields().entrySet()) {
-                builder.append("    [Field] " + fieldEntry.getValue().getName() + "\n");
-            }
-            for (Map.Entry<String, MethodInfo> methodEntry : classInfo.getMethods().entrySet()) {
-                final String methodKey = methodEntry.getKey();
-                final MethodInfo methodInfo = methodEntry.getValue();
-                builder.append(String.format("    [Method key=%s] %s\n", methodKey, methodInfo));
-                for (VariableInfo local : methodInfo.getLocals()) {
-                    builder.append("      [Local] " + local + "\n");
-                }
-            }
+            builder.append(classEntry.getValue().toString().replaceAll("(?m)^", "    "));
+            builder.append(" [KEY: " + classEntry.getKey() + "]\n");
         }
-        builder.deleteCharAt(builder.length() - 1);
+        if (!classes.isEmpty()) {
+            // Remove trailing '\n'.
+            builder.deleteCharAt(builder.length() - 1);
+        }
         return builder.toString();
     }
 }
