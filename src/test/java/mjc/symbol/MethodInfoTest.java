@@ -11,7 +11,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 public class MethodInfoTest {
 
     @Test
-    public void testMethodInfo() {
+    public void testEnterLeaveBlock() {
         /*
          * We build the following test case:
          *
