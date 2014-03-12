@@ -1,4 +1,15 @@
 #!/bin/bash
+#
+# This script submits the compressed source-only TAR archive to the TIGRIS
+# submission system.
+#
+# Usage: ./submit [<recipient e-mail>]
+#
+# The default is to send it to submit@tigris.csc.kth.se.
+#
+# The script depends on the uuencode command from GNU sharutils and uses
+# the mail command to send the mail.
+#
 
 MJC_DIR=$(dirname "$(cd "$(dirname "$0")" && pwd)")
 
