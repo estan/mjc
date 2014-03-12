@@ -6,7 +6,7 @@ class RedeclaredLocalVariable {
 class RedeclaredLocalVariableTest {
     public int foo(int b, long[] c, boolean d) {
         int a;
-        int a; // Redeclared local variable.
+        int b; // Redeclared local variable.
         return 2;
     }
 }
