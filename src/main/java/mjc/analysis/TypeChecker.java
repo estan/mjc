@@ -359,6 +359,7 @@ public class TypeChecker extends DepthFirstAdapter {
             final int line = expression.getIdentifier().getLine();
             final int column = expression.getIdentifier().getPos();
             error(line, column, "undeclared identifier `%s`", id);
+            types.put(expression, UndefinedType.Instance);
         }
     }
 
