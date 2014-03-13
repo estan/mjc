@@ -8,7 +8,10 @@ class RedeclaredMethodTest {
         return 2;
     }
     // Redeclaring method.
-    public long foo(int d, long[] e, boolean f) {
+    //
+    // It's a redeclaration even if the parameters differ since MiniJava does
+    // not support method overloading.
+    public long foo(int d, long[] e, int f) {
         return 0;
     }
 }

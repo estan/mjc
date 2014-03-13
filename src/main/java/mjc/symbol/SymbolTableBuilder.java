@@ -1,7 +1,6 @@
 package mjc.symbol;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,7 +12,6 @@ import mjc.node.AFormalParameter;
 import mjc.node.AMainClassDeclaration;
 import mjc.node.AMethodDeclaration;
 import mjc.node.AVariableDeclaration;
-import mjc.node.PFormalParameter;
 import mjc.node.Start;
 import mjc.node.TIdentifier;
 import mjc.types.ClassType;
@@ -227,34 +225,8 @@ public class SymbolTableBuilder {
             final int line = methodId.getLine();
             final int column = methodId.getPos();
 
-            // Determine if this is a redeclaration.
-            final MethodInfo otherInfo = currentClass.getMethod(methodId.getText());
-            boolean isRedeclaration = false;
-            if (otherInfo != null) { // Another method with the same name exists.
-                final List<PFormalParameter> params = declaration.getFormalParameters();
-                final List<VariableInfo> otherParams = otherInfo.getParameters();
-
-                // If parameter lists are equal, this is a redeclaration.
-                if (params.size() == otherParams.size()) {
-                    Iterator<PFormalParameter> it = params.iterator();
-                    Iterator<VariableInfo> otherIt = otherParams.iterator();
-
-                    isRedeclaration = true;
-                    while (it.hasNext()) {
-                        final AFormalParameter param = (AFormalParameter) it.next();
-                        final Type type = Type.fromAbstract(param.getType(), symbolTable, errors);
-                        final VariableInfo otherParam = otherIt.next();
-                        if (!type.equals(otherParam.getType())) {
-                            // Type of at least one parameter differs.
-                            isRedeclaration = false;
-                            break;
-                        }
-                    }
-                }
-            }
-
             String name = methodId.getText();
-            if (isRedeclaration) {
+            if (currentClass.getMethod(name) != null) {
                 // Redeclaration: Use another name, and update AST to match.
                 name = name + "-REDECLARED-" + UUID.randomUUID();
                 methodId.replaceBy(new TIdentifier(name, line, column));
