@@ -263,8 +263,8 @@ Productions
             {-> New expression.array_access(array.expression, lbrack, index)};
 
     array_length_expression {-> expression} =
-        [instance]:primary_expression period length_keyword
-            {-> New expression.array_length(instance.expression, length_keyword)};
+        [array]:primary_expression period length_keyword
+            {-> New expression.array_length(array.expression, length_keyword)};
 
     class_instance_creation_expression {-> expression} =
         new_keyword [class_name]:identifier lparen rparen
@@ -380,7 +380,7 @@ Abstract Syntax Tree
         {not} not [expression]:expression |
         {method_invocation} [instance]:expression [name]:identifier [actual_parameters]:expression* |
         {array_access} [array]:expression [start_bracket]:lbrack [index]:expression |
-        {array_length} [instance]:expression length_keyword |
+        {array_length} [array]:expression length_keyword |
         {new_instance} [class_name]:identifier |
         {new_int_array} new_keyword [size]:expression |
         {new_long_array} new_keyword [size]:expression |
