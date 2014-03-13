@@ -292,6 +292,7 @@ public class TypeChecker extends DepthFirstAdapter {
             final int column = expression.getLengthKeyword().getPos();
             error(line, column, "length unsupported on non-array type %s", type);
         }
+        types.put(expression, BuiltInType.Integer);
     }
 
     public void outANewInstanceExpression(final ANewInstanceExpression expression) {
