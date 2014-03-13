@@ -16,6 +16,11 @@ public class UndefinedType extends ClassType {
     }
 
     @Override
+    public String getName() {
+        return "$$$UndefinedType$$$";
+    }
+
+    @Override
     public boolean isBuiltIn() {
         return true;
     }

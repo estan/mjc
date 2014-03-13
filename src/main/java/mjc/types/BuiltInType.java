@@ -25,9 +25,7 @@ public class BuiltInType extends Type {
         this.name = name;
     }
 
-    /**
-     * @return Name of the built-in type.
-     */
+    @Override
     public String getName() {
         return name;
     }
@@ -39,6 +37,15 @@ public class BuiltInType extends Type {
 
     @Override
     public boolean isClass() {
+        return false;
+    }
+
+    @Override
+    public boolean isAssignableTo(Type type) {
+        if (type == this || type == UndefinedType.Instance)
+            return true;
+        if (this == Integer && type == Long)
+            return true;
         return false;
     }
 

@@ -20,6 +20,7 @@ public class UnsupportedType extends Type {
         this.name = name;
     }
 
+    @Override
     public String getName() {
         return name;
     }

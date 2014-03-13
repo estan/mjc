@@ -18,6 +18,13 @@ import mjc.symbol.SymbolTable;
  */
 public abstract class Type {
     /**
+     * Returns the name of the type.
+     *
+     * This must be overridden by sub-classes.
+     */
+    public abstract String getName();
+
+    /**
      * Returns true if this is a built-in type.
      *
      * The default implementation returns false.

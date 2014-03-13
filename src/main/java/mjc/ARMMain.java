@@ -16,6 +16,7 @@ import mjc.symbol.SymbolTableBuilder;
 import mjc.node.Start;
 import mjc.analysis.ASTGraphPrinter;
 import mjc.analysis.ASTPrinter;
+import mjc.analysis.TypeChecker;
 
 public class ARMMain {
     private ASTPrinter astPrinter = new ASTPrinter();
@@ -52,17 +53,24 @@ public class ARMMain {
                 // Print AST in GraphViz format.
                 graphPrinter.print(tree);
             } else {
-                // Build and print symbol table.
+                // Build symbol table.
                 SymbolTableBuilder symbolTableBuilder = new SymbolTableBuilder();
                 SymbolTable symbolTable = symbolTableBuilder.build(tree);
-
                 if (symbolTableBuilder.hasErrors()) {
                     for (String error : symbolTableBuilder.getErrors()) {
                         System.err.println(error);
                     }
                 }
 
-                System.out.println(symbolTable);
+                // Run type-check.
+                TypeChecker typeChecker = new TypeChecker();
+                if (!typeChecker.check(tree, symbolTable)) {
+                    for (String error : typeChecker.getErrors()) {
+                        System.err.println(error);
+                    }
+                }
+
+                //System.out.println(symbolTable);
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());

@@ -15,9 +15,7 @@ public class ClassType extends Type {
         this.name = name;
     }
 
-    /**
-     * @return Name of the type.
-     */
+    @Override
     public String getName() {
         return name;
     }
