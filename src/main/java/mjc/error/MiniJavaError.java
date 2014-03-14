@@ -1,7 +1,7 @@
 package mjc.error;
 
 /**
- * The MiniJavaError represents an error in the input program.
+ * The MiniJavaError class represents an error in the input program.
  */
 public final class MiniJavaError {
     final int line;
