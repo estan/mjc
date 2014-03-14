@@ -1,4 +1,4 @@
-package analysis;
+package mjc.analysis;
 
 import java.io.FileReader;
 import java.io.IOException;
