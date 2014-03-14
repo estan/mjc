@@ -67,11 +67,6 @@ public final class MiniJavaError {
             return true;
         if (other instanceof MiniJavaError && ((MiniJavaError) other).type.equals(type))
             return true;
-
-        // We compare equal to our type as well (convenient in unit tests).
-        if (other instanceof MiniJavaErrorType && other.equals(type))
-            return true;
-
-       return false;
+        return other.equals(type); // Compare equal to our type as well (convenient in tests).
     }
 }
