@@ -360,8 +360,10 @@ public class TypeChecker extends DepthFirstAdapter {
         final int column = expression.getEqual().getPos();
 
         if (!(left.isInteger() && right.isInteger() ||
-                left.isClass() && right.isClass() ||
+                left.isIntArray() && right.isIntArray() ||
+                left.isLongArray() && right.isLongArray() ||
                 left.isBoolean() && right.isBoolean() ||
+                left.isClass() && right.isClass() ||
                 left.isUndefined() || right.isUndefined())) {
             error(INVALID_EQ_COMPARISON.on(line, column, left, right));
         }
@@ -376,8 +378,10 @@ public class TypeChecker extends DepthFirstAdapter {
         final int column = expression.getNotEqual().getPos();
 
         if (!(left.isInteger() && right.isInteger() ||
-                left.isClass() && right.isClass() ||
+                left.isIntArray() && right.isIntArray() ||
+                left.isLongArray() && right.isLongArray() ||
                 left.isBoolean() && right.isBoolean() ||
+                left.isClass() && right.isClass() ||
                 left.isUndefined() || right.isUndefined())) {
             error(INVALID_NE_COMPARISON.on(line, column, left, right));
         }
