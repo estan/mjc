@@ -51,7 +51,7 @@ public class SymbolTableBuilderInvalidTest {
      * @throws LexerException if lexical analysis failed.
      */
     @Test
-    public void testValid() throws IOException, ParserException, LexerException {
+    public void testInvalid() throws IOException, ParserException, LexerException {
         // Parse input.
         FileReader reader = new FileReader(path);
         Parser parser = new Parser(new Lexer(new PushbackReader(reader)));
@@ -66,7 +66,7 @@ public class SymbolTableBuilderInvalidTest {
 
     /**
      * Provides the absolute path of each *.java file in dataDir as input to
-     * testValid().
+     * testInvalid().
      *
      * @return an iterable over paths.
      * @throws IOException if an I/O error occurred.
