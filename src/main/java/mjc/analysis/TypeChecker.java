@@ -59,8 +59,8 @@ import mjc.types.UndefinedType;
  * may be queried for using the {@link #hasErrors() hasErrors} and {@link #getErrors()
  * getErrors} methods.
  *
- * The compiler should not proceed if errors occurred during construction of the symbol
- * table or during type-checking.
+ * If any errors exist after construction of the symbol table and type-checking has
+ * completed, the compiler should abort and not proceed with later stages of compilation.
  */
 public class TypeChecker extends DepthFirstAdapter {
     private SymbolTable symbolTable;
