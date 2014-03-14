@@ -65,12 +65,11 @@ public final class MiniJavaError {
     public boolean equals(final Object other) {
         if (this == other)
             return true;
-        if (other instanceof MiniJavaError && ((MiniJavaError) other).type == type)
+        if (other instanceof MiniJavaError && ((MiniJavaError) other).type.equals(type))
             return true;
 
         // We compare equal to our type as well (convenient in unit tests).
-        if (other instanceof MiniJavaErrorType &&
-                ((MiniJavaErrorType) other).getCode() == type.getCode())
+        if (other instanceof MiniJavaErrorType && other.equals(type))
             return true;
 
        return false;
