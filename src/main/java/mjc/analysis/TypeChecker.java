@@ -258,7 +258,7 @@ public class TypeChecker extends DepthFirstAdapter {
                     error(INVALID_ASSIGNMENT.on(line, column, valueType, BuiltInType.Long));
                 }
             } else {
-                error(NOT_ARRAY_TYPE.on(line, column, id, type));
+                error(NOT_ARRAY_TYPE.on(line, column, type));
             }
         }
     }

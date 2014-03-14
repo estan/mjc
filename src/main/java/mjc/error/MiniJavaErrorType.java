@@ -27,7 +27,7 @@ public enum MiniJavaErrorType {
     UNDECLARED_IDENTIFIER           (205, "undeclared identifier `%s`"),
     INVALID_ASSIGNMENT              (206, "can't assign %s to %s"),
     WRONG_INDEX_TYPE                (207, "index of type %s, expected int"),
-    NOT_ARRAY_TYPE                  (208, "`%s` is of non-array type %s"),
+    NOT_ARRAY_TYPE                  (208, "[]: non-array type %s"),
     INVALID_LEFT_OP_AND             (209, "&&: invalid left-hand type %s"),
     INVALID_RIGHT_OP_AND            (210, "&&: invalid right-hand type %s"),
     INVALID_LEFT_OP_OR              (211, "||: invalid left-hand type %s"),
