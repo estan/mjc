@@ -6,16 +6,25 @@ import java.util.UUID;
 
 import mjc.analysis.DepthFirstAdapter;
 import mjc.node.ABlockStatement;
+import mjc.node.ABooleanType;
 import mjc.node.AClassDeclaration;
+import mjc.node.AClassType;
 import mjc.node.AFieldDeclaration;
 import mjc.node.AFormalParameter;
+import mjc.node.AIntArrayType;
+import mjc.node.AIntType;
+import mjc.node.ALongArrayType;
+import mjc.node.ALongType;
 import mjc.node.AMainClassDeclaration;
 import mjc.node.AMethodDeclaration;
 import mjc.node.AVariableDeclaration;
+import mjc.node.PType;
 import mjc.node.Start;
 import mjc.node.TIdentifier;
+import mjc.types.BuiltInType;
 import mjc.types.ClassType;
 import mjc.types.Type;
+import mjc.types.UndefinedType;
 import mjc.types.UnsupportedType;
 
 /**
@@ -210,7 +219,7 @@ public class SymbolTableBuilder {
             if (currentClass.getField(fieldId.getText()) == null) {
                 currentClass.addField(new VariableInfo(
                         fieldId.getText(),
-                        Type.fromAbstract(declaration.getType(), symbolTable, errors),
+                        fromAbstract(declaration.getType()),
                         line, column));
             } else {
                 error(line, column, "duplicate field `%s`", fieldId.getText());
@@ -235,7 +244,7 @@ public class SymbolTableBuilder {
 
             currentMethod = currentClass.addMethod(name,
                     new MethodInfo(methodId.getText(),
-                            Type.fromAbstract(declaration.getReturnType(), symbolTable, errors),
+                            fromAbstract(declaration.getReturnType()),
                             line, column)
             );
 
@@ -266,7 +275,7 @@ public class SymbolTableBuilder {
             if (currentMethod.getParameter(paramId.getText()) == null) {
                 currentMethod.addParameter(new VariableInfo(
                         paramId.getText(),
-                        Type.fromAbstract(declaration.getType(), symbolTable, errors),
+                        fromAbstract(declaration.getType()),
                         line, column));
             } else {
                 error(line, column, "duplicate parameter `%s`", paramId.getText());
@@ -285,10 +294,48 @@ public class SymbolTableBuilder {
             if (otherVariable == null && otherParam == null) {
                 currentMethod.addLocal(new VariableInfo(
                         variableId.getText(),
-                        Type.fromAbstract(declaration.getType(), symbolTable, errors),
+                        fromAbstract(declaration.getType()),
                         line, column));
             } else {
                 error(line, column, "duplicate variable `%s`", variableId.getText());
+            }
+        }
+
+        /**
+         * Helper method: Returns the Type corresponding to an AST type.
+         *
+         * If @a abstractType is of class type, but the class is not declared, this method
+         * returns UndefinedType.Instance and adds an error to the error list.
+         *
+         * @param abstractType Input AST type.
+         * @return The corresponding Type, or UndefinedType.Instance if it is undeclared.
+         * @throws RuntimeException if @a abstractType is of unknown PType subclass.
+         */
+        private Type fromAbstract(final PType abstractType) {
+            if (abstractType instanceof AClassType) {
+                // AST type is a class type.
+                final AClassType classType = (AClassType)abstractType;
+                final TIdentifier classId = classType.getName();
+                final ClassInfo classInfo = symbolTable.getClassInfo(classId.getText());
+                if (classInfo != null) {
+                    return classInfo.getType();
+                } else {
+                    errors.add(String.format("[%d,%d] undeclared class `%s`",
+                            classId.getLine(), classId.getPos(), classId.getText()));
+                    return UndefinedType.Instance;
+                }
+            } else if (abstractType instanceof AIntType) {
+                return BuiltInType.Integer;
+            } else if (abstractType instanceof AIntArrayType) {
+                return BuiltInType.IntegerArray;
+            } else if (abstractType instanceof ALongType) {
+                return BuiltInType.Long;
+            } else if (abstractType instanceof ALongArrayType) {
+                return BuiltInType.LongArray;
+            } else if (abstractType instanceof ABooleanType) {
+                return BuiltInType.Boolean;
+            } else {
+                throw new RuntimeException("Unknown PType");
             }
         }
 
