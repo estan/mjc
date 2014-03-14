@@ -6,7 +6,7 @@ package mjc.types;
  * This is currently just void and String[], which it is convenient to consider as
  * a type during compilation, since they appear as return value and parameter type
  * for main(). Since they are unsupported UnsupportedTypes are assignable to no
- * other types and is neither a built-in nor a user-defined class type.
+ * other types.
  *
  * There are only two static instances of this class.
  */
@@ -23,16 +23,6 @@ public class UnsupportedType extends Type {
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public boolean isBuiltIn() {
-        return false;
-    }
-
-    @Override
-    public boolean isClass() {
-        return false;
     }
 
     @Override

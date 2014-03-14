@@ -3,17 +3,12 @@ package mjc.types;
 /**
  * UndefinedType represents an undefined type.
  *
- * An UndefinedType is assignable to all other types and is both a built-in type
- * and a user-defined class type at the same time.
+ * An UndefinedType is assignable to all other types.
  *
  * There is only a single static instance of this class.
  */
-public class UndefinedType extends ClassType {
-    public final static ClassType Instance = new UndefinedType();
-
-    private UndefinedType() {
-        super("$$$UndefinedType$$$");
-    }
+public class UndefinedType extends Type {
+    public final static Type Instance = new UndefinedType();
 
     @Override
     public String getName() {
@@ -21,12 +16,7 @@ public class UndefinedType extends ClassType {
     }
 
     @Override
-    public boolean isBuiltIn() {
-        return true;
-    }
-
-    @Override
-    public boolean isClass() {
+    public boolean isUndefined() {
         return true;
     }
 

@@ -5,13 +5,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import mjc.node.AAndExpression;
 import mjc.node.AArrayAccessExpression;
+import mjc.node.AArrayAssignStatement;
 import mjc.node.AArrayLengthExpression;
+import mjc.node.AAssignStatement;
 import mjc.node.ABlockStatement;
 import mjc.node.AClassDeclaration;
+import mjc.node.AEqualExpression;
 import mjc.node.AFalseExpression;
+import mjc.node.AGreaterEqualThanExpression;
+import mjc.node.AGreaterThanExpression;
 import mjc.node.AIdentifierExpression;
+import mjc.node.AIfElseStatement;
+import mjc.node.AIfStatement;
 import mjc.node.AIntegerExpression;
+import mjc.node.ALessEqualThanExpression;
+import mjc.node.ALessThanExpression;
 import mjc.node.ALongExpression;
 import mjc.node.AMainClassDeclaration;
 import mjc.node.AMethodDeclaration;
@@ -20,11 +30,15 @@ import mjc.node.AMinusExpression;
 import mjc.node.ANewInstanceExpression;
 import mjc.node.ANewIntArrayExpression;
 import mjc.node.ANewLongArrayExpression;
+import mjc.node.ANotEqualExpression;
 import mjc.node.ANotExpression;
+import mjc.node.AOrExpression;
 import mjc.node.APlusExpression;
+import mjc.node.APrintlnStatement;
 import mjc.node.AThisExpression;
 import mjc.node.ATimesExpression;
 import mjc.node.ATrueExpression;
+import mjc.node.AWhileStatement;
 import mjc.node.Node;
 import mjc.node.PExpression;
 import mjc.node.Start;
@@ -122,7 +136,18 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     public void outAMethodDeclaration(final AMethodDeclaration declaration) {
+        final String id = declaration.getName().getText();
+        final Type actualType = types.get(declaration.getReturnExpression());
+        final Type returnType = currentMethod.getReturnType();
+        final int line = declaration.getName().getLine();
+        final int column = declaration.getName().getPos();
+
+        if (!actualType.isAssignableTo(returnType)) {
+            error(line, column, "method `%s` must return value of type %s", id, returnType);
+        }
+
         currentMethod.leaveBlock();
+
     }
 
     public void inABlockStatement(final ABlockStatement block) {
@@ -133,91 +158,310 @@ public class TypeChecker extends DepthFirstAdapter {
         currentMethod.leaveBlock();
     }
 
+    public void outAIfStatement(final AIfStatement statement) {
+        final Type conditionType = types.get(statement.getCondition());
+        final int line = statement.getIfKeyword().getLine();
+        final int column = statement.getIfKeyword().getPos();
+
+        if (!(conditionType.isBoolean() || conditionType.isUndefined())) {
+            error(line, column, "if: condition must be of type boolean");
+        }
+    }
+
+    public void outAIfElseStatement(final AIfElseStatement statement) {
+        final Type conditionType = types.get(statement.getCondition());
+        final int line = statement.getIfKeyword().getLine();
+        final int column = statement.getIfKeyword().getPos();
+
+        if (!(conditionType.isBoolean() || conditionType.isUndefined())) {
+            error(line, column, "if/else: condition must be of type boolean");
+        }
+    }
+
+    public void outAWhileStatement(final AWhileStatement statement) {
+        final Type conditionType = types.get(statement.getCondition());
+        final int line = statement.getWhileKeyword().getLine();
+        final int column = statement.getWhileKeyword().getPos();
+
+        if (!(conditionType.isBoolean() || conditionType.isUndefined())) {
+            error(line, column, "while: condition must be of type boolean");
+        }
+    }
+
+    public void outAPrintlnStatement(final APrintlnStatement statement) {
+        final Type valueType = types.get(statement.getValue());
+        final int line = statement.getPrintlnKeyword().getLine();
+        final int column = statement.getPrintlnKeyword().getPos();
+
+        if (!(valueType.isInteger() || valueType.isUndefined())) {
+            error(line, column, "can't print value of type %s", valueType);
+        }
+    }
+
+    public void outAAssignStatement(final AAssignStatement statement) {
+        final String id = statement.getVariable().getText();
+        final int line = statement.getAssign().getLine();
+        final int column = statement.getAssign().getPos();
+
+        Type type = null;
+        final VariableInfo localInfo, paramInfo, fieldInfo;
+        if ((localInfo = currentMethod.getLocal(id)) != null) {
+            type = localInfo.getType();
+        } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
+            type = paramInfo.getType();
+        } else if ((fieldInfo = currentClass.getField(id)) != null) {
+            type = fieldInfo.getType();
+        } else if (symbolTable.getClassInfo(id) != null) {
+            error(line, column, "`%s` is a class name, expected variable name", id);
+        } else {
+            error(line, column, "undeclared identifier `%s`", id);
+        }
+
+        if (type != null) {
+            final Type valueType = types.get(statement.getValue());
+            if (!valueType.isAssignableTo(type)) {
+                error(line, column, "can't assign %s to %s", valueType, type);
+            }
+        }
+    }
+
+    public void outAArrayAssignStatement(final AArrayAssignStatement statement) {
+        final String id = statement.getVariable().getText();
+        final int line = statement.getAssign().getLine();
+        final int column = statement.getAssign().getPos();
+
+        final Type indexType = types.get(statement.getIndex());
+        if (!(indexType.isInt() || indexType.isUndefined())) {
+            error(line, column, "index of type %s, expected int", indexType);
+        }
+
+        Type type = null;
+        final VariableInfo localInfo, paramInfo, fieldInfo;
+        if ((localInfo = currentMethod.getLocal(id)) != null) {
+            type = localInfo.getType();
+        } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
+            type = paramInfo.getType();
+        } else if ((fieldInfo = currentClass.getField(id)) != null) {
+            type = fieldInfo.getType();
+        } else if (symbolTable.getClassInfo(id) != null) {
+            error(line, column, "`%s` is a class name, expected variable name", id);
+        } else {
+            error(line, column, "undeclared identifier `%s`", id);
+        }
+
+        if (type != null) {
+            final Type valueType = types.get(statement.getValue());
+            if (type.isIntArray()) {
+                if (!(valueType.isInt() || valueType.isUndefined())) {
+                    error(line, column, "can't assign %s to int", valueType);
+                }
+            } else if (type.isLongArray()) {
+                if (!(valueType.isInteger() || valueType.isUndefined())) {
+                    error(line, column, "can't assign %s to long", valueType);
+                }
+            } else {
+                error(line, column, "`%s` is of non-array type %s", id, type);
+            }
+        }
+    }
+
+    public void outAAndExpression(final AAndExpression expression) {
+        final Type left = types.get(expression.getLeft());
+        final Type right = types.get(expression.getRight());
+        final int line = expression.getAnd().getLine();
+        final int column = expression.getAnd().getPos();
+
+        if (!(left.isBoolean() || left.isUndefined())) {
+            error(line, column, "&&: unsupported left-hand type %s", left);
+        }
+
+        if (!(right.isBoolean() || right.isUndefined())) {
+            error(line, column, "&&: unsupported right-hand type %s", right);
+        }
+
+        types.put(expression, BuiltInType.Boolean);
+    }
+
+    public void outAOrExpression(final AOrExpression expression) {
+        final Type left = types.get(expression.getLeft());
+        final Type right = types.get(expression.getRight());
+        final int line = expression.getOr().getLine();
+        final int column = expression.getOr().getPos();
+
+        if (!(left.isBoolean() || left.isUndefined())) {
+            error(line, column, "||: unsupported left-hand type %s", left);
+        }
+
+        if (!(right.isBoolean() || right.isUndefined())) {
+            error(line, column, "||: unsupported right-hand type %s", right);
+        }
+
+        types.put(expression, BuiltInType.Boolean);
+    }
+
+    public void outALessThanExpression(final ALessThanExpression expression) {
+        final Type left = types.get(expression.getLeft());
+        final Type right = types.get(expression.getRight());
+        final int line = expression.getLessThan().getLine();
+        final int column = expression.getLessThan().getPos();
+
+        if (!(left.isInteger() && right.isInteger() ||
+                left.isUndefined() || right.isUndefined())) {
+            error(line, column, "<: can't compare %s to %s", left, right);
+        }
+
+        types.put(expression, BuiltInType.Boolean);
+    }
+
+    public void outAGreaterThanExpression(final AGreaterThanExpression expression) {
+        final Type left = types.get(expression.getLeft());
+        final Type right = types.get(expression.getRight());
+        final int line = expression.getGreaterThan().getLine();
+        final int column = expression.getGreaterThan().getPos();
+
+        if (!(left.isInteger() && right.isInteger() ||
+                left.isUndefined() || right.isUndefined())) {
+            error(line, column, ">: can't compare %s to %s", left, right);
+        }
+
+        types.put(expression, BuiltInType.Boolean);
+    }
+
+    public void outAGreaterEqualThanExpression(final AGreaterEqualThanExpression expression) {
+        final Type left = types.get(expression.getLeft());
+        final Type right = types.get(expression.getRight());
+        final int line = expression.getGreaterEqualThan().getLine();
+        final int column = expression.getGreaterEqualThan().getPos();
+
+        if (!(left.isInteger() && right.isInteger() ||
+                left.isUndefined() || right.isUndefined())) {
+            error(line, column, ">=: can't compare %s to %s", left, right);
+        }
+
+        types.put(expression, BuiltInType.Boolean);
+    }
+
+    public void outALessEqualThanExpression(final ALessEqualThanExpression expression) {
+        final Type left = types.get(expression.getLeft());
+        final Type right = types.get(expression.getRight());
+        final int line = expression.getLessEqualThan().getLine();
+        final int column = expression.getLessEqualThan().getPos();
+
+        if (!(left.isInteger() && right.isInteger() ||
+                left.isUndefined() || right.isUndefined())) {
+            error(line, column, "<=: can't compare %s to %s", left, right);
+        }
+
+        types.put(expression, BuiltInType.Boolean);
+    }
+
+    public void outAEqualExpression(final AEqualExpression expression) {
+        final Type left = types.get(expression.getLeft());
+        final Type right = types.get(expression.getRight());
+        final int line = expression.getEqual().getLine();
+        final int column = expression.getEqual().getPos();
+
+        if (!(left.isInteger() && right.isInteger() ||
+                left.isClass() && right.isClass() ||
+                left.isBoolean() && right.isBoolean() ||
+                left.isUndefined() || right.isUndefined())) {
+            error(line, column, "==: can't compare %s to %s", left, right);
+        }
+
+        types.put(expression, BuiltInType.Boolean);
+    }
+
+    public void outANotEqualExpression(final ANotEqualExpression expression) {
+        final Type left = types.get(expression.getLeft());
+        final Type right = types.get(expression.getRight());
+        final int line = expression.getNotEqual().getLine();
+        final int column = expression.getNotEqual().getPos();
+
+        if (!(left.isInteger() && right.isInteger() ||
+                left.isClass() && right.isClass() ||
+                left.isBoolean() && right.isBoolean() ||
+                left.isUndefined() || right.isUndefined())) {
+            error(line, column, "!=: can't compare %s to %s", left, right);
+        }
+
+        types.put(expression, BuiltInType.Boolean);
+    }
+
     public void outAPlusExpression(final APlusExpression expression) {
-        final Type leftType = types.get(expression.getLeft());
-        final Type rightType = types.get(expression.getRight());
+        final Type left = types.get(expression.getLeft());
+        final Type right = types.get(expression.getRight());
         final int line = expression.getPlus().getLine();
         final int column = expression.getPlus().getPos();
 
-        if (leftType == BuiltInType.Integer) {
-            if (rightType == BuiltInType.Integer) {
-                types.put(expression, BuiltInType.Integer);
-            } else if (rightType == BuiltInType.Long) {
-                types.put(expression, BuiltInType.Long);
-            } else {
-                types.put(expression, UndefinedType.Instance);
-                error(line, column, "+: unsupported right-hand type %s", rightType);
-            }
-        } else if (leftType == BuiltInType.Long) {
-            if (rightType == BuiltInType.Integer || rightType == BuiltInType.Long) {
-                types.put(expression, BuiltInType.Long);
-            } else {
-                types.put(expression, UndefinedType.Instance);
-                error(line, column, "+: unsupported right-hand type %s", rightType);
-            }
+        if (!(left.isInteger() || left.isUndefined())) {
+            error(line, column, "+: unsupported left-hand type %s", left);
+        }
+
+        if (!(right.isInteger() || right.isUndefined())) {
+            error(line, column, "+: unsupported right-hand type %s", right);
+        }
+
+        if (left.isLong() || right.isLong()) {
+            types.put(expression, BuiltInType.Long);
         } else {
-            types.put(expression, UndefinedType.Instance);
-            error(line, column, "+: unsupported left-hand type %s", leftType);
+            types.put(expression, BuiltInType.Integer); // Possibly a guess.
         }
     }
 
     public void outAMinusExpression(final AMinusExpression expression) {
-        final Type leftType = types.get(expression.getLeft());
-        final Type rightType = types.get(expression.getRight());
+        final Type left = types.get(expression.getLeft());
+        final Type right = types.get(expression.getRight());
         final int line = expression.getMinus().getLine();
         final int column = expression.getMinus().getPos();
 
-        if (leftType == BuiltInType.Integer) {
-            if (rightType == BuiltInType.Integer) {
-                types.put(expression, BuiltInType.Integer);
-            } else {
-                types.put(expression, UndefinedType.Instance);
-                error(line, column, "-: unsupported right-hand type %s", rightType);
-            }
-        } else if (leftType == BuiltInType.Long) {
-            if (rightType == BuiltInType.Integer || rightType == BuiltInType.Long) {
-                types.put(expression, BuiltInType.Long);
-            } else {
-                types.put(expression, UndefinedType.Instance);
-                error(line, column, "-: unsupported right-hand type %s", rightType);
-            }
+        if (!(left.isInteger() || left.isUndefined())) {
+            error(line, column, "-: unsupported left-hand type %s", left);
+        }
+
+        if (!(right.isInteger() || right.isUndefined())) {
+            error(line, column, "-: unsupported right-hand type %s", right);
+        }
+
+        if (left.isInt() && right.isLong()) {
+            error(line, column, "-: can't subtract long from int", left);
+        }
+
+        if (left.isLong()) {
+            types.put(expression, BuiltInType.Long);
         } else {
-            types.put(expression, UndefinedType.Instance);
-            error(line, column, "-: unsupported left-hand type %s", leftType);
+            types.put(expression, BuiltInType.Integer); // Possibly a guess.
         }
     }
 
     public void outATimesExpression(final ATimesExpression expression) {
-        final Type leftType = types.get(expression.getLeft());
-        final Type rightType = types.get(expression.getRight());
+        final Type left = types.get(expression.getLeft());
+        final Type right = types.get(expression.getRight());
         final int line = expression.getStar().getLine();
         final int column = expression.getStar().getPos();
 
-        if (leftType == BuiltInType.Long || leftType == BuiltInType.Integer) {
-            if (rightType == BuiltInType.Long || rightType == BuiltInType.Integer) {
-                if (leftType == BuiltInType.Long || rightType == BuiltInType.Long) {
-                    types.put(expression, BuiltInType.Long);
-                } else {
-                    types.put(expression, BuiltInType.Integer);
-                }
-            } else {
-                types.put(expression, UndefinedType.Instance);
-                error(line, column, "*: unsupported right-hand type %s", rightType);
-            }
+        if (!(right.isInteger() || right.isUndefined())) {
+            error(line, column, "*: unsupported right-hand type %s", right);
+        }
+
+        if (!(left.isInteger() || left.isUndefined())) {
+            error(line, column, "*: unsupported left-hand type %s", left);
+        }
+
+        if (left.isLong() || right.isLong()) {
+            types.put(expression, BuiltInType.Long);
         } else {
-            types.put(expression, UndefinedType.Instance);
-            error(line, column, "*: unsupported left-hand type %s", leftType);
+            types.put(expression, BuiltInType.Integer); // Possibly a guess.
         }
     }
 
     public void outANotExpression(final ANotExpression expression) {
+        types.put(expression, BuiltInType.Boolean);
         final Type type = types.get(expression.getExpression());
-        if (type != BuiltInType.Boolean) {
+        if (!(type.isBoolean() || type.isUndefined())) {
             final int line = expression.getNot().getLine();
             final int column = expression.getNot().getPos();
             error(line, column, "!: expected boolean expression, but got %s", type);
         }
-        types.put(expression, BuiltInType.Boolean);
     }
 
     public void outAMethodInvocationExpression(final AMethodInvocationExpression expression) {
@@ -226,13 +470,12 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getName().getLine();
         final int column = expression.getName().getPos();
 
-        if (type == UndefinedType.Instance) {
-            types.put(expression, UndefinedType.Instance);
-        } else if (type.isClass()) {
+        if (type.isClass()) {
             final ClassInfo classInfo = symbolTable.getClassInfo(type.getName());
             final MethodInfo methodInfo = classInfo.getMethod(methodId);
+
             if (methodInfo != null) {
-                // Check if parameters match.
+                // Check if actual parameters match formal parameters.
                 final List<PExpression> actuals = expression.getActualParameters();
                 final List<VariableInfo> formals = methodInfo.getParameters();
                 if (actuals.size() == formals.size()) {
@@ -249,6 +492,7 @@ public class TypeChecker extends DepthFirstAdapter {
                         }
                         ++param;
                     }
+
                 } else {
                     error(line, column,
                             "in call to `%s`: %d parameters given, expected %d",
@@ -256,12 +500,14 @@ public class TypeChecker extends DepthFirstAdapter {
                 }
                 types.put(expression, methodInfo.getReturnType());
             } else {
+                error(line, column, "no method `%s` in class `%s`", methodId, classInfo.getName());
                 types.put(expression, UndefinedType.Instance);
-                error(line, column, "undeclared method `%s`", methodId);
             }
         } else {
+            if (!type.isUndefined()) {
+                error(line, column, "method call on expression of non-class type %s", type);
+            }
             types.put(expression, UndefinedType.Instance);
-            error(line, column, "method call on expression of non-class type %s", type);
         }
     }
 
@@ -271,26 +517,28 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getStartBracket().getLine();
         final int column = expression.getStartBracket().getPos();
 
-        if (indexType != BuiltInType.Integer) {
-            error(line, column, "array index expression of type %s, expected int", indexType);
+        if (!(indexType.isInt() || indexType.isUndefined())) {
+            error(line, column, "index of type %s, expected int", indexType);
         }
 
-        if (type == BuiltInType.IntegerArray) {
+        if (type.isIntArray()) {
             types.put(expression, BuiltInType.Integer);
-        } else if (type == BuiltInType.LongArray) {
+        } else if (type.isLongArray()) {
             types.put(expression, BuiltInType.Long);
         } else {
-            types.put(expression, UndefinedType.Instance);
-            error(line, column, "accessed expression of type %s, expected array", type);
+            if (!type.isUndefined()) {
+                error(line, column, "%s is not an array type", type);
+            }
+            types.put(expression, BuiltInType.Integer); // Guess int[].
         }
     }
 
     public void outAArrayLengthExpression(final AArrayLengthExpression expression) {
         final Type type = types.get(expression.getArray());
-        if (type != BuiltInType.IntegerArray && type != BuiltInType.LongArray) {
+        if (!(type.isArray() || type.isUndefined())) {
             final int line = expression.getLengthKeyword().getLine();
             final int column = expression.getLengthKeyword().getPos();
-            error(line, column, "length unsupported on non-array type %s", type);
+            error(line, column, "length: unsupported on non-array type %s", type);
         }
         types.put(expression, BuiltInType.Integer);
     }
@@ -310,18 +558,18 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     public void outANewIntArrayExpression(final ANewIntArrayExpression expression) {
+        types.put(expression, BuiltInType.IntegerArray);
         final Type type = types.get(expression.getSize());
-        if (type != BuiltInType.Integer) {
+        if (!(type.isInt() || type.isUndefined())) {
             final int line = expression.getNewKeyword().getLine();
             final int column = expression.getNewKeyword().getPos();
             error(line, column, "array size expression of type %s, expected int", type);
         }
-        types.put(expression, BuiltInType.IntegerArray);
     }
 
     public void outANewLongArrayExpression(final ANewLongArrayExpression expression) {
         final Type type = types.get(expression.getSize());
-        if (type != BuiltInType.Integer) {
+        if (!(type.isInt() || type.isUndefined())) {
             final int line = expression.getNewKeyword().getLine();
             final int column = expression.getNewKeyword().getPos();
             error(line, column, "array size expression of type %s, expected int", type);
@@ -330,10 +578,26 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     public void outAIntegerExpression(final AIntegerExpression expression) {
+        final String literal = expression.getInteger().getText();
+        try {
+            Integer.parseInt(literal);
+        } catch (NumberFormatException e) {
+            final int line = expression.getInteger().getLine();
+            final int column = expression.getInteger().getPos();
+            error(line, column, "invalid int literal %s", literal);
+        }
         types.put(expression, BuiltInType.Integer);
     }
 
     public void outALongExpression(final ALongExpression expression) {
+        final String literal = expression.getLong().getText();
+        try {
+            Long.parseLong(literal.substring(0, literal.length() - 1));
+        } catch (NumberFormatException e) {
+            final int line = expression.getLong().getLine();
+            final int column = expression.getLong().getPos();
+            error(line, column, "invalid long literal %s", literal);
+        }
         types.put(expression, BuiltInType.Long);
     }
 
@@ -347,18 +611,21 @@ public class TypeChecker extends DepthFirstAdapter {
 
     public void outAIdentifierExpression(final AIdentifierExpression expression) {
         final String id = expression.getIdentifier().getText();
-        final VariableInfo localInfo, paramInfo;
-        final ClassInfo classInfo;
+        final int line = expression.getIdentifier().getLine();
+        final int column = expression.getIdentifier().getPos();
+
+        final VariableInfo localInfo, paramInfo, fieldInfo;
 
         if ((localInfo = currentMethod.getLocal(id)) != null) {
             types.put(expression, localInfo.getType());
         } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
             types.put(expression, paramInfo.getType());
-        } else if ((classInfo = symbolTable.getClassInfo(id)) != null) {
-            types.put(expression, classInfo.getType());
+        } else if ((fieldInfo = currentClass.getField(id)) != null) {
+            types.put(expression, fieldInfo.getType());
+        } else if (symbolTable.getClassInfo(id) != null) {
+            error(line, column, "`%s` is a class name, expected variable name", id);
+            types.put(expression, UndefinedType.Instance);
         } else {
-            final int line = expression.getIdentifier().getLine();
-            final int column = expression.getIdentifier().getPos();
             error(line, column, "undeclared identifier `%s`", id);
             types.put(expression, UndefinedType.Instance);
         }

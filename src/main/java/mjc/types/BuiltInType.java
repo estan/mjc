@@ -36,15 +36,40 @@ public class BuiltInType extends Type {
     }
 
     @Override
+    public boolean isInt() {
+        return this == Integer;
+    }
+
+    @Override
+    public boolean isIntArray() {
+        return this == IntegerArray;
+    }
+
+    @Override
+    public boolean isLong() {
+        return this == Long;
+    }
+
+    @Override
+    public boolean isLongArray() {
+        return this == LongArray;
+    }
+
+    @Override
+    public boolean isBoolean() {
+        return this == Boolean;
+    }
+
+    @Override
     public boolean isClass() {
         return false;
     }
 
     @Override
     public boolean isAssignableTo(Type type) {
-        if (type == this || type == UndefinedType.Instance)
+        if (type == this || type.isUndefined())
             return true;
-        if (this == Integer && type == Long)
+        if (isInt() && type.isLong())
             return true;
         return false;
     }

@@ -21,20 +21,15 @@ public class ClassType extends Type {
     }
 
     @Override
-    public boolean isBuiltIn() {
-        return false;
-    }
-
-    @Override
     public boolean isClass() {
         return true;
     }
 
     @Override
     public boolean isAssignableTo(Type type) {
-        if (type == this || type == UndefinedType.Instance)
+        if (type == this || type.isUndefined())
             return true;
-        if (type instanceof ClassType && ((ClassType)type).getName().equals(name))
+        if (type.isClass() && ((ClassType)type).getName().equals(name))
             return true;
         return false;
 
