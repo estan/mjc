@@ -57,9 +57,6 @@
                classpathref="project-classpath"
                includeAntRuntime="false"
                debug="on"/>
-        <copy todir="${main-classes-dir}">
-            <fileset dir="${basedir}" includes="log4j.properties"/>
-        </copy>
 
         <mkdir dir="${test-classes-dir}"/>
         <javac srcdir="${test-src-dir}"
