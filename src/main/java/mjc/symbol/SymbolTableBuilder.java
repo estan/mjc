@@ -26,8 +26,9 @@ import mjc.types.ClassType;
 import mjc.types.Type;
 import mjc.types.UndefinedType;
 import mjc.types.UnsupportedType;
-import mjc.Error;
-import static mjc.Error.*;
+import mjc.error.MiniJavaError;
+
+import static mjc.error.MiniJavaErrorType.*;
 
 /**
  * Symbol table builder.
@@ -51,7 +52,7 @@ import static mjc.Error.*;
  */
 public class SymbolTableBuilder {
 
-    private final List<Error> errors = new ArrayList<>();
+    private final List<MiniJavaError> errors = new ArrayList<>();
 
     /**
      * Builds and returns a symbol table from the given AST.
@@ -84,14 +85,14 @@ public class SymbolTableBuilder {
     /**
      * @return The list of errors collected during symbol table construction.
      */
-    public List<Error> getErrors() {
+    public List<MiniJavaError> getErrors() {
         return errors;
     }
 
     /**
      * Adds an encountered error to the list of errors.
      */
-    private void error(final Error error) {
+    private void error(final MiniJavaError error) {
         errors.add(error);
     }
 

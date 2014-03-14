@@ -50,9 +50,9 @@ import mjc.symbol.VariableInfo;
 import mjc.types.BuiltInType;
 import mjc.types.Type;
 import mjc.types.UndefinedType;
-import mjc.Error;
+import mjc.error.MiniJavaError;
 
-import static mjc.Error.*;
+import static mjc.error.MiniJavaErrorType.*;
 
 /**
  * Type checker.
@@ -72,7 +72,7 @@ public class TypeChecker extends DepthFirstAdapter {
     private MethodInfo currentMethod;
 
     private HashMap<Node, Type> types;
-    private List<Error> errors;
+    private List<MiniJavaError> errors;
 
     /**
      * Perform type-checking on the given tree using the given symbol table.
@@ -103,14 +103,14 @@ public class TypeChecker extends DepthFirstAdapter {
     /**
      * @return The list of errors collected during type-checking.
      */
-    public List<Error> getErrors() {
+    public List<MiniJavaError> getErrors() {
         return errors;
     }
 
     /**
      * Adds an encountered error to the list of errors.
      */
-    private void error(final Error error) {
+    private void error(final MiniJavaError error) {
         errors.add(error);
     }
 

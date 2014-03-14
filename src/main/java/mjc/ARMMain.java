@@ -17,6 +17,7 @@ import mjc.node.Start;
 import mjc.analysis.ASTGraphPrinter;
 import mjc.analysis.ASTPrinter;
 import mjc.analysis.TypeChecker;
+import mjc.error.MiniJavaError;
 
 public class ARMMain {
     private ASTPrinter astPrinter = new ASTPrinter();
@@ -57,7 +58,7 @@ public class ARMMain {
                 SymbolTableBuilder symbolTableBuilder = new SymbolTableBuilder();
                 SymbolTable symbolTable = symbolTableBuilder.build(tree);
                 if (symbolTableBuilder.hasErrors()) {
-                    for (Error error : symbolTableBuilder.getErrors()) {
+                    for (MiniJavaError error : symbolTableBuilder.getErrors()) {
                         System.err.println(error);
                     }
                 }
@@ -65,7 +66,7 @@ public class ARMMain {
                 // Run type-check.
                 TypeChecker typeChecker = new TypeChecker();
                 if (!typeChecker.check(tree, symbolTable)) {
-                    for (Error error : typeChecker.getErrors()) {
+                    for (MiniJavaError error : typeChecker.getErrors()) {
                         System.err.println(error);
                     }
                 }
