@@ -592,7 +592,7 @@ public class TypeChecker extends DepthFirstAdapter {
     public void outALongExpression(final ALongExpression expression) {
         final String literal = expression.getLong().getText();
         try {
-            Long.parseLong(literal.substring(0, literal.length() - 1));
+            Long.parseLong(literal.substring(0, literal.length() - 1)); // Strip 'L'/'l'.
         } catch (NumberFormatException e) {
             final int line = expression.getLong().getLine();
             final int column = expression.getLong().getPos();
