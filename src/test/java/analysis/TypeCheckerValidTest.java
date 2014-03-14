@@ -1,4 +1,4 @@
-package mjc.symbol;
+package analysis;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -8,28 +8,31 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import mjc.analysis.TypeChecker;
 import mjc.lexer.Lexer;
 import mjc.lexer.LexerException;
 import mjc.node.Start;
 import mjc.parser.Parser;
 import mjc.parser.ParserException;
+import mjc.symbol.SymbolTable;
+import mjc.symbol.SymbolTableBuilder;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import static org.junit.Assert.assertThat;
 
+import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.emptyIterable;
 
 /**
- * Tests the symbol table builder on valid input.
+ * Tests the type checker on valid input.
  *
  * The test case will run once on each *.java file in dataDir.
  */
 @RunWith(Parameterized.class)
-public class SymbolTableBuilderValidTest {
+public class TypeCheckerValidTest {
     private static String dataDir = "src/test/resources/valid";
 
     private String path; // Set once for each file in dataDir.
@@ -39,12 +42,12 @@ public class SymbolTableBuilderValidTest {
      *
      * @param path Path of file to test on.
      */
-    public SymbolTableBuilderValidTest(String path) {
+    public TypeCheckerValidTest(String path) {
         this.path = path;
     }
 
     /**
-     * Tests that the symbol table builder runs without problems.
+     * Tests that the type checker runs without problems.
      *
      * @throws IOException if an I/O error occurred.
      * @throws ParserException if parsing failed.
@@ -60,8 +63,13 @@ public class SymbolTableBuilderValidTest {
 
         // Build symbol table and assert there were no errors.
         SymbolTableBuilder symbolTableBuilder = new SymbolTableBuilder();
-        symbolTableBuilder.build(tree);
+        SymbolTable symbolTable = symbolTableBuilder.build(tree);
         assertThat(symbolTableBuilder.getErrors(), is(emptyIterable()));
+
+        // Run type-checker and assert there were no errors.
+        TypeChecker typeChecker = new TypeChecker();
+        typeChecker.check(tree, symbolTable);
+        assertThat(typeChecker.getErrors(), is(emptyIterable()));
     }
 
     /**
