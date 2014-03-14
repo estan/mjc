@@ -57,7 +57,7 @@ public class ARMMain {
                 SymbolTableBuilder symbolTableBuilder = new SymbolTableBuilder();
                 SymbolTable symbolTable = symbolTableBuilder.build(tree);
                 if (symbolTableBuilder.hasErrors()) {
-                    for (String error : symbolTableBuilder.getErrors()) {
+                    for (Error error : symbolTableBuilder.getErrors()) {
                         System.err.println(error);
                     }
                 }
@@ -65,12 +65,10 @@ public class ARMMain {
                 // Run type-check.
                 TypeChecker typeChecker = new TypeChecker();
                 if (!typeChecker.check(tree, symbolTable)) {
-                    for (String error : typeChecker.getErrors()) {
+                    for (Error error : typeChecker.getErrors()) {
                         System.err.println(error);
                     }
                 }
-
-                //System.out.println(symbolTable);
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());

@@ -26,6 +26,8 @@ import mjc.types.ClassType;
 import mjc.types.Type;
 import mjc.types.UndefinedType;
 import mjc.types.UnsupportedType;
+import mjc.Error;
+import static mjc.Error.*;
 
 /**
  * Symbol table builder.
@@ -49,7 +51,7 @@ import mjc.types.UnsupportedType;
  */
 public class SymbolTableBuilder {
 
-    private final List<String> errors = new ArrayList<>();
+    private final List<Error> errors = new ArrayList<>();
 
     /**
      * Builds and returns a symbol table from the given AST.
@@ -73,29 +75,24 @@ public class SymbolTableBuilder {
     }
 
     /**
-     * Returns true if errors were encountered during symbol table construction.
+     * @return true if errors occurred during symbol table construction.
      */
     public boolean hasErrors() {
         return !errors.isEmpty();
     }
 
     /**
-     * Returns the list of errors encountered during symbol table construction.
+     * @return The list of errors collected during symbol table construction.
      */
-    public List<String> getErrors() {
+    public List<Error> getErrors() {
         return errors;
     }
 
     /**
-     * Add an encountered error to the list of errors.
-     *
-     * @param line Line of the error.
-     * @param column Column of the error.
-     * @param format Error message as a formatted string referring to argument in @a args.
-     * @param args Arguments referred to in @a format.
+     * Adds an encountered error to the list of errors.
      */
-    private void error(int line, int column, final String format, final Object... args) {
-        errors.add("[" + line + "," + column + "] " + String.format(format, args));
+    private void error(final Error error) {
+        errors.add(error);
     }
 
     /**
@@ -120,11 +117,12 @@ public class SymbolTableBuilder {
         public void inAMainClassDeclaration(final AMainClassDeclaration declaration) {
             final TIdentifier classId = declaration.getName();
             final TIdentifier methodId = declaration.getMainMethodName();
+            final int line = methodId.getLine();
+            final int column = methodId.getPos();
 
             // Check that main method name is "main".
             if (!methodId.getText().equals("main")) {
-                error(methodId.getLine(), methodId.getPos(), "missing main method in `%s`",
-                    classId.getText());
+                error(MISSING_MAIN.on(line, column, classId.getText()));
             }
 
             symbolTable.addClassInfo(classId.getText(), new ClassInfo(
@@ -145,7 +143,7 @@ public class SymbolTableBuilder {
                 // Redeclaration: Enter ClassInfo under new name, and update AST to match.
                 name = name + "-REDECLARED-" + UUID.randomUUID();
                 classId.replaceBy(new TIdentifier(name, line, column));
-                error(line, column, "duplicate class `%s`", classId.getText());
+                error(DUPLICATE_CLASS.on(line, column, classId.getText()));
             }
 
             symbolTable.addClassInfo(name, new ClassInfo(
@@ -222,7 +220,7 @@ public class SymbolTableBuilder {
                         fromAbstract(declaration.getType()),
                         line, column));
             } else {
-                error(line, column, "duplicate field `%s`", fieldId.getText());
+                error(DUPLICATE_FIELD.on(line, column, fieldId.getText()));
             }
         }
 
@@ -239,7 +237,7 @@ public class SymbolTableBuilder {
                 // Redeclaration: Use another name, and update AST to match.
                 name = name + "-REDECLARED-" + UUID.randomUUID();
                 methodId.replaceBy(new TIdentifier(name, line, column));
-                error(line, column, "duplicate method `%s`", methodId.getText());
+                error(DUPLICATE_METHOD.on(line, column, methodId.getText()));
             }
 
             currentMethod = currentClass.addMethod(name,
@@ -278,7 +276,7 @@ public class SymbolTableBuilder {
                         fromAbstract(declaration.getType()),
                         line, column));
             } else {
-                error(line, column, "duplicate parameter `%s`", paramId.getText());
+                error(DUPLICATE_PARAMETER.on(line, column, paramId.getText()));
             }
         }
 
@@ -297,7 +295,7 @@ public class SymbolTableBuilder {
                         fromAbstract(declaration.getType()),
                         line, column));
             } else {
-                error(line, column, "duplicate variable `%s`", variableId.getText());
+                error(DUPLICATE_VARIABLE.on(line, column, variableId.getText()));
             }
         }
 
@@ -320,8 +318,9 @@ public class SymbolTableBuilder {
                 if (classInfo != null) {
                     return classInfo.getType();
                 } else {
-                    errors.add(String.format("[%d,%d] undeclared class `%s`",
-                            classId.getLine(), classId.getPos(), classId.getText()));
+                    final int line = classId.getLine();
+                    final int column = classId.getPos();
+                    error(UNDECLARED_CLASS.on(line, column, classId.getText()));
                     return UndefinedType.Instance;
                 }
             } else if (abstractType instanceof AIntType) {
