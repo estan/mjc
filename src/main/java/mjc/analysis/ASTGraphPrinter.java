@@ -35,8 +35,36 @@ public class ASTGraphPrinter extends DepthFirstAdapter {
 
     @Override
     public void defaultCase(Node node) {
-        if (!(node instanceof EOF))
-            printNode(node, ((Token) node).getText());
+        if (node instanceof EOF)
+            return;
+
+        final Token token = (Token) node;
+        switch (token.getText()) {
+            case "=":
+            case "!=":
+            case "&&":
+            case "||":
+            case "<":
+            case "<=":
+            case ">":
+            case ">=":
+            case "length":
+            case "new":
+            case "if":
+            case "else":
+            case "[":
+            case "*":
+            case "+":
+            case "-":
+            case "int":
+            case "long":
+            case "int[]":
+            case "long[]":
+            case "boolean":
+                break; // Some noise in our AST that we can skip.
+            default:
+                printNode(node, ((Token) node).getText());
+        }
     }
 
     private void printNode(Node node, String label) {
