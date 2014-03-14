@@ -12,6 +12,10 @@ public final class MiniJavaError {
     /**
      * Constructs a new error.
      *
+     * Errors are usually not created explicitly (which is why this constructor is package
+     * private), but by using the {@link MiniJavaErrorType#on(int, int, Object...)} factory
+     * method.
+     *
      * @param line Line of the error.
      * @param column Column of the error.
      * @param type Type of the error.
