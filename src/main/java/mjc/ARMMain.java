@@ -60,8 +60,10 @@ public class ARMMain {
             final int line = token.getLine();
             final int column = token.getPos();
             System.err.println(LEXER_ERROR.on(line, column, token.getText()));
+            System.exit(EXIT_FAILURE);
         } catch (ParserException e) {
             System.err.println(PARSER_ERROR.on(e.getLine(), e.getPos(), e.getError()));
+            System.exit(EXIT_FAILURE);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             System.exit(EXIT_FAILURE);
