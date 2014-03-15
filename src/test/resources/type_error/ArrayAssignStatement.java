@@ -8,17 +8,17 @@ class ArrayAssignStatementTest {
         A cA;
         B cB;
 
-        ia[ia] = i;   // WRONG_INDEX_TYPE
-        ia[l] = i;    // WRONG_INDEX_TYPE
-        ia[la] = i;   // WRONG_INDEX_TYPE
-        ia[b] = i;    // WRONG_INDEX_TYPE
-        ia[cA] = i;   // WRONG_INDEX_TYPE
+        ia[ia] = i;   // INVALID_INDEX_TYPE
+        ia[l] = i;    // INVALID_INDEX_TYPE
+        ia[la] = i;   // INVALID_INDEX_TYPE
+        ia[b] = i;    // INVALID_INDEX_TYPE
+        ia[cA] = i;   // INVALID_INDEX_TYPE
 
-        la[ia] = l;  // WRONG_INDEX_TYPE
-        la[l] = l;   // WRONG_INDEX_TYPE
-        la[la] = l;  // WRONG_INDEX_TYPE
-        la[b] = l;   // WRONG_INDEX_TYPE
-        la[cA] = l;  // WRONG_INDEX_TYPE
+        la[ia] = l;  // INVALID_INDEX_TYPE
+        la[l] = l;   // INVALID_INDEX_TYPE
+        la[la] = l;  // INVALID_INDEX_TYPE
+        la[b] = l;   // INVALID_INDEX_TYPE
+        la[cA] = l;  // INVALID_INDEX_TYPE
 
         A[i] = i; // EXPECTED_VARIABLE_GOT_CLASS
         U[i] = i; // UNDECLARED_IDENTIFIER

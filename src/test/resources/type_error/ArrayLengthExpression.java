@@ -8,10 +8,10 @@ class ArrayLengthExpressionTest {
         A cA;
         B cB;
 
-        i = i.length;  // LENGTH_ON_NON_ARRAY_TYPE
-        i = l.length;  // LENGTH_ON_NON_ARRAY_TYPE
-        i = b.length;  // LENGTH_ON_NON_ARRAY_TYPE
-        i = cA.length; // LENGTH_ON_NON_ARRAY_TYPE
+        i = i.length;  // LENGTH_ON_NON_ARRAY
+        i = l.length;  // LENGTH_ON_NON_ARRAY
+        i = b.length;  // LENGTH_ON_NON_ARRAY
+        i = cA.length; // LENGTH_ON_NON_ARRAY
     }
 }
 class A {}

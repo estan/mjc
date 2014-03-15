@@ -7,16 +7,16 @@ class AndExpressionTest {
         boolean b;
         A cA;
         B cB;
-        if (i && b) {} // INVALID_LEFT_OP_AND
-        if (ia && b) {} // INVALID_LEFT_OP_AND
-        if (l && b) {} // INVALID_LEFT_OP_AND
-        if (la && b) {} // INVALID_LEFT_OP_AND
-        if (cA && b) {} // INVALID_LEFT_OP_AND
-        if (b && i) {} // INVALID_RIGHT_OP_AND
-        if (b && ia) {} // INVALID_RIGHT_OP_AND
-        if (b && l) {} // INVALID_RIGHT_OP_AND
-        if (b && la) {} // INVALID_RIGHT_OP_AND
-        if (b && cA) {} // INVALID_RIGHT_OP_AND
+        if (i && b) {} // INVALID_BINARY_OP
+        if (ia && b) {} // INVALID_BINARY_OP
+        if (l && b) {} // INVALID_BINARY_OP
+        if (la && b) {} // INVALID_BINARY_OP
+        if (cA && b) {} // INVALID_BINARY_OP
+        if (b && i) {} // INVALID_BINARY_OP
+        if (b && ia) {} // INVALID_BINARY_OP
+        if (b && l) {} // INVALID_BINARY_OP
+        if (b && la) {} // INVALID_BINARY_OP
+        if (b && cA) {} // INVALID_BINARY_OP
 
         // We could test all combinations, but lets hope this suffices.
     }

@@ -3,9 +3,9 @@ package mjc.types;
 /**
  * UndefinedType represents an undefined type.
  *
- * An UndefinedType is assignable to all other types.
+ * Operations with undefined types are always allowed, except with unsupported types.
  *
- * There is only a single static instance of this class.
+ * There is only one single static instance of this class.
  */
 public class UndefinedType extends Type {
     public final static Type Instance = new UndefinedType();
@@ -21,7 +21,42 @@ public class UndefinedType extends Type {
     }
 
     @Override
-    public boolean isAssignableTo(Type o) {
-        return true;
+    public boolean isAssignableTo(final Type type) {
+        return !type.isUnsupported();
+    }
+
+    @Override
+    public boolean isEqualComparableTo(final Type type) {
+        return !type.isUnsupported();
+    }
+
+    @Override
+    public boolean isRelationalComparableTo(final Type type) {
+        return !type.isUnsupported();
+    }
+
+    @Override
+    public boolean isAddableTo(final Type type) {
+        return !type.isUnsupported();
+    }
+
+    @Override
+    public boolean isSubtractableFrom(final Type type) {
+        return !type.isUnsupported();
+    }
+
+    @Override
+    public boolean isMultipliableWith(final Type type) {
+        return !type.isUnsupported();
+    }
+
+    @Override
+    public boolean isDisjunctableWith(final Type type) {
+        return !type.isUnsupported();
+    }
+
+    @Override
+    public boolean isConjunctableWith(final Type type) {
+        return !type.isUnsupported();
     }
 }

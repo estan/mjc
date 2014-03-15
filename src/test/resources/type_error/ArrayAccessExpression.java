@@ -8,17 +8,17 @@ class ArrayAccessExpressionTest {
         A cA;
         B cB;
 
-        i = ia[ia]; // WRONG_INDEX_TYPE
-        i = ia[l];  // WRONG_INDEX_TYPE
-        i = ia[la]; // WRONG_INDEX_TYPE
-        i = ia[b];  // WRONG_INDEX_TYPE
-        i = ia[cA]; // WRONG_INDEX_TYPE
+        i = ia[ia]; // INVALID_INDEX_TYPE
+        i = ia[l];  // INVALID_INDEX_TYPE
+        i = ia[la]; // INVALID_INDEX_TYPE
+        i = ia[b];  // INVALID_INDEX_TYPE
+        i = ia[cA]; // INVALID_INDEX_TYPE
 
-        l = la[ia];  // WRONG_INDEX_TYPE
-        l = la[l];   // WRONG_INDEX_TYPE
-        l = la[la];  // WRONG_INDEX_TYPE
-        l = la[b];   // WRONG_INDEX_TYPE
-        l = la[cA];  // WRONG_INDEX_TYPE
+        l = la[ia];  // INVALID_INDEX_TYPE
+        l = la[l];   // INVALID_INDEX_TYPE
+        l = la[la];  // INVALID_INDEX_TYPE
+        l = la[b];   // INVALID_INDEX_TYPE
+        l = la[cA];  // INVALID_INDEX_TYPE
 
         i = i[i];    // NOT_ARRAY_TYPE
         i = l[i];    // NOT_ARRAY_TYPE

@@ -27,12 +27,13 @@ public class ClassType extends Type {
 
     @Override
     public boolean isAssignableTo(Type type) {
-        if (type == this || type.isUndefined())
-            return true;
-        if (type.isClass() && type.getName().equals(name))
-            return true;
-        return false;
+        return type.isUndefined() || type.isClass() && type.getName().equals(name);
 
+    }
+
+    @Override
+    public boolean isEqualComparableTo(final Type type) {
+        return type.isUndefined() || type.isClass() && type.getName().equals(name);
     }
 
     @Override

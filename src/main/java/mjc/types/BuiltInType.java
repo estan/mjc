@@ -21,7 +21,7 @@ public class BuiltInType extends Type {
      *
      * @param name Name of the type.
      */
-    private BuiltInType(String name) {
+    private BuiltInType(final String name) {
         this.name = name;
     }
 
@@ -51,8 +51,18 @@ public class BuiltInType extends Type {
     }
 
     @Override
+    public boolean isInteger() {
+        return isInt() || isLong();
+    }
+
+    @Override
     public boolean isLongArray() {
         return this == LongArray;
+    }
+
+    @Override
+    public boolean isArray() {
+        return isIntArray() || isLongArray();
     }
 
     @Override
@@ -66,12 +76,43 @@ public class BuiltInType extends Type {
     }
 
     @Override
-    public boolean isAssignableTo(Type type) {
-        if (type == this || type.isUndefined())
-            return true;
-        if (isInt() && type.isLong())
-            return true;
-        return false;
+    public boolean isAssignableTo(final Type type) {
+        return type.isUndefined() || type == this || type.isLong() && isInt();
+    }
+
+    @Override
+    public boolean isEqualComparableTo(final Type type) {
+        return type.isUndefined() || type == this || type.isInteger() && isInteger();
+    }
+
+    @Override
+    public boolean isRelationalComparableTo(final Type type) {
+        return type.isUndefined() || type.isInteger() && isInteger();
+    }
+
+    @Override
+    public boolean isAddableTo(final Type type) {
+        return type.isUndefined() || type.isInteger() && isInteger();
+    }
+
+    @Override
+    public boolean isSubtractableFrom(final Type type) {
+        return type.isUndefined() || type.isLong() && isInteger() || type.isInt() && isInt();
+    }
+
+    @Override
+    public boolean isMultipliableWith(final Type type) {
+        return type.isUndefined() || type.isInteger() && isInteger();
+    }
+
+    @Override
+    public boolean isDisjunctableWith(final Type type) {
+        return type.isUndefined() || type.isBoolean() && isBoolean();
+    }
+
+    @Override
+    public boolean isConjunctableWith(final Type type) {
+        return type.isUndefined() || type.isBoolean() && isBoolean();
     }
 
     @Override

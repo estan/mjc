@@ -141,7 +141,7 @@ public class TypeChecker extends DepthFirstAdapter {
         final int column = declaration.getName().getPos();
 
         if (!actualType.isAssignableTo(returnType)) {
-            error(WRONG_RETURN_TYPE.on(line, column, id, returnType));
+            error(INVALID_RETURN_TYPE.on(line, column, id, returnType));
         }
 
         currentMethod.leaveBlock();
@@ -161,8 +161,8 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = statement.getIfKeyword().getLine();
         final int column = statement.getIfKeyword().getPos();
 
-        if (!(conditionType.isBoolean() || conditionType.isUndefined())) {
-            error(WRONG_IF_CONDITION_TYPE.on(line, column));
+        if (!conditionType.isBoolean() && !conditionType.isUndefined()) {
+            error(INVALID_CONDITION_TYPE.on(line, column, conditionType));
         }
     }
 
@@ -171,8 +171,8 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = statement.getIfKeyword().getLine();
         final int column = statement.getIfKeyword().getPos();
 
-        if (!(conditionType.isBoolean() || conditionType.isUndefined())) {
-            error(WRONG_IF_CONDITION_TYPE.on(line, column));
+        if (!conditionType.isBoolean() && !conditionType.isUndefined()) {
+            error(INVALID_CONDITION_TYPE.on(line, column, conditionType));
         }
     }
 
@@ -181,8 +181,8 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = statement.getWhileKeyword().getLine();
         final int column = statement.getWhileKeyword().getPos();
 
-        if (!(conditionType.isBoolean() || conditionType.isUndefined())) {
-            error(WRONG_WHILE_CONDITION_TYPE.on(line, column));
+        if (!conditionType.isBoolean() && !conditionType.isUndefined()) {
+            error(INVALID_CONDITION_TYPE.on(line, column, conditionType));
         }
     }
 
@@ -191,8 +191,8 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = statement.getPrintlnKeyword().getLine();
         final int column = statement.getPrintlnKeyword().getPos();
 
-        if (!(valueType.isInteger() || valueType.isUndefined())) {
-            error(UNPRINTABLE_TYPE.on(line, column, valueType));
+        if (!valueType.isInteger() && !valueType.isUndefined()) {
+            error(INVALID_PRINTLN_TYPE.on(line, column, valueType));
         }
     }
 
@@ -201,24 +201,26 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = statement.getAssign().getLine();
         final int column = statement.getAssign().getPos();
 
-        Type type = null;
+        Type left = null;
         final VariableInfo localInfo, paramInfo, fieldInfo;
         if ((localInfo = currentMethod.getLocal(id)) != null) {
-            type = localInfo.getType();
+            left = localInfo.getType();
         } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
-            type = paramInfo.getType();
+            left = paramInfo.getType();
         } else if ((fieldInfo = currentClass.getField(id)) != null) {
-            type = fieldInfo.getType();
-        } else if (symbolTable.getClassInfo(id) != null) {
-            error(EXPECTED_VARIABLE_GOT_CLASS.on(line, column, id));
-        } else {
-            error(UNDECLARED_IDENTIFIER.on(line, column, id));
+            left = fieldInfo.getType();
         }
 
-        if (type != null) {
-            final Type valueType = types.get(statement.getValue());
-            if (!valueType.isAssignableTo(type)) {
-                error(INVALID_ASSIGNMENT.on(line, column, valueType, type));
+        if (left == null) {
+            if (symbolTable.getClassInfo(id) != null) {
+                error(EXPECTED_VARIABLE_GOT_CLASS.on(line, column, id));
+            } else {
+                error(UNDECLARED_IDENTIFIER.on(line, column, id));
+            }
+        } else {
+            final Type right = types.get(statement.getValue());
+            if (!right.isAssignableTo(left)) {
+                error(INVALID_ASSIGNMENT.on(line, column, right, left));
             }
         }
     }
@@ -229,36 +231,36 @@ public class TypeChecker extends DepthFirstAdapter {
         final int column = statement.getAssign().getPos();
 
         final Type indexType = types.get(statement.getIndex());
-        if (!(indexType.isInt() || indexType.isUndefined())) {
-            error(WRONG_INDEX_TYPE.on(line, column, indexType));
+        if (!indexType.isInt() && !indexType.isUndefined()) {
+            error(INVALID_INDEX_TYPE.on(line, column, indexType));
         }
 
-        Type type = null;
+        Type left = null;
         final VariableInfo localInfo, paramInfo, fieldInfo;
         if ((localInfo = currentMethod.getLocal(id)) != null) {
-            type = localInfo.getType();
+            left = localInfo.getType();
         } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
-            type = paramInfo.getType();
+            left = paramInfo.getType();
         } else if ((fieldInfo = currentClass.getField(id)) != null) {
-            type = fieldInfo.getType();
+            left = fieldInfo.getType();
         } else if (symbolTable.getClassInfo(id) != null) {
             error(EXPECTED_VARIABLE_GOT_CLASS.on(line, column, id));
         } else {
             error(UNDECLARED_IDENTIFIER.on(line, column, id));
         }
 
-        if (type != null) {
-            final Type valueType = types.get(statement.getValue());
-            if (type.isIntArray()) {
-                if (!(valueType.isInt() || valueType.isUndefined())) {
-                    error(INVALID_ASSIGNMENT.on(line, column, valueType, BuiltInType.Integer));
+        if (left != null) {
+            final Type right = types.get(statement.getValue());
+            if (left.isIntArray()) {
+                if (!right.isAssignableTo(BuiltInType.Integer)) {
+                    error(INVALID_ASSIGNMENT.on(line, column, right, BuiltInType.Integer));
                 }
-            } else if (type.isLongArray()) {
-                if (!(valueType.isInteger() || valueType.isUndefined())) {
-                    error(INVALID_ASSIGNMENT.on(line, column, valueType, BuiltInType.Long));
+            } else if (left.isLongArray()) {
+                if (!right.isAssignableTo(BuiltInType.Long)) {
+                    error(INVALID_ASSIGNMENT.on(line, column, right, BuiltInType.Long));
                 }
             } else {
-                error(NOT_ARRAY_TYPE.on(line, column, type));
+                error(NOT_ARRAY_TYPE.on(line, column, left));
             }
         }
     }
@@ -269,12 +271,8 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getAnd().getLine();
         final int column = expression.getAnd().getPos();
 
-        if (!(left.isBoolean() || left.isUndefined())) {
-            error(INVALID_LEFT_OP_AND.on(line, column, left));
-        }
-
-        if (!(right.isBoolean() || right.isUndefined())) {
-            error(INVALID_RIGHT_OP_AND.on(line, column, right));
+        if (!left.isConjunctableWith(right)) {
+            error(INVALID_BINARY_OP.on(line, column, "&&", left, right));
         }
 
         types.put(expression, BuiltInType.Boolean);
@@ -286,12 +284,8 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getOr().getLine();
         final int column = expression.getOr().getPos();
 
-        if (!(left.isBoolean() || left.isUndefined())) {
-            error(INVALID_LEFT_OP_OR.on(line, column, left));
-        }
-
-        if (!(right.isBoolean() || right.isUndefined())) {
-            error(INVALID_RIGHT_OP_OR.on(line, column, right));
+        if (!left.isDisjunctableWith(right)) {
+            error(INVALID_BINARY_OP.on(line, column, "||", left, right));
         }
 
         types.put(expression, BuiltInType.Boolean);
@@ -303,9 +297,8 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getLessThan().getLine();
         final int column = expression.getLessThan().getPos();
 
-        if (!(left.isInteger() && right.isInteger() ||
-                left.isUndefined() || right.isUndefined())) {
-            error(INVALID_LT_COMPARISON.on(line, column, left, right));
+        if (!left.isRelationalComparableTo(right)) {
+            error(INVALID_BINARY_OP.on(line, column, "<", left, right));
         }
 
         types.put(expression, BuiltInType.Boolean);
@@ -317,9 +310,8 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getGreaterThan().getLine();
         final int column = expression.getGreaterThan().getPos();
 
-        if (!(left.isInteger() && right.isInteger() ||
-                left.isUndefined() || right.isUndefined())) {
-            error(INVALID_GT_COMPARISON.on(line, column, left, right));
+        if (!left.isRelationalComparableTo(right)) {
+            error(INVALID_BINARY_OP.on(line, column, ">", left, right));
         }
 
         types.put(expression, BuiltInType.Boolean);
@@ -331,9 +323,8 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getGreaterEqualThan().getLine();
         final int column = expression.getGreaterEqualThan().getPos();
 
-        if (!(left.isInteger() && right.isInteger() ||
-                left.isUndefined() || right.isUndefined())) {
-            error(INVALID_GE_COMPARISON.on(line, column, left, right));
+        if (!left.isRelationalComparableTo(right)) {
+            error(INVALID_BINARY_OP.on(line, column, ">=", left, right));
         }
 
         types.put(expression, BuiltInType.Boolean);
@@ -345,9 +336,8 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getLessEqualThan().getLine();
         final int column = expression.getLessEqualThan().getPos();
 
-        if (!(left.isInteger() && right.isInteger() ||
-                left.isUndefined() || right.isUndefined())) {
-            error(INVALID_LE_COMPARISON.on(line, column, left, right));
+        if (!left.isRelationalComparableTo(right)) {
+            error(INVALID_BINARY_OP.on(line, column, "<=", left, right));
         }
 
         types.put(expression, BuiltInType.Boolean);
@@ -359,13 +349,8 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getEqual().getLine();
         final int column = expression.getEqual().getPos();
 
-        if (!(left.isInteger() && right.isInteger() ||
-                left.isIntArray() && right.isIntArray() ||
-                left.isLongArray() && right.isLongArray() ||
-                left.isBoolean() && right.isBoolean() ||
-                (left.isClass() && right.isClass() && right.isAssignableTo(left)) ||
-                left.isUndefined() || right.isUndefined())) {
-            error(INVALID_EQ_COMPARISON.on(line, column, left, right));
+        if (!left.isEqualComparableTo(right)) {
+            error(INVALID_BINARY_OP.on(line, column, "==", left, right));
         }
 
         types.put(expression, BuiltInType.Boolean);
@@ -377,13 +362,8 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getNotEqual().getLine();
         final int column = expression.getNotEqual().getPos();
 
-        if (!(left.isInteger() && right.isInteger() ||
-                left.isIntArray() && right.isIntArray() ||
-                left.isLongArray() && right.isLongArray() ||
-                left.isBoolean() && right.isBoolean() ||
-                (left.isClass() && right.isClass() && right.isAssignableTo(left)) ||
-                left.isUndefined() || right.isUndefined())) {
-            error(INVALID_NE_COMPARISON.on(line, column, left, right));
+        if (!left.isEqualComparableTo(right)) {
+            error(INVALID_BINARY_OP.on(line, column, "!=", left, right));
         }
 
         types.put(expression, BuiltInType.Boolean);
@@ -395,18 +375,14 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getPlus().getLine();
         final int column = expression.getPlus().getPos();
 
-        if (!(left.isInteger() || left.isUndefined())) {
-            error(INVALID_LEFT_OP_PLUS.on(line, column, left));
-        }
-
-        if (!(right.isInteger() || right.isUndefined())) {
-            error(INVALID_RIGHT_OP_PLUS.on(line, column, right));
+        if (!left.isAddableTo(right)) {
+            error(INVALID_BINARY_OP.on(line, column, "+", left, right));
         }
 
         if (left.isLong() || right.isLong()) {
             types.put(expression, BuiltInType.Long);
         } else {
-            types.put(expression, BuiltInType.Integer); // Possibly a guess.
+            types.put(expression, BuiltInType.Integer);
         }
     }
 
@@ -416,22 +392,14 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getMinus().getLine();
         final int column = expression.getMinus().getPos();
 
-        if (!(left.isInteger() || left.isUndefined())) {
-            error(INVALID_LEFT_OP_MINUS.on(line, column, left));
+        if (!right.isSubtractableFrom(left)) {
+            error(INVALID_BINARY_OP.on(line, column, "-", left, right));
         }
 
-        if (!(right.isInteger() || right.isUndefined())) {
-            error(INVALID_RIGHT_OP_MINUS.on(line, column, right));
-        }
-
-        if (left.isInt() && right.isLong()) {
-            error(INVALID_SUBTRACTION.on(line, column, right, left));
-        }
-
-        if (left.isLong()) {
+        if (left.isLong() || right.isLong()) {
             types.put(expression, BuiltInType.Long);
         } else {
-            types.put(expression, BuiltInType.Integer); // Possibly a guess.
+            types.put(expression, BuiltInType.Integer);
         }
     }
 
@@ -441,40 +409,38 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getStar().getLine();
         final int column = expression.getStar().getPos();
 
-        if (!(left.isInteger() || left.isUndefined())) {
-            error(INVALID_LEFT_OP_TIMES.on(line, column, left));
-        }
-
-        if (!(right.isInteger() || right.isUndefined())) {
-            error(INVALID_RIGHT_OP_TIMES.on(line, column, right));
+        if (!left.isMultipliableWith(right)) {
+            error(INVALID_BINARY_OP.on(line, column, "*", left, right));
         }
 
         if (left.isLong() || right.isLong()) {
             types.put(expression, BuiltInType.Long);
         } else {
-            types.put(expression, BuiltInType.Integer); // Possibly a guess.
+            types.put(expression, BuiltInType.Integer);
         }
     }
 
     public void outANotExpression(final ANotExpression expression) {
-        types.put(expression, BuiltInType.Boolean);
         final Type type = types.get(expression.getExpression());
-        if (!(type.isBoolean() || type.isUndefined())) {
+
+        if (!type.isBoolean() && !type.isUndefined()) {
             final int line = expression.getNot().getLine();
             final int column = expression.getNot().getPos();
-            error(NEGATION_EXPECTED_BOOLEAN.on(line, column, type));
+            error(INVALID_UNARY_OP.on(line, column, "!", type));
         }
+
+        types.put(expression, BuiltInType.Boolean);
     }
 
     public void outAMethodInvocationExpression(final AMethodInvocationExpression expression) {
         final Type type = types.get(expression.getInstance());
-        final String methodId = expression.getName().getText();
+        final String id = expression.getName().getText();
         final int line = expression.getName().getLine();
         final int column = expression.getName().getPos();
 
         if (type.isClass()) {
             final ClassInfo classInfo = symbolTable.getClassInfo(type.getName());
-            final MethodInfo methodInfo = classInfo.getMethod(methodId);
+            final MethodInfo methodInfo = classInfo.getMethod(id);
 
             if (methodInfo != null) {
                 // Check if actual parameters match formal parameters.
@@ -485,27 +451,25 @@ public class TypeChecker extends DepthFirstAdapter {
                     final Iterator<VariableInfo> formalsIt = formals.iterator();
                     int param = 0;
                     while (actualsIt.hasNext()) {
-                        final Type actualType = types.get(actualsIt.next());
-                        final Type formalType = formalsIt.next().getType();
-                        if (!actualType.isAssignableTo(formalType)) {
-                            error(WRONG_PARAMETER_TYPE.on(
-                                    line, column, methodId, param, actualType, formalType));
+                        final Type actual = types.get(actualsIt.next());
+                        final Type formal = formalsIt.next().getType();
+                        if (!actual.isAssignableTo(formal)) {
+                            error(INVALID_PARAM_TYPE.on(line, column, id, param, actual, formal));
                         }
                         ++param;
                     }
 
                 } else {
-                    error(WRONG_PARAMETER_COUNT.on(
-                            line, column, methodId, actuals.size(), formals.size()));
+                    error(INVALID_PARAM_COUNT.on(line, column, id, actuals.size(), formals.size()));
                 }
                 types.put(expression, methodInfo.getReturnType());
             } else {
-                error(UNDECLARED_METHOD.on(line, column, methodId, classInfo.getName()));
+                error(UNDECLARED_METHOD.on(line, column, id, classInfo.getName()));
                 types.put(expression, UndefinedType.Instance);
             }
         } else {
             if (!type.isUndefined()) {
-                error(METHOD_CALL_ON_NON_CLASS_TYPE.on(line, column, type));
+                error(CALL_ON_NON_CLASS.on(line, column, type));
             }
             types.put(expression, UndefinedType.Instance);
         }
@@ -517,8 +481,8 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = expression.getStartBracket().getLine();
         final int column = expression.getStartBracket().getPos();
 
-        if (!(indexType.isInt() || indexType.isUndefined())) {
-            error(WRONG_INDEX_TYPE.on(line, column, indexType));
+        if (!indexType.isInt() && !indexType.isUndefined()) {
+            error(INVALID_INDEX_TYPE.on(line, column, indexType));
         }
 
         if (type.isIntArray()) {
@@ -529,17 +493,19 @@ public class TypeChecker extends DepthFirstAdapter {
             if (!type.isUndefined()) {
                 error(NOT_ARRAY_TYPE.on(line, column, type));
             }
-            types.put(expression, BuiltInType.Integer); // Guess int[].
+            types.put(expression, BuiltInType.Integer);
         }
     }
 
     public void outAArrayLengthExpression(final AArrayLengthExpression expression) {
         final Type type = types.get(expression.getArray());
-        if (!(type.isArray() || type.isUndefined())) {
+
+        if (!type.isArray() && !type.isUndefined()) {
             final int line = expression.getLengthKeyword().getLine();
             final int column = expression.getLengthKeyword().getPos();
-            error(LENGTH_ON_NON_ARRAY_TYPE.on(line, column, type));
+            error(LENGTH_ON_NON_ARRAY.on(line, column, type));
         }
+
         types.put(expression, BuiltInType.Integer);
     }
 
@@ -558,27 +524,32 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     public void outANewIntArrayExpression(final ANewIntArrayExpression expression) {
-        types.put(expression, BuiltInType.IntegerArray);
         final Type type = types.get(expression.getSize());
-        if (!(type.isInt() || type.isUndefined())) {
+
+        if (!type.isInt() && !type.isUndefined()) {
             final int line = expression.getNewKeyword().getLine();
             final int column = expression.getNewKeyword().getPos();
-            error(WRONG_SIZE_TYPE.on(line, column, type));
+            error(INVALID_SIZE_TYPE.on(line, column, type));
         }
+
+        types.put(expression, BuiltInType.IntegerArray);
     }
 
     public void outANewLongArrayExpression(final ANewLongArrayExpression expression) {
         final Type type = types.get(expression.getSize());
-        if (!(type.isInt() || type.isUndefined())) {
+
+        if (!type.isInt() && !type.isUndefined()) {
             final int line = expression.getNewKeyword().getLine();
             final int column = expression.getNewKeyword().getPos();
-            error(WRONG_SIZE_TYPE.on(line, column, type));
+            error(INVALID_SIZE_TYPE.on(line, column, type));
         }
+
         types.put(expression, BuiltInType.LongArray);
     }
 
     public void outAIntegerExpression(final AIntegerExpression expression) {
         final String literal = expression.getInteger().getText();
+
         try {
             Integer.parseInt(literal);
         } catch (NumberFormatException e) {
@@ -586,11 +557,13 @@ public class TypeChecker extends DepthFirstAdapter {
             final int column = expression.getInteger().getPos();
             error(INVALID_INT_LITERAL.on(line, column, literal));
         }
+
         types.put(expression, BuiltInType.Integer);
     }
 
     public void outALongExpression(final ALongExpression expression) {
         final String literal = expression.getLong().getText();
+
         try {
             Long.parseLong(literal.substring(0, literal.length() - 1)); // Strip 'L'/'l'.
         } catch (NumberFormatException e) {
@@ -598,6 +571,7 @@ public class TypeChecker extends DepthFirstAdapter {
             final int column = expression.getLong().getPos();
             error(INVALID_LONG_LITERAL.on(line, column, literal));
         }
+
         types.put(expression, BuiltInType.Long);
     }
 

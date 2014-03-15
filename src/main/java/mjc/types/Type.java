@@ -5,40 +5,26 @@ package mjc.types;
  */
 public abstract class Type {
     /**
-     * Returns the name of the type.
-     *
-     * This must be overridden by sub-classes.
+     * @return name of the type.
      */
     public abstract String getName();
 
     /**
-     * Returns true if this is a built-in type.
-     *
-     * The default implementation returns false.
-     *
-     * @return false.
+     * @return true if this is a built-in type.
      */
     public boolean isBuiltIn() {
         return false;
     }
 
     /**
-     * Returns true if this is the int type.
-     *
-     * The default implementation returns false.
-     *
-     * @return false.
+     * @return true if this is the int type.
      */
     public boolean isInt() {
         return false;
     }
 
     /**
-     * Returns true if this is the long type.
-     *
-     * The default implementation returns false.
-     *
-     * @return false.
+     * @return true if this is the long type.
      */
     public boolean isLong() {
         return false;
@@ -48,26 +34,18 @@ public abstract class Type {
      * @return true if this is the int or long type.
      */
     public boolean isInteger() {
-        return isInt() || isLong();
+        return false;
     }
 
     /**
-     * Returns true if this is the int array type.
-     *
-     * The default implementation returns false.
-     *
-     * @return false.
+     * @return true if this is the int array type.
      */
     public boolean isIntArray() {
         return false;
     }
 
     /**
-     * Returns true if this is the long array type.
-     *
-     * The default implementation returns false.
-     *
-     * @return false.
+     * @return true if this is the long array type.
      */
     public boolean isLongArray() {
         return false;
@@ -77,52 +55,90 @@ public abstract class Type {
      * @return true if this is the int array or long array type.
      */
     public boolean isArray() {
-        return isIntArray() || isLongArray();
+        return false;
     }
 
     /**
-     * Returns true if this is the boolean type.
-     *
-     * The default implementation returns false.
-     *
-     * @return false.
+     * @return true if this is the boolean type.
      */
     public boolean isBoolean() {
         return false;
     }
 
     /**
-     * Returns true if this is a user-defined class type.
-     *
-     * The default implementation returns false.
-     *
-     * @return false.
+     * @return true if this is a user-defined class type.
      */
     public boolean isClass() {
         return false;
     }
 
     /**
-     * Returns true if this is the undefined type.
-     *
-     * The default implementation returns false.
-     *
-     * @return false.
+     * @return true if this is the undefined type.
      */
     public boolean isUndefined() {
         return false;
     }
 
     /**
-     * Returns true if instances of this type can be assigned to instances of @a type.
-     *
-     * The default implementation returns true if @a type is the same instance as this,
-     * or if @a type is UndefinedType.Instance.
-     *
-     * @param type A type.
-     * @return true if instances of this type can be assigned to instances of @a type.
+     * @return true if this is an unsupported type.
      */
-    public boolean isAssignableTo(Type type) {
-        return type == this || type.isUndefined();
+    public boolean isUnsupported() {
+        return false;
+    }
+
+    /**
+     * @return true if this type is assignable (=) to @a type.
+     */
+    public boolean isAssignableTo(final Type type) {
+        return false;
+    }
+
+    /**
+     * @return true if this type is comparable (==, !=) to @a type.
+     */
+    public boolean isEqualComparableTo(final Type type) {
+        return false;
+    }
+
+    /**
+     * @return true if this type is comparable (<, <=, >, >=) to @a type.
+     */
+    public boolean isRelationalComparableTo(final Type type) {
+        return false;
+    }
+
+    /**
+     * @return true if this type can be added (+) to @a type.
+     */
+    public boolean isAddableTo(final Type type) {
+        return false;
+    }
+
+    /**
+     * @return true if this type can be subtracted (-) from @a type.
+     */
+    public boolean isSubtractableFrom(final Type type) {
+        return false;
+    }
+
+    /**
+     * @return true if this type can be multiplied (*) by @a type.
+     */
+    public boolean isMultipliableWith(final Type type) {
+        return false;
+    }
+
+    /**
+     * @return true if this type can be combined with @a type using logical OR.
+     */
+    public boolean isDisjunctableWith(final Type type) {
+        return false;
+    }
+
+    /**
+     * @return true if this type can be combined with @a type using logical AND.
+     */
+    public boolean isConjunctableWith(final Type type) {
+        return false;
     }
 }

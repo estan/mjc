@@ -5,8 +5,7 @@ package mjc.types;
  *
  * This is currently just void and String[], which it is convenient to consider as
  * a type during compilation, since they appear as return value and parameter type
- * for main(). Since they are unsupported UnsupportedTypes are assignable to no
- * other types.
+ * for main(). Operations with unsupported types are never allowed.
  *
  * There are only two static instances of this class.
  */
@@ -16,7 +15,7 @@ public class UnsupportedType extends Type {
 
     private final String name;
 
-    private UnsupportedType(String name) {
+    private UnsupportedType(final String name) {
         this.name = name;
     }
 
@@ -26,8 +25,8 @@ public class UnsupportedType extends Type {
     }
 
     @Override
-    public boolean isAssignableTo(Type o) {
-        return false;
+    public boolean isUnsupported() {
+        return true;
     }
 
     @Override
