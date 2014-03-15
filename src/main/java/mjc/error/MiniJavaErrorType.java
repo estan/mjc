@@ -44,7 +44,7 @@ public enum MiniJavaErrorType {
     CALL_ON_NON_CLASS             (216, "method call on expression of non-class type %s"),
     LENGTH_ON_NON_ARRAY           (217, "length unsupported on non-array type %s"),
 
-    INTERNAL_ERROR                (1000, "Internal compiler error: %s");
+    INTERNAL_ERROR                (1000, "internal error: %s");
 
     private final int code;
     private final String message;
