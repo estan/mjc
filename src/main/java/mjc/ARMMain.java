@@ -1,5 +1,6 @@
 package mjc;
 
+import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.FileReader;
 import java.util.Comparator;
@@ -10,9 +11,12 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 import mjc.lexer.Lexer;
+import mjc.lexer.LexerException;
 import mjc.parser.Parser;
+import mjc.parser.ParserException;
 import mjc.symbol.SymbolTable;
 import mjc.symbol.SymbolTableBuilder;
 import mjc.node.Start;
@@ -32,7 +36,14 @@ public class ARMMain {
     private final static int EXIT_FAILURE = 1;
 
     public ARMMain() {
-        helpFormatter.setOptionComparator(new OptionComarator<Option>());
+        options.addOption("S", false, "output assembler code");
+        options.addOption("o", true, "output file");
+        options.addOption("p", false, "print abstract syntax tree");
+        options.addOption("g", false, "print abstract syntax tree in GraphViz format");
+        options.addOption("s", false, "print symbol table");
+        options.addOption("h", false, "show help message");
+
+        helpFormatter.setOptionComparator(new OptionComparator<Option>());
     }
 
     public static void main(String[] args) {
@@ -45,13 +56,18 @@ public class ARMMain {
         }
     }
 
-    private int run(String[] args) throws Exception {
-        options.addOption("S", false, "output assembler code");
-        options.addOption("o", true, "output file");
-        options.addOption("p", false, "print abstract syntax tree");
-        options.addOption("g", false, "print abstract syntax tree in GraphViz format");
-        options.addOption("s", false, "print symbol table");
-        options.addOption("h", false, "show help message");
+    /**
+     * Run compiler with the given command line arguments.
+     *
+     * @param args Command line arguments.
+     * @return EXIT_SUCCESS if compilation succeeded, otherwise EXIT_FAILURE.
+     *
+     * @throws ParseException if parsing of command line arguments failed.
+     * @throws IOException if an I/O error occurred.
+     * @throws LexerException if lexical analysis failed.
+     * @throws ParserException if parsing failed.
+     */
+    private int run(String[] args) throws ParseException, ParserException, LexerException, IOException {
 
         final CommandLine commandLine = commandLineParser.parse(options, args);
 
@@ -114,7 +130,7 @@ public class ARMMain {
     }
 
     // Comparator for Options, to get them in the order we want in help output.
-    class OptionComarator<T extends Option> implements Comparator<T> {
+    class OptionComparator<T extends Option> implements Comparator<T> {
         private static final String ORDER = "Sopgsh";
 
         @Override
