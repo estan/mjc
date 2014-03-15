@@ -532,7 +532,7 @@ public class TypeChecker extends DepthFirstAdapter {
             error(INVALID_SIZE_TYPE.on(line, column, type));
         }
 
-        types.put(expression, BuiltInType.IntegerArray);
+        types.put(expression, BuiltInType.IntArray);
     }
 
     public void outANewLongArrayExpression(final ANewLongArrayExpression expression) {

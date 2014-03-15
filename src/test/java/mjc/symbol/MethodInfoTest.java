@@ -62,7 +62,7 @@ public class MethodInfoTest {
             f.enterBlock(); // Enter block 2.
 
             if (run == 0) { // In the first iteration we add variables.
-                l3 = new VariableInfo("l3", BuiltInType.IntegerArray, 6, 12);
+                l3 = new VariableInfo("l3", BuiltInType.IntArray, 6, 12);
                 f.addLocal(l3);
             } // Else: In the second iteration we just check.
 

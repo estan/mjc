@@ -11,7 +11,7 @@ public class BuiltInType extends Type {
     public final static Type Integer = new BuiltInType("int");
     public final static Type Long = new BuiltInType("long");
     public final static Type Boolean = new BuiltInType("boolean");
-    public final static Type IntegerArray = new BuiltInType("int[]");
+    public final static Type IntArray = new BuiltInType("int[]");
     public final static Type LongArray = new BuiltInType("long[]");
 
     private final String name;
@@ -42,7 +42,7 @@ public class BuiltInType extends Type {
 
     @Override
     public boolean isIntArray() {
-        return this == IntegerArray;
+        return this == IntArray;
     }
 
     @Override
