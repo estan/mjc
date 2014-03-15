@@ -53,7 +53,9 @@ public enum MiniJavaErrorType {
     LENGTH_ON_NON_ARRAY_TYPE        (231, "length unsupported on non-array type %s"),
     WRONG_SIZE_TYPE                 (232, "size of type %s, expected int"),
     INVALID_INT_LITERAL             (233, "invalid int literal %s"),
-    INVALID_LONG_LITERAL            (234, "invalid long literal %s");
+    INVALID_LONG_LITERAL            (234, "invalid long literal %s"),
+
+    INTERNAL_ERROR                  (1000, "Internal compiler error: %s");
 
     private final int code;
     private final String message;

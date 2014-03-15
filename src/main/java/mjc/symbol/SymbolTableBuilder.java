@@ -335,7 +335,8 @@ public class SymbolTableBuilder {
             } else if (abstractType instanceof ABooleanType) {
                 return BuiltInType.Boolean;
             } else {
-                throw new RuntimeException("Unknown PType");
+                error(INTERNAL_ERROR.on(0, 0, "Unknown PType"));
+                return UndefinedType.Instance;
             }
         }
 
