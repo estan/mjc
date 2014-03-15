@@ -2,11 +2,13 @@ package mjc;
 
 import java.io.PushbackReader;
 import java.io.FileReader;
+import java.util.Comparator;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 import mjc.lexer.Lexer;
@@ -26,18 +28,41 @@ public class ARMMain {
     private final HelpFormatter helpFormatter = new HelpFormatter();
     private final Options options = new Options();
 
+    private final static int EXIT_SUCCESS = 0;
+    private final static int EXIT_FAILURE = 1;
+
+    public ARMMain() {
+        helpFormatter.setOptionComparator(new OptionComarator<Option>());
+    }
+
+    public static void main(String[] args) {
+        ARMMain program = new ARMMain();
+        try {
+            System.exit(program.run(args));
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            System.exit(EXIT_FAILURE);
+        }
+    }
+
     private int run(String[] args) throws Exception {
         options.addOption("S", false, "output assembler code");
         options.addOption("o", true, "output file");
-        options.addOption("h", false, "show help message");
         options.addOption("p", false, "print abstract syntax tree");
-        options.addOption("g", false, "print abstract syntax tree (GraphViz)");
+        options.addOption("g", false, "print abstract syntax tree in GraphViz format");
+        options.addOption("s", false, "print symbol table");
+        options.addOption("h", false, "show help message");
 
         final CommandLine commandLine = commandLineParser.parse(options, args);
 
-        if (commandLine.hasOption("h") || commandLine.getArgs().length != 1) {
-            helpFormatter.printHelp("mjc infile [options]", options);
-            System.exit(1);
+        if (commandLine.hasOption("h")) {
+            helpFormatter.printHelp("mjc <infile> [options]", options);
+            System.exit(EXIT_SUCCESS);
+        }
+
+        if (commandLine.getArgs().length != 1) {
+            helpFormatter.printHelp("mjc <infile> [options]", options);
+            System.exit(EXIT_FAILURE);
         }
 
         /******************************
@@ -49,30 +74,27 @@ public class ARMMain {
         final Parser parser = new Parser(new Lexer(reader));
         final Start tree = parser.parse();
 
-        if (commandLine.hasOption("p")) {
-            // Print AST and abort.
+        if (commandLine.hasOption("p"))
             astPrinter.print(tree);
-            return 0;
-        }
 
-        if (commandLine.hasOption("g")) {
-            // Print AST in GraphViz format and abort.
+        if (commandLine.hasOption("g"))
             graphPrinter.print(tree);
-            return 0;
-        }
 
         /*******************************
          * Stage 2: Semantic Analysis. *
          *******************************/
 
         // Build symbol table.
-        final SymbolTableBuilder symbolTableBuilder = new SymbolTableBuilder();
-        final SymbolTable symbolTable = symbolTableBuilder.build(tree);
-        if (symbolTableBuilder.hasErrors()) {
-            for (MiniJavaError error : symbolTableBuilder.getErrors()) {
+        final SymbolTableBuilder builder = new SymbolTableBuilder();
+        final SymbolTable symbolTable = builder.build(tree);
+        if (builder.hasErrors()) {
+            for (MiniJavaError error : builder.getErrors()) {
                 System.err.println(error);
             }
         }
+
+        if (commandLine.hasOption("s"))
+            System.out.println(symbolTable);
 
         // Run type-check.
         final TypeChecker typeChecker = new TypeChecker();
@@ -82,21 +104,22 @@ public class ARMMain {
             }
         }
 
-        if (symbolTableBuilder.hasErrors() || typeChecker.hasErrors()) {
+
+        if (builder.hasErrors() || typeChecker.hasErrors()) {
             // Errors in symbol table building or type checking, abort.
-            return 1;
+            return EXIT_FAILURE;
         }
 
-        return 0;
+        return EXIT_SUCCESS;
     }
 
-    public static void main(String[] args) {
-        ARMMain program = new ARMMain();
-        try {
-            System.exit(program.run(args));
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+    // Comparator for Options, to get them in the order we want in help output.
+    class OptionComarator<T extends Option> implements Comparator<T> {
+        private static final String ORDER = "Sopgsh";
+
+        @Override
+        public int compare(T option1, T option2) {
+            return ORDER.indexOf(option1.getOpt()) - ORDER.indexOf(option2.getOpt());
         }
     }
 }
