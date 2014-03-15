@@ -29,7 +29,7 @@ public class ClassType extends Type {
     public boolean isAssignableTo(Type type) {
         if (type == this || type.isUndefined())
             return true;
-        if (type.isClass() && ((ClassType)type).getName().equals(name))
+        if (type.isClass() && type.getName().equals(name))
             return true;
         return false;
 
