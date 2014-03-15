@@ -27,11 +27,16 @@
     </target>
 
     <target name="generate-parser" if="parser-out-of-date" depends="init">
-        <java jar="${lib-dir}/sablecc.jar" fork="true" failonerror="true">
+        <java classname="org.sablecc.sablecc.SableCC" fork="true" failonerror="true">
             <arg value="-d"/>
             <arg value="${parser-src-dir}"/>
             <arg value="--no-inline"/>
             <arg value="${parser-grammar}"/>
+            <classpath>
+                <!-- So that our custom parser.txt template is picked up -->
+                <pathelement location="${src-dir}/main/txt"/>
+                <pathelement location="${lib-dir}/sablecc.jar"/>
+            </classpath>
         </java>
     </target>
 

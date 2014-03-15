@@ -6,6 +6,12 @@ package mjc.error;
 public enum MiniJavaErrorType {
 
     /*
+     * Lexer / parser errors.
+     */
+    LEXER_ERROR                   (50, "invalid token: %s"),
+    PARSER_ERROR                  (51, "parsing failed: %s"),
+
+    /*
      * Symbol table construction errors.
      */
     MISSING_MAIN                  (100, "missing main method in `%s`"),

@@ -19,11 +19,15 @@ import mjc.parser.Parser;
 import mjc.parser.ParserException;
 import mjc.symbol.SymbolTable;
 import mjc.symbol.SymbolTableBuilder;
+import mjc.node.InvalidToken;
 import mjc.node.Start;
 import mjc.analysis.ASTGraphPrinter;
 import mjc.analysis.ASTPrinter;
 import mjc.analysis.TypeChecker;
 import mjc.error.MiniJavaError;
+
+import static mjc.error.MiniJavaErrorType.LEXER_ERROR;
+import static mjc.error.MiniJavaErrorType.PARSER_ERROR;
 
 public class ARMMain {
     private final ASTPrinter astPrinter = new ASTPrinter();
@@ -49,7 +53,15 @@ public class ARMMain {
     public static void main(String[] args) {
         ARMMain program = new ARMMain();
         try {
+            // Run the compiler.
             System.exit(program.run(args));
+        } catch (LexerException e) {
+            final InvalidToken token = e.getToken();
+            final int line = token.getLine();
+            final int column = token.getPos();
+            System.err.println(LEXER_ERROR.on(line, column, token.getText()));
+        } catch (ParserException e) {
+            System.err.println(PARSER_ERROR.on(e.getLine(), e.getPos(), e.getError()));
         } catch (Exception e) {
             System.err.println(e.getMessage());
             System.exit(EXIT_FAILURE);
