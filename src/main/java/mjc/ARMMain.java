@@ -81,9 +81,9 @@ public class ARMMain {
             System.exit(EXIT_FAILURE);
         }
 
-        /******************************
-         * Stage 1: Lexing + Parsing. *
-         *****************************/
+        /****************************************
+         * Stage 1: Lexical Analysis / Parsing. *
+         ***************************************/
 
         final String fileName = commandLine.getArgs()[0];
         final PushbackReader reader = new PushbackReader(new FileReader(fileName));
