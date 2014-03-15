@@ -325,7 +325,7 @@ public class SymbolTableBuilder {
                     return UndefinedType.Instance;
                 }
             } else if (abstractType instanceof AIntType) {
-                return BuiltInType.Integer;
+                return BuiltInType.Int;
             } else if (abstractType instanceof AIntArrayType) {
                 return BuiltInType.IntArray;
             } else if (abstractType instanceof ALongType) {

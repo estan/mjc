@@ -252,8 +252,8 @@ public class TypeChecker extends DepthFirstAdapter {
         if (left != null) {
             final Type right = types.get(statement.getValue());
             if (left.isIntArray()) {
-                if (!right.isAssignableTo(BuiltInType.Integer)) {
-                    error(INVALID_ASSIGNMENT.on(line, column, right, BuiltInType.Integer));
+                if (!right.isAssignableTo(BuiltInType.Int)) {
+                    error(INVALID_ASSIGNMENT.on(line, column, right, BuiltInType.Int));
                 }
             } else if (left.isLongArray()) {
                 if (!right.isAssignableTo(BuiltInType.Long)) {
@@ -382,7 +382,7 @@ public class TypeChecker extends DepthFirstAdapter {
         if (left.isLong() || right.isLong()) {
             types.put(expression, BuiltInType.Long);
         } else {
-            types.put(expression, BuiltInType.Integer);
+            types.put(expression, BuiltInType.Int);
         }
     }
 
@@ -399,7 +399,7 @@ public class TypeChecker extends DepthFirstAdapter {
         if (left.isLong() || right.isLong()) {
             types.put(expression, BuiltInType.Long);
         } else {
-            types.put(expression, BuiltInType.Integer);
+            types.put(expression, BuiltInType.Int);
         }
     }
 
@@ -416,7 +416,7 @@ public class TypeChecker extends DepthFirstAdapter {
         if (left.isLong() || right.isLong()) {
             types.put(expression, BuiltInType.Long);
         } else {
-            types.put(expression, BuiltInType.Integer);
+            types.put(expression, BuiltInType.Int);
         }
     }
 
@@ -486,14 +486,14 @@ public class TypeChecker extends DepthFirstAdapter {
         }
 
         if (type.isIntArray()) {
-            types.put(expression, BuiltInType.Integer);
+            types.put(expression, BuiltInType.Int);
         } else if (type.isLongArray()) {
             types.put(expression, BuiltInType.Long);
         } else {
             if (!type.isUndefined()) {
                 error(NOT_ARRAY_TYPE.on(line, column, type));
             }
-            types.put(expression, BuiltInType.Integer);
+            types.put(expression, BuiltInType.Int);
         }
     }
 
@@ -506,7 +506,7 @@ public class TypeChecker extends DepthFirstAdapter {
             error(LENGTH_ON_NON_ARRAY.on(line, column, type));
         }
 
-        types.put(expression, BuiltInType.Integer);
+        types.put(expression, BuiltInType.Int);
     }
 
     public void outANewInstanceExpression(final ANewInstanceExpression expression) {
@@ -558,7 +558,7 @@ public class TypeChecker extends DepthFirstAdapter {
             error(INVALID_INT_LITERAL.on(line, column, literal));
         }
 
-        types.put(expression, BuiltInType.Integer);
+        types.put(expression, BuiltInType.Int);
     }
 
     public void outALongExpression(final ALongExpression expression) {

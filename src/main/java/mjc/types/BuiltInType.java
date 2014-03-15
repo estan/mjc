@@ -8,7 +8,7 @@ package mjc.types;
  */
 public class BuiltInType extends Type {
 
-    public final static Type Integer = new BuiltInType("int");
+    public final static Type Int = new BuiltInType("int");
     public final static Type Long = new BuiltInType("long");
     public final static Type Boolean = new BuiltInType("boolean");
     public final static Type IntArray = new BuiltInType("int[]");
@@ -37,7 +37,7 @@ public class BuiltInType extends Type {
 
     @Override
     public boolean isInt() {
-        return this == Integer;
+        return this == Int;
     }
 
     @Override

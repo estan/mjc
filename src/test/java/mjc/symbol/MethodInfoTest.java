@@ -33,7 +33,7 @@ public class MethodInfoTest {
         MethodInfo f;
         VariableInfo p1 = null, l1 = null, l2 = null, l3 = null, l4 = null;
 
-        f = new MethodInfo("f", BuiltInType.Integer, 1, 1);
+        f = new MethodInfo("f", BuiltInType.Int, 1, 1);
 
         for (int run = 0; run < 2; ++run) {
             f.enterBlock(); // Enter block 0.
@@ -51,7 +51,7 @@ public class MethodInfoTest {
             f.enterBlock(); // Enter block 1.
 
             if (run == 0) { // In the first iteration we add variables.
-                l2 = new VariableInfo("l2", BuiltInType.Integer, 4, 8);
+                l2 = new VariableInfo("l2", BuiltInType.Int, 4, 8);
                 f.addLocal(l2);
             } // Else: In the second iteration we just check.
 
