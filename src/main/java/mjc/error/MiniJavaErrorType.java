@@ -8,13 +8,13 @@ public enum MiniJavaErrorType {
     /*
      * Symbol table construction errors.
      */
-    MISSING_MAIN                    (100, "missing main method in `%s`"),
-    DUPLICATE_CLASS                 (101, "duplicate class `%s`"),
-    DUPLICATE_FIELD                 (102, "duplicate field `%s`"),
-    DUPLICATE_METHOD                (103, "duplicate method `%s`"),
-    DUPLICATE_PARAMETER             (104, "duplicate parameter `%s`"),
-    DUPLICATE_VARIABLE              (105, "duplicate variable `%s`"),
-    UNDECLARED_CLASS                (106, "undeclared class `%s`"),
+    MISSING_MAIN                  (100, "missing main method in `%s`"),
+    DUPLICATE_CLASS               (101, "duplicate class `%s`"),
+    DUPLICATE_FIELD               (102, "duplicate field `%s`"),
+    DUPLICATE_METHOD              (103, "duplicate method `%s`"),
+    DUPLICATE_PARAMETER           (104, "duplicate parameter `%s`"),
+    DUPLICATE_VARIABLE            (105, "duplicate variable `%s`"),
+    UNDECLARED_CLASS              (106, "undeclared class `%s`"),
 
     /*
      * Type errors.
