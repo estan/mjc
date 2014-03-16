@@ -1,4 +1,4 @@
-class IfElseStatementTest {
+class IfStatementTest {
     public static void main(String[] args) {
         int i;
         int[] ia;
