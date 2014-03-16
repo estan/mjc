@@ -5,7 +5,7 @@ This directory and its subdirectories contain input programs for the various
 compiler tests. The tests are organized as follows:
 
 * **good** contains programs that should compile without problems, but which
-  may exhibit runtime errors.
+  may exhibit runtime errors. These are used by `TypeCheckerGoodTest.java`.
 * **bad/syntax** contains programs with syntax errors. These are used by
   `ParserBadTest.java`.
 * **bad/symbol** contains programs with symbol errors. These are used by
