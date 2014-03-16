@@ -7,7 +7,7 @@ class NewLongArrayExpressionTest {
         boolean b;
         A cA;
 
-        //ia = new int[i]; // OK!
+        //la = new long[i]; // OK!
         la = new long[ia]; // INVALID_SIZE_TYPE
         la = new long[l]; // INVALID_SIZE_TYPE
         la = new long[la]; // INVALID_SIZE_TYPE
