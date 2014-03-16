@@ -33,7 +33,7 @@ import static org.hamcrest.Matchers.emptyIterable;
  */
 @RunWith(Parameterized.class)
 public class TypeCheckerValidTest {
-    private static String dataDir = "src/test/resources/valid";
+    private static String dataDir = "src/test/resources/type_valid";
 
     private String path; // Set once for each file in dataDir.
 
