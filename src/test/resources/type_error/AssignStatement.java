@@ -11,6 +11,7 @@ class AssignStatementTest {
         A = i;  // EXPECTED_VARIABLE_GOT_CLASS
         U = i;  // UNDECLARED_IDENTIFIER
 
+        //i = i; // OK!
         i = ia; // INVALID_ASSIGNMENT
         i = l;  // INVALID_ASSIGNMENT
         i = la; // INVALID_ASSIGNMENT
@@ -18,12 +19,15 @@ class AssignStatementTest {
         i = cA; // INVALID_ASSIGNMENT
 
         ia = i;  // INVALID_ASSIGNMENT
+        //ia = ia;  // OK!
         ia = l;  // INVALID_ASSIGNMENT
         ia = la; // INVALID_ASSIGNMENT
         ia = b;  // INVALID_ASSIGNMENT
         ia = cA; // INVALID_ASSIGNMENT
 
+        //l = i;  // OK!
         l = ia;  // INVALID_ASSIGNMENT
+        //l = l;  // OK!
         l = la;  // INVALID_ASSIGNMENT
         l = b;   // INVALID_ASSIGNMENT
         l = cA;  // INVALID_ASSIGNMENT
@@ -31,6 +35,7 @@ class AssignStatementTest {
         la = i;  // INVALID_ASSIGNMENT
         la = ia; // INVALID_ASSIGNMENT
         la = l;  // INVALID_ASSIGNMENT
+        //la = la; // OK!
         la = b;  // INVALID_ASSIGNMENT
         la = cA; // INVALID_ASSIGNMENT
 
@@ -39,6 +44,7 @@ class AssignStatementTest {
         cA = l;  // INVALID_ASSIGNMENT
         cA = la; // INVALID_ASSIGNMENT
         cA = b;  // INVALID_ASSIGNMENT
+        //cA = cA; // OK!
         cA = cB; // INVALID_ASSIGNMENT
     }
 }
