@@ -133,7 +133,7 @@ public class SymbolTableBuilder {
             String name = classId.getText();
             if (symbolTable.getClassInfo(name) != null) {
                 // Redeclaration: Enter ClassInfo under new name, and update AST to match.
-                name = name + "-REDECLARED-" + UUID.randomUUID();
+                name = name + UUID.randomUUID();
                 classId.replaceBy(new TIdentifier(name, line, column));
                 error(DUPLICATE_CLASS.on(line, column, classId.getText()));
             }
@@ -238,7 +238,7 @@ public class SymbolTableBuilder {
             String name = methodId.getText();
             if (currentClass.getMethod(name) != null) {
                 // Redeclaration: Use another name, and update AST to match.
-                name = name + "-REDECLARED-" + UUID.randomUUID();
+                name = name + UUID.randomUUID();
                 methodId.replaceBy(new TIdentifier(name, line, column));
                 error(DUPLICATE_METHOD.on(line, column, methodId.getText()));
             }
