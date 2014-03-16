@@ -1,3 +1,10 @@
+/**
+ * Tests some evaluation order / side effects issues with && and ||.
+ */
+
+//EXT:IWE
+//EXT:BDJ
+
 class SideEffectsAndEvalOrder {
     public static void main(String[] args) {
         IncredibleMachine m;
@@ -14,7 +21,6 @@ class IncredibleMachine {
             || (m(7, false) || s(11, true) && m(13, false))  /* r = ((2 + 3) * 7 - 11) * 13 */
             || a(17, true) || m(19, true))                   /* r = ((2 + 3) * 7 - 11) * 13 + 17 = 329 */
             result = result;
-        else {}
         return result;
     }
     public boolean m(int value, boolean ret) {
