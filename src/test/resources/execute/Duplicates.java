@@ -1,7 +1,11 @@
 /**
- * Check duplicates in two arrays.
+ * Check duplicates in two sorted arrays.
+ *
+ * This is the "cd" problem on Kattis [1]
  *
  * @author Elvis Stansvik <elvstone@gmail.com>
+ *
+ * [1] https://kth.kattis.scrool.se/problems/cd
  */
 class Duplicates {
     public static void main(String[] args) {

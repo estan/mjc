@@ -61,8 +61,8 @@ import static org.hamcrest.Matchers.containsInAnyOrder;;
  * the listed errors are reported by the checker (and only those), the test will pass.
  */
 @RunWith(Parameterized.class)
-public class TypeCheckerInvalidTest {
-    private static String dataDir = "src/test/resources/type_error";
+public class TypeCheckerBadTest {
+    private static String dataDir = "src/test/resources/bad/type";
 
     private String path; // Set once for each file in dataDir.
 
@@ -71,7 +71,7 @@ public class TypeCheckerInvalidTest {
      *
      * @param path Path of file to test on.
      */
-    public TypeCheckerInvalidTest(String path) {
+    public TypeCheckerBadTest(String path) {
         this.path = path;
     }
 

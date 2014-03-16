@@ -32,8 +32,8 @@ import static org.hamcrest.Matchers.emptyIterable;
  * The test case will run once on each *.java file in dataDir.
  */
 @RunWith(Parameterized.class)
-public class TypeCheckerValidTest {
-    private static String dataDir = "src/test/resources/type_valid";
+public class TypeCheckerGoodTest {
+    private static String dataDir = "src/test/resources/good";
 
     private String path; // Set once for each file in dataDir.
 
@@ -42,7 +42,7 @@ public class TypeCheckerValidTest {
      *
      * @param path Path of file to test on.
      */
-    public TypeCheckerValidTest(String path) {
+    public TypeCheckerGoodTest(String path) {
         this.path = path;
     }
 
