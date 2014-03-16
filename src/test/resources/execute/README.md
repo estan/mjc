@@ -1,5 +1,6 @@
-Valid MiniJava Programs
-=======================
-These are perfectly valid MiniJava programs.
+Valid MiniJava Programs with Expected Output
+============================================
+These are valid MiniJava programs that should also execute correctly and
+have expected output.
 
-They serve as input for both the parser and the type-checking tests.
+Each testcase consists of a .java file and the corresponding .out file.
