@@ -1,12 +1,7 @@
 class NewInstanceExpressionTest {
     public static void main(String[] args) {
         int i;
-        int[] ia;
-        long l;
-        long[] la;
-        boolean b;
-        A cA;
-        B cB;
+        i = new C(); // UNDECLARED_CLASS
     }
 }
 class A {}
