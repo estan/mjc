@@ -122,7 +122,6 @@ public class MethodInfo {
      * @return The added VariableInfo.
      */
     public VariableInfo addParameter(final VariableInfo parameter) {
-        parameter.setBlock(0);
         parameters.add(parameter);
         return parameter;
     }
