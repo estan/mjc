@@ -1,3 +1,20 @@
+/**
+ * This is a combination of the tests we had for our type checker. It should
+ * cover most type-valid constructs of our extended language.
+ *
+ * @author Elvis Stansvik <elvstone@gmail.com>
+ */
+
+//EXT:LONG
+//EXT:IWE
+//EXT:NBD
+//EXT:CLE
+//EXT:CGT
+//EXT:CGE
+//EXT:CEQ
+//EXT:CNE
+//EXT:BDJ
+
 class TypeCheckTest {
     public static void main(String[] args) {
         int i;
