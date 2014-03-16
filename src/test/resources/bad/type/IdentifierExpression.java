@@ -1,5 +1,7 @@
 class IdentifierExpressionTest {
     public static void main(String[] args) {
+        int a;
+        a = args; // UNDECLARED_IDENTIFIER (yes!)
     }
 }
 class A {
