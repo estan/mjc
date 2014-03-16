@@ -1,5 +1,5 @@
 /**
- * Tests some evaluation order / side effects issues with && and ||.
+ * Tests some evaluation order / side effects with && and ||.
  *
  * @author Elvis Stansvik <elvstone@gmail.com>
  */
@@ -7,7 +7,7 @@
 //EXT:IWE
 //EXT:BDJ
 
-class SideEffectsAndEvalOrder {
+class SideEffects {
     public static void main(String[] args) {
         IncredibleMachine m;
         m = new IncredibleMachine();

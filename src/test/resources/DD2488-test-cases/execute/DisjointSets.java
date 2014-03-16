@@ -6,15 +6,15 @@
  *
  * [1] https://kth.kattis.com/problems/unionfind
  */
-class DisjointSetsTest {
+class DisjointSets {
     public static void main(String[] args) {
-        DisjointSets s1;
-        DisjointSets s2;
+        DisjointSet s1;
+        DisjointSet s2;
 
         int r; // Unused.
 
         // First test case (unionfind1.in on Kattis).
-        s1 = new DisjointSets();
+        s1 = new DisjointSet();
         r = s1.init(10);
         r = s1.same(1, 3);
         r = s1.union(1, 8);
@@ -22,7 +22,7 @@ class DisjointSetsTest {
         r = s1.same(1, 3);
 
         // Second test case (unionfind2.in on Kattis).
-        s2 = new DisjointSets();
+        s2 = new DisjointSet();
         r = s2.init(4);
         r = s2.same(0, 0);
         r = s2.union(0, 1);
@@ -39,7 +39,7 @@ class DisjointSetsTest {
  *
  * [1] https://en.wikipedia.org/wiki/Disjoint-set_data_structure
  */
-class DisjointSets {
+class DisjointSet {
     int[] parent;
     int[] rank;
 
