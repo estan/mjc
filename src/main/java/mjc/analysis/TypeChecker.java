@@ -443,24 +443,28 @@ public class TypeChecker extends DepthFirstAdapter {
             final MethodInfo methodInfo = classInfo.getMethod(id);
 
             if (methodInfo != null) {
-                // Check if actual parameters match formal parameters.
-                final List<PExpression> actuals = expression.getActualParameters();
-                final List<VariableInfo> formals = methodInfo.getParameters();
-                if (actuals.size() == formals.size()) {
-                    final Iterator<PExpression> actualsIt = actuals.iterator();
-                    final Iterator<VariableInfo> formalsIt = formals.iterator();
-                    int param = 0;
-                    while (actualsIt.hasNext()) {
-                        final Type actual = types.get(actualsIt.next());
-                        final Type formal = formalsIt.next().getType();
-                        if (!actual.isAssignableTo(formal)) {
-                            error(INVALID_PARAM_TYPE.on(line, column, id, param, actual, formal));
+                if (methodInfo != symbolTable.getMainMethod()) {
+                    // Check if actual parameters match formal parameters.
+                    final List<PExpression> actuals = expression.getActualParameters();
+                    final List<VariableInfo> formals = methodInfo.getParameters();
+                    if (actuals.size() == formals.size()) {
+                        final Iterator<PExpression> actualsIt = actuals.iterator();
+                        final Iterator<VariableInfo> formalsIt = formals.iterator();
+                        int param = 0;
+                        while (actualsIt.hasNext()) {
+                            final Type actual = types.get(actualsIt.next());
+                            final Type formal = formalsIt.next().getType();
+                            if (!actual.isAssignableTo(formal)) {
+                                error(INVALID_PARAM_TYPE.on(line, column, id, param, actual, formal));
+                            }
+                            ++param;
                         }
-                        ++param;
-                    }
 
+                    } else {
+                        error(INVALID_PARAM_COUNT.on(line, column, id, actuals.size(), formals.size()));
+                    }
                 } else {
-                    error(INVALID_PARAM_COUNT.on(line, column, id, actuals.size(), formals.size()));
+                    error(CALL_TO_MAIN.on(line, column));
                 }
                 types.put(expression, methodInfo.getReturnType());
             } else {

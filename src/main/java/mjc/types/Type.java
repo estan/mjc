@@ -80,13 +80,6 @@ public abstract class Type {
     }
 
     /**
-     * @return true if this is an unsupported type.
-     */
-    public boolean isUnsupported() {
-        return false;
-    }
-
-    /**
      * @return true if this type is assignable (=) to @a type.
      */
     public boolean isAssignableTo(final Type type) {

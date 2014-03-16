@@ -99,8 +99,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Boolean.isAssignableTo(BuiltInType.Boolean), is(true));
         assertThat(BuiltInType.Boolean.isAssignableTo(classType), is(false));
         assertThat(BuiltInType.Boolean.isAssignableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Boolean.isAssignableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Boolean.isAssignableTo(UnsupportedType.StringArray), is(false));
 
         // Int
         assertThat(BuiltInType.Int.isAssignableTo(BuiltInType.Int), is(true));
@@ -110,8 +108,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Int.isAssignableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Int.isAssignableTo(classType), is(false));
         assertThat(BuiltInType.Int.isAssignableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Int.isAssignableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Int.isAssignableTo(UnsupportedType.StringArray), is(false));
 
         // IntArray
         assertThat(BuiltInType.IntArray.isAssignableTo(BuiltInType.Int), is(false));
@@ -121,8 +117,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.IntArray.isAssignableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.IntArray.isAssignableTo(classType), is(false));
         assertThat(BuiltInType.IntArray.isAssignableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.IntArray.isAssignableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.IntArray.isAssignableTo(UnsupportedType.StringArray), is(false));
 
         // Long
         assertThat(BuiltInType.Long.isAssignableTo(BuiltInType.Int), is(false));
@@ -132,8 +126,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Long.isAssignableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Long.isAssignableTo(classType), is(false));
         assertThat(BuiltInType.Long.isAssignableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Long.isAssignableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Long.isAssignableTo(UnsupportedType.StringArray), is(false));
 
         // LongArray
         assertThat(BuiltInType.LongArray.isAssignableTo(BuiltInType.Int), is(false));
@@ -143,8 +135,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.LongArray.isAssignableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.LongArray.isAssignableTo(classType), is(false));
         assertThat(BuiltInType.LongArray.isAssignableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.LongArray.isAssignableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.LongArray.isAssignableTo(UnsupportedType.StringArray), is(false));
     }
 
     @Test
@@ -157,8 +147,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Boolean.isEqualComparableTo(BuiltInType.Boolean), is(true));
         assertThat(BuiltInType.Boolean.isEqualComparableTo(classType), is(false));
         assertThat(BuiltInType.Boolean.isEqualComparableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Boolean.isEqualComparableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Boolean.isEqualComparableTo(UnsupportedType.StringArray), is(false));
 
         // Int
         assertThat(BuiltInType.Int.isEqualComparableTo(BuiltInType.Int), is(true));
@@ -168,8 +156,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Int.isEqualComparableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Int.isEqualComparableTo(classType), is(false));
         assertThat(BuiltInType.Int.isEqualComparableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Int.isEqualComparableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Int.isEqualComparableTo(UnsupportedType.StringArray), is(false));
 
         // IntArray
         assertThat(BuiltInType.IntArray.isEqualComparableTo(BuiltInType.Int), is(false));
@@ -179,8 +165,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.IntArray.isEqualComparableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.IntArray.isEqualComparableTo(classType), is(false));
         assertThat(BuiltInType.IntArray.isEqualComparableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.IntArray.isEqualComparableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.IntArray.isEqualComparableTo(UnsupportedType.StringArray), is(false));
 
         // Long
         assertThat(BuiltInType.Long.isEqualComparableTo(BuiltInType.Int), is(true));
@@ -190,8 +174,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Long.isEqualComparableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Long.isEqualComparableTo(classType), is(false));
         assertThat(BuiltInType.Long.isEqualComparableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Long.isEqualComparableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Long.isEqualComparableTo(UnsupportedType.StringArray), is(false));
 
         // LongArray
         assertThat(BuiltInType.LongArray.isEqualComparableTo(BuiltInType.Int), is(false));
@@ -201,8 +183,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.LongArray.isEqualComparableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.LongArray.isEqualComparableTo(classType), is(false));
         assertThat(BuiltInType.LongArray.isEqualComparableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.LongArray.isEqualComparableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.LongArray.isEqualComparableTo(UnsupportedType.StringArray), is(false));
     }
 
     @Test
@@ -215,8 +195,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Boolean.isRelationalComparableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Boolean.isRelationalComparableTo(classType), is(false));
         assertThat(BuiltInType.Boolean.isRelationalComparableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Boolean.isRelationalComparableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Boolean.isRelationalComparableTo(UnsupportedType.StringArray), is(false));
 
         // Int
         assertThat(BuiltInType.Int.isRelationalComparableTo(BuiltInType.Int), is(true));
@@ -226,8 +204,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Int.isRelationalComparableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Int.isRelationalComparableTo(classType), is(false));
         assertThat(BuiltInType.Int.isRelationalComparableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Int.isRelationalComparableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Int.isRelationalComparableTo(UnsupportedType.StringArray), is(false));
 
         // IntArray
         assertThat(BuiltInType.IntArray.isRelationalComparableTo(BuiltInType.Int), is(false));
@@ -237,8 +213,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.IntArray.isRelationalComparableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.IntArray.isRelationalComparableTo(classType), is(false));
         assertThat(BuiltInType.IntArray.isRelationalComparableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.IntArray.isRelationalComparableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.IntArray.isRelationalComparableTo(UnsupportedType.StringArray), is(false));
 
         // Long
         assertThat(BuiltInType.Long.isRelationalComparableTo(BuiltInType.Int), is(true));
@@ -248,8 +222,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Long.isRelationalComparableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Long.isRelationalComparableTo(classType), is(false));
         assertThat(BuiltInType.Long.isRelationalComparableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Long.isRelationalComparableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Long.isRelationalComparableTo(UnsupportedType.StringArray), is(false));
 
         // LongArray
         assertThat(BuiltInType.LongArray.isRelationalComparableTo(BuiltInType.Int), is(false));
@@ -259,8 +231,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.LongArray.isRelationalComparableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.LongArray.isRelationalComparableTo(classType), is(false));
         assertThat(BuiltInType.LongArray.isRelationalComparableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.LongArray.isRelationalComparableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.LongArray.isRelationalComparableTo(UnsupportedType.StringArray), is(false));
     }
 
     @Test
@@ -273,8 +243,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Boolean.isAddableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Boolean.isAddableTo(classType), is(false));
         assertThat(BuiltInType.Boolean.isAddableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Boolean.isAddableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Boolean.isAddableTo(UnsupportedType.StringArray), is(false));
 
         // Int
         assertThat(BuiltInType.Int.isAddableTo(BuiltInType.Int), is(true));
@@ -284,8 +252,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Int.isAddableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Int.isAddableTo(classType), is(false));
         assertThat(BuiltInType.Int.isAddableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Int.isAddableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Int.isAddableTo(UnsupportedType.StringArray), is(false));
 
         // IntArray
         assertThat(BuiltInType.IntArray.isAddableTo(BuiltInType.Int), is(false));
@@ -295,8 +261,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.IntArray.isAddableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.IntArray.isAddableTo(classType), is(false));
         assertThat(BuiltInType.IntArray.isAddableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.IntArray.isAddableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.IntArray.isAddableTo(UnsupportedType.StringArray), is(false));
 
         // Long
         assertThat(BuiltInType.Long.isAddableTo(BuiltInType.Int), is(true));
@@ -306,8 +270,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Long.isAddableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Long.isAddableTo(classType), is(false));
         assertThat(BuiltInType.Long.isAddableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Long.isAddableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Long.isAddableTo(UnsupportedType.StringArray), is(false));
 
         // LongArray
         assertThat(BuiltInType.LongArray.isAddableTo(BuiltInType.Int), is(false));
@@ -317,8 +279,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.LongArray.isAddableTo(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.LongArray.isAddableTo(classType), is(false));
         assertThat(BuiltInType.LongArray.isAddableTo(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.LongArray.isAddableTo(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.LongArray.isAddableTo(UnsupportedType.StringArray), is(false));
     }
 
     @Test
@@ -331,8 +291,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Boolean.isSubtractableFrom(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Boolean.isSubtractableFrom(classType), is(false));
         assertThat(BuiltInType.Boolean.isSubtractableFrom(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Boolean.isSubtractableFrom(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Boolean.isSubtractableFrom(UnsupportedType.StringArray), is(false));
 
         // Int
         assertThat(BuiltInType.Int.isSubtractableFrom(BuiltInType.Int), is(true));
@@ -342,8 +300,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Int.isSubtractableFrom(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Int.isSubtractableFrom(classType), is(false));
         assertThat(BuiltInType.Int.isSubtractableFrom(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Int.isSubtractableFrom(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Int.isSubtractableFrom(UnsupportedType.StringArray), is(false));
 
         // IntArray
         assertThat(BuiltInType.IntArray.isSubtractableFrom(BuiltInType.Int), is(false));
@@ -353,8 +309,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.IntArray.isSubtractableFrom(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.IntArray.isSubtractableFrom(classType), is(false));
         assertThat(BuiltInType.IntArray.isSubtractableFrom(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.IntArray.isSubtractableFrom(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.IntArray.isSubtractableFrom(UnsupportedType.StringArray), is(false));
 
         // Long
         assertThat(BuiltInType.Long.isSubtractableFrom(BuiltInType.Int), is(false));
@@ -364,8 +318,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Long.isSubtractableFrom(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Long.isSubtractableFrom(classType), is(false));
         assertThat(BuiltInType.Long.isSubtractableFrom(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Long.isSubtractableFrom(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Long.isSubtractableFrom(UnsupportedType.StringArray), is(false));
 
         // LongArray
         assertThat(BuiltInType.LongArray.isSubtractableFrom(BuiltInType.Int), is(false));
@@ -375,8 +327,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.LongArray.isSubtractableFrom(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.LongArray.isSubtractableFrom(classType), is(false));
         assertThat(BuiltInType.LongArray.isSubtractableFrom(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.LongArray.isSubtractableFrom(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.LongArray.isSubtractableFrom(UnsupportedType.StringArray), is(false));
     }
 
     @Test
@@ -389,8 +339,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Boolean.isMultipliableWith(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Boolean.isMultipliableWith(classType), is(false));
         assertThat(BuiltInType.Boolean.isMultipliableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Boolean.isMultipliableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Boolean.isMultipliableWith(UnsupportedType.StringArray), is(false));
 
         // Int
         assertThat(BuiltInType.Int.isMultipliableWith(BuiltInType.Int), is(true));
@@ -400,8 +348,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Int.isMultipliableWith(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Int.isMultipliableWith(classType), is(false));
         assertThat(BuiltInType.Int.isMultipliableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Int.isMultipliableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Int.isMultipliableWith(UnsupportedType.StringArray), is(false));
 
 
         // IntArray
@@ -412,8 +358,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.IntArray.isMultipliableWith(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.IntArray.isMultipliableWith(classType), is(false));
         assertThat(BuiltInType.IntArray.isMultipliableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.IntArray.isMultipliableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.IntArray.isMultipliableWith(UnsupportedType.StringArray), is(false));
 
 
         // Long
@@ -424,8 +368,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Long.isMultipliableWith(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Long.isMultipliableWith(classType), is(false));
         assertThat(BuiltInType.Long.isMultipliableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Long.isMultipliableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Long.isMultipliableWith(UnsupportedType.StringArray), is(false));
 
 
         // LongArray
@@ -436,8 +378,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.LongArray.isMultipliableWith(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.LongArray.isMultipliableWith(classType), is(false));
         assertThat(BuiltInType.LongArray.isMultipliableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.LongArray.isMultipliableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.LongArray.isMultipliableWith(UnsupportedType.StringArray), is(false));
 
     }
 
@@ -451,8 +391,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Boolean.isDisjunctableWith(BuiltInType.Boolean), is(true));
         assertThat(BuiltInType.Boolean.isDisjunctableWith(classType), is(false));
         assertThat(BuiltInType.Boolean.isDisjunctableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Boolean.isDisjunctableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Boolean.isDisjunctableWith(UnsupportedType.StringArray), is(false));
 
         // Int
         assertThat(BuiltInType.Int.isDisjunctableWith(BuiltInType.Int), is(false));
@@ -462,8 +400,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Int.isDisjunctableWith(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Int.isDisjunctableWith(classType), is(false));
         assertThat(BuiltInType.Int.isDisjunctableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Int.isDisjunctableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Int.isDisjunctableWith(UnsupportedType.StringArray), is(false));
 
         // IntArray
         assertThat(BuiltInType.IntArray.isDisjunctableWith(BuiltInType.Int), is(false));
@@ -473,8 +409,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.IntArray.isDisjunctableWith(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.IntArray.isDisjunctableWith(classType), is(false));
         assertThat(BuiltInType.IntArray.isDisjunctableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.IntArray.isDisjunctableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.IntArray.isDisjunctableWith(UnsupportedType.StringArray), is(false));
 
         // Long
         assertThat(BuiltInType.Long.isDisjunctableWith(BuiltInType.Int), is(false));
@@ -484,8 +418,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Long.isDisjunctableWith(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Long.isDisjunctableWith(classType), is(false));
         assertThat(BuiltInType.Long.isDisjunctableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Long.isDisjunctableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Long.isDisjunctableWith(UnsupportedType.StringArray), is(false));
 
         // LongArray
         assertThat(BuiltInType.LongArray.isDisjunctableWith(BuiltInType.Int), is(false));
@@ -495,8 +427,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.LongArray.isDisjunctableWith(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.LongArray.isDisjunctableWith(classType), is(false));
         assertThat(BuiltInType.LongArray.isDisjunctableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.LongArray.isDisjunctableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.LongArray.isDisjunctableWith(UnsupportedType.StringArray), is(false));
     }
 
     @Test
@@ -509,8 +439,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Boolean.isConjunctableWith(BuiltInType.Boolean), is(true));
         assertThat(BuiltInType.Boolean.isConjunctableWith(classType), is(false));
         assertThat(BuiltInType.Boolean.isConjunctableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Boolean.isConjunctableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Boolean.isConjunctableWith(UnsupportedType.StringArray), is(false));
 
         // Int
         assertThat(BuiltInType.Int.isConjunctableWith(BuiltInType.Int), is(false));
@@ -520,8 +448,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Int.isConjunctableWith(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Int.isConjunctableWith(classType), is(false));
         assertThat(BuiltInType.Int.isConjunctableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Int.isConjunctableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Int.isConjunctableWith(UnsupportedType.StringArray), is(false));
 
         // IntArray
         assertThat(BuiltInType.IntArray.isConjunctableWith(BuiltInType.Int), is(false));
@@ -531,8 +457,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.IntArray.isConjunctableWith(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.IntArray.isConjunctableWith(classType), is(false));
         assertThat(BuiltInType.IntArray.isConjunctableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.IntArray.isConjunctableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.IntArray.isConjunctableWith(UnsupportedType.StringArray), is(false));
 
 
         // Long
@@ -543,8 +467,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Long.isConjunctableWith(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.Long.isConjunctableWith(classType), is(false));
         assertThat(BuiltInType.Long.isConjunctableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.Long.isConjunctableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.Long.isConjunctableWith(UnsupportedType.StringArray), is(false));
 
         // LongArray
         assertThat(BuiltInType.LongArray.isConjunctableWith(BuiltInType.Int), is(false));
@@ -554,8 +476,6 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.LongArray.isConjunctableWith(BuiltInType.Boolean), is(false));
         assertThat(BuiltInType.LongArray.isConjunctableWith(classType), is(false));
         assertThat(BuiltInType.LongArray.isConjunctableWith(UndefinedType.Instance), is(true));
-        assertThat(BuiltInType.LongArray.isConjunctableWith(UnsupportedType.Void), is(false));
-        assertThat(BuiltInType.LongArray.isConjunctableWith(UnsupportedType.StringArray), is(false));
     }
 
     @Test
@@ -565,14 +485,5 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Long.isUndefined(), is(false));
         assertThat(BuiltInType.IntArray.isUndefined(), is(false));
         assertThat(BuiltInType.LongArray.isUndefined(), is(false));
-    }
-
-    @Test
-    public void testIsUnsupported() {
-        assertThat(BuiltInType.Boolean.isUnsupported(), is(false));
-        assertThat(BuiltInType.Int.isUnsupported(), is(false));
-        assertThat(BuiltInType.Long.isUnsupported(), is(false));
-        assertThat(BuiltInType.IntArray.isUnsupported(), is(false));
-        assertThat(BuiltInType.LongArray.isUnsupported(), is(false));
     }
 }

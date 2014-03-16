@@ -10,6 +10,7 @@ import java.util.Map;
  */
 public class SymbolTable {
     private final Map<String, ClassInfo> classes;
+    private MethodInfo mainMethod;
 
     /**
      * Constructs a new empty symbol table.
@@ -39,6 +40,30 @@ public class SymbolTable {
      */
     public void addClassInfo(String name, ClassInfo info) {
         classes.put(name, info);
+    }
+
+    /**
+     * Returns information about the main method.
+     *
+     * Since we forbid explicit calls to the main method, a reference is kept here so
+     * that we can identify it when we encounter such a call during type-checking.
+     *
+     * @return Information about the main method.
+     */
+    public MethodInfo getMainMethod() {
+        return mainMethod;
+    }
+
+    /**
+     * Sets information about the main method.
+     *
+     * Since we forbid explicit calls to the main method, a reference is kept here so
+     * that we can identify it when we encounter such a call during type-checking.
+     *
+     * @param mainMethod Information about the main method.
+     */
+    public void setMainMethod(final MethodInfo mainMethod) {
+        this.mainMethod = mainMethod;
     }
 
     @Override

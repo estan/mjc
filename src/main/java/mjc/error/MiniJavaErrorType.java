@@ -41,8 +41,9 @@ public enum MiniJavaErrorType {
     INVALID_LONG_LITERAL          (213, "invalid long literal %s"),
     EXPECTED_VARIABLE_GOT_CLASS   (214, "`%s` is a class name, expected variable name"),
     NOT_ARRAY_TYPE                (215, "%s is not an array type"),
-    CALL_ON_NON_CLASS             (216, "method call on expression of non-class type %s"),
-    LENGTH_ON_NON_ARRAY           (217, "length unsupported on non-array type %s"),
+    LENGTH_ON_NON_ARRAY           (216, "length unsupported on non-array type %s"),
+    CALL_ON_NON_CLASS             (217, "method call on expression of non-class type %s"),
+    CALL_TO_MAIN                  (218, "unsupported call to `main`"),
 
     INTERNAL_ERROR                (1000, "internal error: %s");
 

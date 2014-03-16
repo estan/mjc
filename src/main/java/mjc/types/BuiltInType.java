@@ -1,7 +1,7 @@
 package mjc.types;
 
 /**
- * Represents a built-in type.
+ * BuiltInType represents a built-in MiniJava type.
  *
  * There are only five static instances of this class, one for each of the built-in
  * types int, int[], long, long[] and boolean.
@@ -9,10 +9,10 @@ package mjc.types;
 public class BuiltInType extends Type {
 
     public final static Type Int = new BuiltInType("int");
-    public final static Type Long = new BuiltInType("long");
-    public final static Type Boolean = new BuiltInType("boolean");
     public final static Type IntArray = new BuiltInType("int[]");
+    public final static Type Long = new BuiltInType("long");
     public final static Type LongArray = new BuiltInType("long[]");
+    public final static Type Boolean = new BuiltInType("boolean");
 
     private final String name;
 

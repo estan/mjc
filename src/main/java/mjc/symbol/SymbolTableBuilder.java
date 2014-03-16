@@ -25,7 +25,6 @@ import mjc.types.BuiltInType;
 import mjc.types.ClassType;
 import mjc.types.Type;
 import mjc.types.UndefinedType;
-import mjc.types.UnsupportedType;
 import mjc.error.MiniJavaError;
 
 import static mjc.error.MiniJavaErrorType.*;
@@ -117,14 +116,6 @@ public class SymbolTableBuilder {
         @Override
         public void inAMainClassDeclaration(final AMainClassDeclaration declaration) {
             final TIdentifier classId = declaration.getName();
-            final TIdentifier methodId = declaration.getMainMethodName();
-            final int line = methodId.getLine();
-            final int column = methodId.getPos();
-
-            // Check that main method name is "main".
-            if (!methodId.getText().equals("main")) {
-                error(MISSING_MAIN.on(line, column, classId.getText()));
-            }
 
             symbolTable.addClassInfo(classId.getText(), new ClassInfo(
                     classId.getText(),
@@ -181,19 +172,30 @@ public class SymbolTableBuilder {
         public void inAMainClassDeclaration(final AMainClassDeclaration declaration) {
             currentClass = symbolTable.getClassInfo(declaration.getName().getText());
 
-            // Create MethodInfo for main method.
-            final TIdentifier methodId = declaration.getMainMethodName();
-            final MethodInfo methodInfo = new MethodInfo(
-                    methodId.getText(),
-                    UnsupportedType.Void,
-                    methodId.getLine(), methodId.getPos());
+            final String methodId = declaration.getMainMethodName().getText();
+            final int line = declaration.getMainMethodName().getLine();
+            final int column = declaration.getMainMethodName().getPos();
 
-            // Create VariableInfo for main method parameter.
-            final TIdentifier paramId = declaration.getArguments();
-            methodInfo.addParameter(new VariableInfo(
-                    paramId.getText(),
-                    UnsupportedType.StringArray,
-                    paramId.getLine(), paramId.getPos()));
+            // Check that main method name is "main".
+            if (!methodId.equals("main")) {
+                error(MISSING_MAIN.on(line, column, currentClass.getName()));
+            }
+
+            /*
+             * Create MethodInfo for main method.
+             *
+             * Since explicit calls to the main method are forbidden anyway, the return type
+             * doesn't matter, and we give the method the UndefinedType return type.
+             *
+             * Furthermore, since the String[] parameter should be inaccessible to code inside
+             * the main method, we just don't add any parameter.
+             */
+            final MethodInfo methodInfo = new MethodInfo(
+                    methodId,
+                    UndefinedType.Instance,
+                    line, column);
+
+            symbolTable.setMainMethod(methodInfo); // To make it identifiable.
 
             currentMethod = currentClass.addMethod(methodInfo.getName(), methodInfo);
             currentMethod.enterBlock();
