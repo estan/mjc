@@ -1,5 +1,7 @@
 /**
  * Tests some evaluation order / side effects issues with && and ||.
+ *
+ * @author Elvis Stansvik <elvstone@gmail.com>
  */
 
 //EXT:IWE
