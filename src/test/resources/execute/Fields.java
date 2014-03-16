@@ -1,5 +1,5 @@
 /**
-   @author Henrik Österdahl
+   @author Henrik Ã–sterdahl
 */
 
 class Fields {
