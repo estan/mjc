@@ -8,12 +8,14 @@ class ArrayAssignStatementTest {
         A cA;
         B cB;
 
+        //ia[i] = i;  // OK!
         ia[ia] = i;   // INVALID_INDEX_TYPE
         ia[l] = i;    // INVALID_INDEX_TYPE
         ia[la] = i;   // INVALID_INDEX_TYPE
         ia[b] = i;    // INVALID_INDEX_TYPE
         ia[cA] = i;   // INVALID_INDEX_TYPE
 
+        //la[i] = l; // OK!
         la[ia] = l;  // INVALID_INDEX_TYPE
         la[l] = l;   // INVALID_INDEX_TYPE
         la[la] = l;  // INVALID_INDEX_TYPE
