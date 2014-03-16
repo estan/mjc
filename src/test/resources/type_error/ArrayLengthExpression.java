@@ -9,7 +9,9 @@ class ArrayLengthExpressionTest {
         B cB;
 
         i = i.length;  // LENGTH_ON_NON_ARRAY
+        //i = ia.length;  // OK!
         i = l.length;  // LENGTH_ON_NON_ARRAY
+        //i = la.length;  // OK!
         i = b.length;  // LENGTH_ON_NON_ARRAY
         i = cA.length; // LENGTH_ON_NON_ARRAY
     }
