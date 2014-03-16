@@ -15,6 +15,7 @@ class ArrayAccessExpressionTest {
         i = ia[b];  // INVALID_INDEX_TYPE
         i = ia[cA]; // INVALID_INDEX_TYPE
 
+        //l = ia[i];  // OK!
         //l = la[i];  // OK!
         l = la[ia];  // INVALID_INDEX_TYPE
         l = la[l];   // INVALID_INDEX_TYPE

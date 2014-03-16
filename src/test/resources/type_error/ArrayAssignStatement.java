@@ -31,6 +31,7 @@ class ArrayAssignStatementTest {
         ia[i] = b;  // INVALID_ASSIGNMENT
         ia[i] = cA; // INVALID_ASSIGNMENT
 
+        //la[i] = i; // OK!
         la[i] = ia; // INVALID_ASSIGNMENT
         la[i] = la; // INVALID_ASSIGNMENT
         la[i] = b;  // INVALID_ASSIGNMENT
