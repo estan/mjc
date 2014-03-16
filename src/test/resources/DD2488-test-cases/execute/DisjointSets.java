@@ -63,11 +63,11 @@ class DisjointSets {
         xRoot = this.find(x);
         yRoot = this.find(y);
 
-        if (xRoot != yRoot) {
+        if (!(!(xRoot < yRoot) && !(yRoot < xRoot))) { // xRoot != yRoot
             if (rank[xRoot] < rank[yRoot]) {
                 parent[xRoot] = yRoot;
             } else {
-                if (rank[xRoot] > rank[yRoot]) {
+                if (rank[yRoot] < rank[xRoot]) {
                     parent[yRoot] = xRoot;
                 } else {
                     parent[yRoot] = xRoot;
@@ -88,12 +88,12 @@ class DisjointSets {
 
         // Find root.
         root = x;
-        while (root != parent[root]) {
+        while (!(!(root < parent[root]) && !(parent[root] < root))) { // root != parent[root]
             root = parent[root];
         }
 
         // Re-parent all elements on path to root to root.
-        while (x != root) {
+        while (!(!(x < root) && !(root < x))) { // x != root
             next = parent[x];
             parent[x] = root;
             x = next;
@@ -103,7 +103,12 @@ class DisjointSets {
 
     // Prints 1 if x and y is in the same subset, otherwise 0.
     public int same(int x, int y) {
-        if (this.find(x) == this.find(y)) {
+        int xRoot;
+        int yRoot;
+        xRoot = this.find(x);
+        yRoot = this.find(y);
+
+        if (!(xRoot < yRoot) && !(yRoot < xRoot)) { // xRoot == yRoot
             System.out.println(1);
         } else {
             System.out.println(0);
