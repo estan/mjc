@@ -10,6 +10,35 @@ import com.google.common.collect.ArrayListMultimap;
 
 /**
  * MethodInfo represents information about a declared method.
+ *
+ * It holds the function name, return type and list of parameters. Local variables are
+ * kept in a multimap, since there may be several local variables with the same name but
+ * declared in blocks that can't see each other.
+ *
+ * The scope of added local variables is controlled by calling {@link #enterBlock()
+ * enterBlock} and {@link #leaveBlock() leaveBlock}. The mechanism behind these methods
+ * is quite simple, but here's an explanation:
+ *
+ * Each block within a method is given a number from 0, 1, ..., N as it is encountered.
+ *
+ * MethodInfo internally maintains a stack of block numbers; each time a block is entered
+ * using enterBlock(), a new block number is created from a counter (nextBlock) and pushed
+ * on the stack. When leaving a block using leaveBlock(), the stack is popped. When leaving
+ * the last block (the stack becomes empty), the nextBlock counter is reset to 0, to prepare
+ * it for the next user of the API. Note that this requires users of this API to always make
+ * a matching number of calls to enterBlock()/leaveBlock(), to not leave the MethodInfo in
+ * an unknown state for the next user.
+ *
+ * When a local variable is added using {@link #addLocal(VariableInfo) addLocal} it gets its
+ * block set to the current block (top of the stack) before being added to the multimap.
+ *
+ * When a local variable is looked up using {@link #getLocal(String)}, the multimap is first
+ * queried for the variable with the given name. If the variable is found, we check if its
+ * block number is currently on the stack. If it is; the variable is in scope and we return
+ * it, otherwise we return null (the variable is not in scope).
+ *
+ * Local variable lookup is thus O(N * M), where N is the number of local variables with the
+ * same name and M is the current block nesting depth. This should be reasonably fast.
  */
 public class MethodInfo {
 
