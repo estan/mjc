@@ -34,7 +34,7 @@ import com.google.common.collect.ArrayListMultimap;
  *
  * When a local variable is looked up using {@link #getLocal(String)}, the multimap is first
  * queried for the variable with the given name. If the variable is found, we check if its
- * block number is currently on the stack. If it is; the variable is in scope and we return
+ * block number is currently on the stack. If it is, the variable is in scope and we return
  * it, otherwise we return null (the variable is not in scope).
  *
  * Local variable lookup is thus O(N * M), where N is the number of local variables with the
