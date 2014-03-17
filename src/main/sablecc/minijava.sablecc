@@ -90,6 +90,10 @@ Ignored Tokens
 
 Productions
 
+    /*
+     * Declarations
+     */
+
     program =
         [main_class_declaration]:main_class_declaration [class_declarations]:class_declaration*
             {-> New program(main_class_declaration, [class_declarations])};
@@ -132,15 +136,15 @@ Productions
         [type]:type [name]:identifier semicolon
             {-> New variable_declaration(type, name)};
 
-    formal_parameter =
-        [type]:type [name]:identifier
-            {-> New formal_parameter(type, name)};
-
     formal_parameter_list {-> formal_parameter* } =
         {formal_parameter} formal_parameter
             {-> [formal_parameter.formal_parameter] } |
         {formal_parameters} formal_parameter_list comma formal_parameter
             {-> [formal_parameter_list.formal_parameter, formal_parameter.formal_parameter] };
+
+    formal_parameter =
+        [type]:type [name]:identifier
+            {-> New formal_parameter(type, name)};
 
     type =
         {int} int_keyword
@@ -155,6 +159,10 @@ Productions
             {-> New type.boolean(boolean_keyword)} |
         {class} identifier
             {-> New type.class(identifier)};
+
+    /*
+     * Statements
+     */
 
     statement =
         {without_trailing_substatement} statement_without_trailing_substatement
@@ -191,6 +199,10 @@ Productions
             {-> New statement.assign(variable, assign, value)} |
         {array_assign} [variable]:identifier lbrack [index]:expression rbrack assign [value]:expression semicolon
             {-> New statement.array_assign(variable, index, assign, value)};
+
+    /*
+     * Expressions
+     */
 
     expression_list {-> expression*} =
         {expression} expression
@@ -312,6 +324,10 @@ Productions
 
 Abstract Syntax Tree
 
+    /*
+     * Declarations
+     */
+
     program =
         main_class_declaration [class_declarations]:class_declaration*;
 
@@ -355,6 +371,10 @@ Abstract Syntax Tree
         {boolean} [name]:boolean_keyword |
         {class} [name]:identifier;
 
+    /*
+     * Statements
+     */
+
     statement =
         {block} [variable_declarations]:variable_declaration* [statements]:statement* |
         {if} if_keyword [condition]:expression [statement]:statement |
@@ -363,6 +383,10 @@ Abstract Syntax Tree
         {println} println_keyword [value]:expression |
         {assign} [variable]:identifier assign [value]:expression |
         {array_assign} [variable]:identifier [index]:expression assign [value]:expression;
+
+    /*
+     * Expressions
+     */
 
     expression =
         {and} [left]:expression and [right]:expression |
