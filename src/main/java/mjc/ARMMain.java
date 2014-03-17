@@ -139,8 +139,7 @@ public class ARMMain {
         }
 
         if (builder.hasErrors() || typeChecker.hasErrors()) {
-            // Errors in symbol table building or type checking, abort.
-            return EXIT_FAILURE;
+            return EXIT_FAILURE; // Abort compilation.
         }
 
         return EXIT_SUCCESS;
