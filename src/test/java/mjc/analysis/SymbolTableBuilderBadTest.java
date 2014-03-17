@@ -1,4 +1,4 @@
-package mjc.symbol;
+package mjc.analysis;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import mjc.analysis.SymbolTableBuilder;
 import mjc.error.MiniJavaErrorType;
 import mjc.lexer.Lexer;
 import mjc.lexer.LexerException;

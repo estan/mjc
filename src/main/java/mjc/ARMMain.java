@@ -18,14 +18,13 @@ import mjc.lexer.LexerException;
 import mjc.parser.Parser;
 import mjc.parser.ParserException;
 import mjc.symbol.SymbolTable;
-import mjc.symbol.SymbolTableBuilder;
 import mjc.node.InvalidToken;
 import mjc.node.Start;
 import mjc.analysis.ASTGraphPrinter;
 import mjc.analysis.ASTPrinter;
+import mjc.analysis.SymbolTableBuilder;
 import mjc.analysis.TypeChecker;
 import mjc.error.MiniJavaError;
-
 import static mjc.error.MiniJavaErrorType.LEXER_ERROR;
 import static mjc.error.MiniJavaErrorType.PARSER_ERROR;
 

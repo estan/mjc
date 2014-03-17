@@ -17,7 +17,6 @@ import mjc.node.Start;
 import mjc.parser.Parser;
 import mjc.parser.ParserException;
 import mjc.symbol.SymbolTable;
-import mjc.symbol.SymbolTableBuilder;
 import mjc.error.MiniJavaErrorType;
 
 import org.junit.Test;

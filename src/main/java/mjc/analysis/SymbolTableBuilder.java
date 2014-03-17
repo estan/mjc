@@ -1,4 +1,4 @@
-package mjc.symbol;
+package mjc.analysis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +21,15 @@ import mjc.node.AVariableDeclaration;
 import mjc.node.PType;
 import mjc.node.Start;
 import mjc.node.TIdentifier;
+import mjc.symbol.ClassInfo;
+import mjc.symbol.MethodInfo;
+import mjc.symbol.SymbolTable;
+import mjc.symbol.VariableInfo;
 import mjc.types.BuiltInType;
 import mjc.types.ClassType;
 import mjc.types.Type;
 import mjc.types.UndefinedType;
 import mjc.error.MiniJavaError;
-
 import static mjc.error.MiniJavaErrorType.*;
 
 /**
