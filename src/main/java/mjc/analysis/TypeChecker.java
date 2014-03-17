@@ -116,7 +116,7 @@ public class TypeChecker extends DepthFirstAdapter {
 
     public void inAMainClassDeclaration(final AMainClassDeclaration declaration) {
         currentClass = symbolTable.getClassInfo(declaration.getName().getText());
-        currentMethod = currentClass.getMethod(declaration.getMainMethodName().getText());
+        currentMethod = currentClass.getMethod(declaration.getMethodName().getText());
         currentMethod.enterBlock();
     }
 
@@ -197,7 +197,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     public void outAAssignStatement(final AAssignStatement statement) {
-        final String id = statement.getVariable().getText();
+        final String id = statement.getName().getText();
         final int line = statement.getAssign().getLine();
         final int column = statement.getAssign().getPos();
 
@@ -226,7 +226,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     public void outAArrayAssignStatement(final AArrayAssignStatement statement) {
-        final String id = statement.getVariable().getText();
+        final String id = statement.getName().getText();
         final int line = statement.getAssign().getLine();
         final int column = statement.getAssign().getPos();
 

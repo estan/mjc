@@ -175,9 +175,9 @@ public class SymbolTableBuilder {
         public void inAMainClassDeclaration(final AMainClassDeclaration declaration) {
             currentClass = symbolTable.getClassInfo(declaration.getName().getText());
 
-            final String methodId = declaration.getMainMethodName().getText();
-            final int line = declaration.getMainMethodName().getLine();
-            final int column = declaration.getMainMethodName().getPos();
+            final String methodId = declaration.getMethodName().getText();
+            final int line = declaration.getMethodName().getLine();
+            final int column = declaration.getMethodName().getPos();
 
             // Check that main method name is "main".
             if (!methodId.equals("main")) {

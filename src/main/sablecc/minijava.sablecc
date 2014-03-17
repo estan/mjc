@@ -95,38 +95,38 @@ Productions
      */
 
     program =
-        [main_class_declaration]:main_class_declaration [class_declarations]:class_declaration*
-            {-> New program(main_class_declaration, [class_declarations])};
+        [main_class_declaration]:main_class_declaration [classes]:class_declaration*
+            {-> New program(main_class_declaration, [classes])};
 
     main_class_declaration =
         class_keyword [name]:identifier
         [class_begin]:lbrace
-            public_keyword static_keyword void_keyword [main_method_name]:identifier
-                lparen string_keyword lbrack rbrack [arguments]:identifier rparen
+            public_keyword static_keyword void_keyword [method_name]:identifier
+                lparen string_keyword lbrack rbrack identifier rparen
             [method_begin]:lbrace
-                [variable_declarations]:variable_declaration*
+                [locals]:variable_declaration*
                 [statements]:statement*
             [method_end]:rbrace
         [class_end]:rbrace
-            {-> New main_class_declaration(name, main_method_name, arguments, [variable_declarations], [statements])};
+            {-> New main_class_declaration(name, method_name, [locals], [statements])};
 
     class_declaration =
         class_keyword [name]:identifier
         lbrace
-            [field_declarations]:field_declaration*
-            [method_declarations]:method_declaration*
+            [fields]:field_declaration*
+            [methods]:method_declaration*
         rbrace
-            {-> New class_declaration(name, [field_declarations], [method_declarations])};
+            {-> New class_declaration(name, [fields], [methods])};
 
     method_declaration =
         public_keyword [return_type]:type [name]:identifier
             lparen [formal_parameters]:formal_parameter_list? rparen
         lbrace
-            [variable_declarations]:variable_declaration*
+            [locals]:variable_declaration*
             [statements]:statement*
             return_keyword [return_expression]:expression semicolon
         rbrace
-            {-> New method_declaration(return_type, name, [formal_parameters.formal_parameter], [variable_declarations], [statements], return_expression)};
+            {-> New method_declaration(return_type, name, [formal_parameters.formal_parameter], [locals], [statements], return_expression)};
 
     field_declaration =
         [type]:type [name]:identifier semicolon
@@ -171,10 +171,10 @@ Productions
             {-> New statement.if(if_keyword, condition, statement)} |
         {if_else}
             if_keyword lparen [condition]:expression rparen
-                [then_statement]:statement_no_short_if
+                [then]:statement_no_short_if
             else_keyword
-                [else_statement]:statement
-            {-> New statement.if_else(if_keyword, condition, then_statement.statement, else_keyword, else_statement)} |
+                [else]:statement
+            {-> New statement.if_else(if_keyword, condition, then.statement, else_keyword, else)} |
         {while} while_keyword lparen [condition]:expression rparen [statement]:statement
             {-> New statement.while(while_keyword, condition, statement)};
 
@@ -183,22 +183,22 @@ Productions
             {-> statement_without_trailing_substatement.statement} |
         {if_else}
             if_keyword lparen [condition]:expression rparen
-                [then_statement]:statement_no_short_if
+                [then]:statement_no_short_if
             else_keyword
-                [else_statement]:statement_no_short_if
-            {-> New statement.if_else(if_keyword, condition, then_statement.statement, else_keyword, else_statement.statement)} |
+                [else]:statement_no_short_if
+            {-> New statement.if_else(if_keyword, condition, then.statement, else_keyword, else.statement)} |
         {while} while_keyword lparen [condition]:expression rparen [statement]:statement_no_short_if
             {-> New statement.while(while_keyword, condition, statement.statement)};
 
     statement_without_trailing_substatement {->statement} = 
-        {block} lbrace [variable_declarations]:variable_declaration* [statements]:statement* rbrace
-            {-> New statement.block([variable_declarations], [statements])} |
+        {block} lbrace [locals]:variable_declaration* [statements]:statement* rbrace
+            {-> New statement.block([locals], [statements])} |
         {println} println_keyword lparen [value]:expression rparen semicolon
             {-> New statement.println(println_keyword, value)} |
-        {assign} [variable]:identifier assign [value]:expression semicolon
-            {-> New statement.assign(variable, assign, value)} |
-        {array_assign} [variable]:identifier lbrack [index]:expression rbrack assign [value]:expression semicolon
-            {-> New statement.array_assign(variable, index, assign, value)};
+        {assign} [name]:identifier assign [value]:expression semicolon
+            {-> New statement.assign(name, assign, value)} |
+        {array_assign} [name]:identifier lbrack [index]:expression rbrack assign [value]:expression semicolon
+            {-> New statement.array_assign(name, index, assign, value)};
 
     /*
      * Expressions
@@ -329,25 +329,24 @@ Abstract Syntax Tree
      */
 
     program =
-        main_class_declaration [class_declarations]:class_declaration*;
+        main_class_declaration [classes]:class_declaration*;
 
     main_class_declaration =
         [name]:identifier
-        [main_method_name]:identifier
-        [arguments]:identifier
-        [local_variables]:variable_declaration*
+        [method_name]:identifier
+        [locals]:variable_declaration*
         [statements]:statement*;
 
     class_declaration =
         [name]:identifier
-        [field_declarations]:field_declaration*
-        [method_declarations]:method_declaration*;
+        [fields]:field_declaration*
+        [methods]:method_declaration*;
 
     method_declaration =
         [return_type]:type
         [name]:identifier
         [formal_parameters]:formal_parameter*
-        [variable_declarations]:variable_declaration*
+        [locals]:variable_declaration*
         [statements]:statement*
         [return_expression]:expression;
 
@@ -376,13 +375,13 @@ Abstract Syntax Tree
      */
 
     statement =
-        {block} [variable_declarations]:variable_declaration* [statements]:statement* |
+        {block} [locals]:variable_declaration* [statements]:statement* |
         {if} if_keyword [condition]:expression [statement]:statement |
-        {if_else} if_keyword [condition]:expression [then_statement]:statement else_keyword [else_statement]:statement |
+        {if_else} if_keyword [condition]:expression [then]:statement else_keyword [else]:statement |
         {while} while_keyword [condition]:expression [statement]:statement |
         {println} println_keyword [value]:expression |
-        {assign} [variable]:identifier assign [value]:expression |
-        {array_assign} [variable]:identifier [index]:expression assign [value]:expression;
+        {assign} [name]:identifier assign [value]:expression |
+        {array_assign} [name]:identifier [index]:expression assign [value]:expression;
 
     /*
      * Expressions
