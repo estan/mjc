@@ -15,5 +15,5 @@ compiler tests. The tests are organized as follows:
 * **execute** contains programs that should compile and run without problems,
   and which have expected output.
 
-The tests in **DD2488-test-cases** are the tests that we will submit as part
-of the project examination.
+The tests in **shared** are the tests that we will submit as part of the
+project examination.
