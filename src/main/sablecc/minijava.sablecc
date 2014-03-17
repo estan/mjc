@@ -120,13 +120,13 @@ Productions
 
     method_declaration =
         public_keyword [return_type]:type [name]:identifier
-            lparen [formal_parameters]:formal_parameter_list? rparen
+            lparen [formals]:formal_parameter_list? rparen
         lbrace
             [locals]:variable_declaration*
             [statements]:statement*
             return_keyword [return_expression]:expression semicolon
         rbrace
-            {-> New method_declaration(return_type, name, [formal_parameters.formal_parameter], [locals], [statements], return_expression)};
+            {-> New method_declaration(return_type, name, [formals.formal_parameter], [locals], [statements], return_expression)};
 
     field_declaration =
         [type]:type [name]:identifier semicolon
@@ -319,8 +319,8 @@ Productions
             {-> New expression.array_access(array.expression, lbrack, index)};
 
     method_invocation_expression {-> expression} =
-        [instance]:primary_expression period [name]:identifier lparen [actual_parameters]:expression_list? rparen
-            {-> New expression.method_invocation(instance.expression, name, [actual_parameters.expression])};
+        [instance]:primary_expression period [name]:identifier lparen [actuals]:expression_list? rparen
+            {-> New expression.method_invocation(instance.expression, name, [actuals.expression])};
 
 Abstract Syntax Tree
 
@@ -345,7 +345,7 @@ Abstract Syntax Tree
     method_declaration =
         [return_type]:type
         [name]:identifier
-        [formal_parameters]:formal_parameter*
+        [formals]:formal_parameter*
         [locals]:variable_declaration*
         [statements]:statement*
         [return_expression]:expression;
@@ -400,7 +400,7 @@ Abstract Syntax Tree
         {minus} [left]:expression minus [right]:expression |
         {times} [left]:expression star [right]:expression |
         {not} not [expression]:expression |
-        {method_invocation} [instance]:expression [name]:identifier [actual_parameters]:expression* |
+        {method_invocation} [instance]:expression [name]:identifier [actuals]:expression* |
         {array_access} [array]:expression [start_bracket]:lbrack [index]:expression |
         {array_length} [array]:expression length_keyword |
         {new_instance} [class_name]:identifier |

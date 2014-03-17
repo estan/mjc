@@ -454,7 +454,7 @@ public class TypeChecker extends DepthFirstAdapter {
             error(CALL_TO_MAIN.on(line, column));
             types.put(expression, UndefinedType.Instance);
         } else {
-            final List<PExpression> actuals = expression.getActualParameters();
+            final List<PExpression> actuals = expression.getActuals();
             final List<VariableInfo> formals = methodInfo.getParameters();
             if (actuals.size() != formals.size()) {
                 error(INVALID_PARAM_COUNT.on(line, column, methodId, actuals.size(), formals.size()));
