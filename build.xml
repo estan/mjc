@@ -27,7 +27,11 @@
     </target>
 
     <target name="generate-parser" if="parser-out-of-date" depends="init">
-        <java classname="org.sablecc.sablecc.SableCC" fork="true" failonerror="true">
+        <java classname="org.sablecc.sablecc.SableCC"
+              fork="true"
+              outputproperty="sablecc-output"
+              errorproperty="sablecc-error"
+              resultproperty="sablecc-result">
             <arg value="-d"/>
             <arg value="${parser-src-dir}"/>
             <arg value="--no-inline"/>
@@ -38,6 +42,13 @@
                 <pathelement location="${lib-dir}/sablecc.jar"/>
             </classpath>
         </java>
+        <fail message="${sablecc-error}">
+            <condition>
+                <not>
+                    <equals arg1="${sablecc-result}" arg2="0"/>
+                </not>
+            </condition>
+        </fail>
     </target>
 
     <!-- Public Targets -->
