@@ -32,8 +32,8 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
  * The test case will run once on each *.java file in dataDir.
  */
 @RunWith(Parameterized.class)
-public class SymbolTableBuilderBadTest {
-    private static String dataDir = "src/test/resources/bad/symbol";
+public class NonCompileSymbolTest {
+    private static String dataDir = "src/test/resources/noncompile/symbol";
 
     private String path; // Set once for each file in dataDir.
 
@@ -42,7 +42,7 @@ public class SymbolTableBuilderBadTest {
      *
      * @param path Path of file to test on.
      */
-    public SymbolTableBuilderBadTest(String path) {
+    public NonCompileSymbolTest(String path) {
         this.path = path;
     }
 

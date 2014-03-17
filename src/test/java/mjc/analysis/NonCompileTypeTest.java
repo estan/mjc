@@ -54,14 +54,15 @@ import static org.hamcrest.Matchers.containsInAnyOrder;;
  * INVALID_ASSIGNMENT
  * </code>
  *
- * in the corresponding Test.expected. The names in the .expected file is the enum
- * values in MiniJavaErrorType. There can be multiple such values in each .expected,
- * one for each expected type error, and the order does not matter; as long as all
- * the listed errors are reported by the checker (and only those), the test will pass.
+ * in the corresponding Test.expected. The names in the .expected file refer to the
+ * enum values in MiniJavaErrorType. There can be multiple such values in each
+ * .expected, one for each expected type error, and the order does not matter; as
+ * long as all the listed errors are reported by the checker (and only those), the
+ * test will pass.
  */
 @RunWith(Parameterized.class)
-public class TypeCheckerBadTest {
-    private static String dataDir = "src/test/resources/bad/type";
+public class NonCompileTypeTest {
+    private static String dataDir = "src/test/resources/noncompile/type";
 
     private String path; // Set once for each file in dataDir.
 
@@ -70,7 +71,7 @@ public class TypeCheckerBadTest {
      *
      * @param path Path of file to test on.
      */
-    public TypeCheckerBadTest(String path) {
+    public NonCompileTypeTest(String path) {
         this.path = path;
     }
 

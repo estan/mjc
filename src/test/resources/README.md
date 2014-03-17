@@ -4,13 +4,13 @@ Compiler Test Programs
 This directory and its subdirectories contain input programs for the various
 compiler tests. The tests are organized as follows:
 
-* **good** contains programs that should compile without problems, but which
+* **compile** contains programs that should compile without problems, but which
   may exhibit runtime errors.
-* **bad/syntax** contains programs with syntax errors.
-* **bad/symbol** contains programs with symbol errors.
-* **bad/type** contains programs with type errors.
+* **noncompile/syntax** contains programs with syntax errors.
+* **noncompile/symbol** contains programs with symbol errors.
+* **noncompile/type** contains programs with type errors.
 * **execute** contains programs that should compile and run without problems,
-  and which have expected output.
-
-The tests in **shared** are the tests that we will submit as part of the
-project examination.
+* **nonexecute** contains programs that should compile but which exhibit runtime
+  errors.
+* **shared** contains a selection of tests that we will submit as part of
+  project examination.

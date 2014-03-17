@@ -31,8 +31,8 @@ import static org.hamcrest.Matchers.emptyIterable;
  * The test case will run once on each *.java file in dataDir.
  */
 @RunWith(Parameterized.class)
-public class TypeCheckerGoodTest {
-    private static String dataDir = "src/test/resources/good";
+public class CompileTypeTest {
+    private static String dataDir = "src/test/resources/compile";
 
     private String path; // Set once for each file in dataDir.
 
@@ -41,7 +41,7 @@ public class TypeCheckerGoodTest {
      *
      * @param path Path of file to test on.
      */
-    public TypeCheckerGoodTest(String path) {
+    public CompileTypeTest(String path) {
         this.path = path;
     }
 
