@@ -433,49 +433,45 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     public void outAMethodInvocationExpression(final AMethodInvocationExpression expression) {
-        final Type type = types.get(expression.getInstance());
-        final String id = expression.getName().getText();
+        final Type classType = types.get(expression.getInstance());
+        final String classId = classType.getName();
+
+        final String methodId = expression.getName().getText();
+        final MethodInfo methodInfo;
+
         final int line = expression.getName().getLine();
         final int column = expression.getName().getPos();
 
-        if (type.isClass()) {
-            final ClassInfo classInfo = symbolTable.getClassInfo(type.getName());
-            final MethodInfo methodInfo = classInfo.getMethod(id);
-
-            if (methodInfo != null) {
-                if (methodInfo != symbolTable.getMainMethod()) {
-                    // Check if actual parameters match formal parameters.
-                    final List<PExpression> actuals = expression.getActualParameters();
-                    final List<VariableInfo> formals = methodInfo.getParameters();
-                    if (actuals.size() == formals.size()) {
-                        final Iterator<PExpression> actualsIt = actuals.iterator();
-                        final Iterator<VariableInfo> formalsIt = formals.iterator();
-                        int param = 0;
-                        while (actualsIt.hasNext()) {
-                            final Type actual = types.get(actualsIt.next());
-                            final Type formal = formalsIt.next().getType();
-                            if (!actual.isAssignableTo(formal)) {
-                                error(INVALID_PARAM_TYPE.on(line, column, id, param, actual, formal));
-                            }
-                            ++param;
-                        }
-
-                    } else {
-                        error(INVALID_PARAM_COUNT.on(line, column, id, actuals.size(), formals.size()));
-                    }
-                } else {
-                    error(CALL_TO_MAIN.on(line, column));
-                }
-                types.put(expression, methodInfo.getReturnType());
-            } else {
-                error(UNDECLARED_METHOD.on(line, column, id, classInfo.getName()));
-                types.put(expression, UndefinedType.Instance);
-            }
-        } else {
-            if (!type.isUndefined()) {
-                error(CALL_ON_NON_CLASS.on(line, column, type));
+        if (!classType.isClass()) {
+            if (!classType.isUndefined()) {
+                error(CALL_ON_NON_CLASS.on(line, column, classType));
             }
             types.put(expression, UndefinedType.Instance);
+        } else if ((methodInfo = symbolTable.getClassInfo(classId).getMethod(methodId)) == null) {
+            error(UNDECLARED_METHOD.on(line, column, methodId));
+            types.put(expression, UndefinedType.Instance);
+        } else if (methodInfo == symbolTable.getMainMethod()) {
+            error(CALL_TO_MAIN.on(line, column));
+            types.put(expression, UndefinedType.Instance);
+        } else {
+            final List<PExpression> actuals = expression.getActualParameters();
+            final List<VariableInfo> formals = methodInfo.getParameters();
+            if (actuals.size() != formals.size()) {
+                error(INVALID_PARAM_COUNT.on(line, column, methodId, actuals.size(), formals.size()));
+            } else {
+                final Iterator<PExpression> actualsIt = actuals.iterator();
+                final Iterator<VariableInfo> formalsIt = formals.iterator();
+                int paramNr = 0;
+                while (actualsIt.hasNext()) {
+                    final Type actual = types.get(actualsIt.next());
+                    final Type formal = formalsIt.next().getType();
+                    if (!actual.isAssignableTo(formal)) {
+                        error(INVALID_PARAM_TYPE.on(line, column, methodId, paramNr, actual, formal));
+                    }
+                    ++paramNr;
+                }
+            }
+            types.put(expression, methodInfo.getReturnType());
         }
     }
 

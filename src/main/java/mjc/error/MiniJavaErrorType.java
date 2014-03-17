@@ -26,7 +26,7 @@ public enum MiniJavaErrorType {
      * Type errors.
      */
     UNDECLARED_IDENTIFIER         (200, "undeclared identifier `%s`"),
-    UNDECLARED_METHOD             (201, "no method `%s` in class `%s`"),
+    UNDECLARED_METHOD             (201, "undeclared method `%s`"),
     INVALID_RETURN_TYPE           (202, "method `%s` must return value of type %s"),
     INVALID_CONDITION_TYPE        (203, "condition must be of type boolean, not %s"),
     INVALID_PRINTLN_TYPE          (204, "can't print value of type %s"),
