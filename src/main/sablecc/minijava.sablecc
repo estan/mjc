@@ -267,28 +267,30 @@ Productions
             {-> New expression.not(not, primary_expression.expression)};
 
     primary_expression {-> expression} =
-        {array} array_creation_expression
-            {-> array_creation_expression.expression} |
-        {primary} primary_no_array_creation_expression
-            {-> primary_no_array_creation_expression.expression};
+        {new_int_array} new_keyword int_keyword lbrack [size]:expression rbrack
+            {-> New expression.new_int_array(new_keyword, size)} |
+        {new_long_array} new_keyword long_keyword lbrack [size]:expression rbrack
+            {-> New expression.new_long_array(new_keyword, size)} |
+        {primary_no_new_array} primary_no_new_array_expression
+            {-> primary_no_new_array_expression.expression};
 
-    primary_no_array_creation_expression {-> expression} =
+    primary_no_new_array_expression {-> expression} =
         {literal} literal_expression
             {-> literal_expression.expression} |
         {identifier} identifier
             {-> New expression.identifier(identifier)} |
         {this} this_keyword
             {-> New expression.this(this_keyword)} |
-        {instance} class_instance_creation_expression
-            {-> class_instance_creation_expression.expression} |
-        {array_length} array_length_expression
-            {-> array_length_expression.expression} |
-        {array_access} array_access_expression
-            {-> array_access_expression.expression} |
-        {method} method_invocation_expression
-            {-> method_invocation_expression.expression} |
+        {new_instance} new_keyword [class_name]:identifier lparen rparen
+            {-> New expression.new_instance(class_name)} |
+        {array_length} [array]:primary_expression period length_keyword
+            {-> New expression.array_length(array.expression, length_keyword)} |
+        {array_access} [array]:primary_no_new_array_expression lbrack [index]:expression rbrack
+            {-> New expression.array_access(array.expression, lbrack, index)} |
+        {method_invocation} [instance]:primary_expression period [name]:identifier lparen [actuals]:expression_list? rparen
+            {-> New expression.method_invocation(instance.expression, name, [actuals.expression])} |
         {expression} lparen expression rparen
-            {-> expression.expression};
+            {-> expression};
 
     literal_expression {-> expression} =
         {integer} integer
@@ -299,28 +301,6 @@ Productions
             {-> New expression.true(true_keyword)} |
         {false} false_keyword
             {-> New expression.false(false_keyword)};
-
-    array_creation_expression {-> expression} =
-        {new_int_array} new_keyword int_keyword lbrack [size]:expression rbrack
-            {-> New expression.new_int_array(new_keyword, size)} |
-        {new_long_array} new_keyword long_keyword lbrack [size]:expression rbrack
-            {-> New expression.new_long_array(new_keyword, size)};
-
-    class_instance_creation_expression {-> expression} =
-        new_keyword [class_name]:identifier lparen rparen
-            {-> New expression.new_instance(class_name)};
-
-    array_length_expression {-> expression} =
-        [array]:primary_expression period length_keyword
-            {-> New expression.array_length(array.expression, length_keyword)};
-
-    array_access_expression {-> expression} =
-        [array]:primary_no_array_creation_expression lbrack [index]:expression rbrack
-            {-> New expression.array_access(array.expression, lbrack, index)};
-
-    method_invocation_expression {-> expression} =
-        [instance]:primary_expression period [name]:identifier lparen [actuals]:expression_list? rparen
-            {-> New expression.method_invocation(instance.expression, name, [actuals.expression])};
 
 Abstract Syntax Tree
 
