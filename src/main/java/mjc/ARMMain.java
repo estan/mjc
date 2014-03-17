@@ -29,11 +29,12 @@ import static mjc.error.MiniJavaErrorType.LEXER_ERROR;
 import static mjc.error.MiniJavaErrorType.PARSER_ERROR;
 
 public class ARMMain {
+    private final static CommandLineParser commandLineParser = new GnuParser();
+    private final static HelpFormatter helpFormatter = new HelpFormatter();
+    private final static Options options = new Options();
+
     private final ASTPrinter astPrinter = new ASTPrinter();
     private final ASTGraphPrinter graphPrinter = new ASTGraphPrinter();
-    private final CommandLineParser commandLineParser = new GnuParser();
-    private final HelpFormatter helpFormatter = new HelpFormatter();
-    private final Options options = new Options();
 
     private final static int EXIT_SUCCESS = 0;
     private final static int EXIT_FAILURE = 1;
@@ -50,21 +51,13 @@ public class ARMMain {
     }
 
     public static void main(String[] args) {
-        ARMMain program = new ARMMain();
+        ARMMain main = new ARMMain();
+
         try {
             // Run the compiler.
-            System.exit(program.run(args));
-        } catch (LexerException e) {
-            final InvalidToken token = e.getToken();
-            final int line = token.getLine();
-            final int column = token.getPos();
-            System.err.println(LEXER_ERROR.on(line, column, token.getText()));
-            System.exit(EXIT_FAILURE);
-        } catch (ParserException e) {
-            System.err.println(PARSER_ERROR.on(e.getLine(), e.getPos(), e.getError()));
-            System.exit(EXIT_FAILURE);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.exit(main.run(args));
+        } catch (ParseException e) {
+            printHelp();
             System.exit(EXIT_FAILURE);
         }
     }
@@ -74,34 +67,45 @@ public class ARMMain {
      *
      * @param args Command line arguments.
      * @return EXIT_SUCCESS if compilation succeeded, otherwise EXIT_FAILURE.
-     *
      * @throws ParseException if parsing of command line arguments failed.
-     * @throws IOException if an I/O error occurred.
-     * @throws LexerException if lexical analysis failed.
-     * @throws ParserException if parsing failed.
      */
-    private int run(String[] args) throws ParseException, ParserException, LexerException, IOException {
+    private int run(String[] args) throws ParseException {
 
         final CommandLine commandLine = commandLineParser.parse(options, args);
 
         if (commandLine.hasOption("h")) {
-            helpFormatter.printHelp("mjc <infile> [options]", options);
-            System.exit(EXIT_SUCCESS);
+            printHelp();
+            return EXIT_SUCCESS;
         }
 
         if (commandLine.getArgs().length != 1) {
-            helpFormatter.printHelp("mjc <infile> [options]", options);
-            System.exit(EXIT_FAILURE);
+            printHelp();
+            return EXIT_FAILURE;
         }
 
         /****************************************
          * Stage 1: Lexical Analysis / Parsing. *
          ***************************************/
 
-        final String fileName = commandLine.getArgs()[0];
-        final PushbackReader reader = new PushbackReader(new FileReader(fileName));
-        final Parser parser = new Parser(new Lexer(reader));
-        final Start tree = parser.parse();
+        Start tree = new Start();
+        try {
+            final String fileName = commandLine.getArgs()[0];
+            final PushbackReader reader = new PushbackReader(new FileReader(fileName));
+            final Parser parser = new Parser(new Lexer(reader));
+            tree = parser.parse();
+        } catch (LexerException e) {
+            final InvalidToken token = e.getToken();
+            final int line = token.getLine();
+            final int column = token.getPos();
+            System.err.println(LEXER_ERROR.on(line, column, token.getText()));
+            return EXIT_FAILURE;
+        } catch (ParserException e) {
+            System.err.println(PARSER_ERROR.on(e.getLine(), e.getPos(), e.getError()));
+            return EXIT_FAILURE;
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            return EXIT_FAILURE;
+        }
 
         if (commandLine.hasOption("p"))
             astPrinter.print(tree);
@@ -140,6 +144,10 @@ public class ARMMain {
         }
 
         return EXIT_SUCCESS;
+    }
+
+    private static void printHelp() {
+        helpFormatter.printHelp("mjc <infile> [options]", options);
     }
 
     // Comparator for Options, to get them in the order we want in help output.
