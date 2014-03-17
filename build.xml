@@ -49,7 +49,7 @@
                 </not>
             </condition>
         </fail>
-        <echo>Generated lexer/parser in ${parser-src-dir} from ${parser-grammar}</echo>
+        <echo>Generated parser in ${parser-src-dir} from ${parser-grammar}</echo>
     </target>
 
     <!-- Public Targets -->
