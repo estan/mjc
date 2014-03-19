@@ -17,15 +17,17 @@
 
 class NestedBlocks {
     public static void main(String[] args) {
+        int r;
         Lost lost;
         lost = new Lost();
-        lost.printNumbers();
+        r = lost.printNumbers();
     }
 }
 
 class Lost {
     public int printNumbers() {
-        int l, k;
+        int l;
+        int k;
         {
             int n;
             n = 1;
