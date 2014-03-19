@@ -153,6 +153,85 @@
         <delete dir="${temp-dir}"/>
     </target>
 
+    <target name="report" description="Build report PDF file">
+        <echo>Generating report.pdf from LaTeX in ${report-src-dir}/report.tex</echo>
+
+        <!-- Prepare build directory -->
+        <delete dir="${report-build-dir}"/>
+        <copy todir="${report-build-dir}">
+            <fileset dir="${report-src-dir}"/>
+        </copy>
+
+        <!-- Run LaTeX - Pass #1 -->
+        <echo>Running LaTeX - Pass #1</echo>
+        <exec executable="${latex-command}"
+              dir="${report-build-dir}"
+              outputProperty="latex1-output"
+              resultProperty="latex1-result">
+            <arg value="report.tex"/>
+        </exec>
+        <fail message="${latex1-output}">
+            <condition>
+                <not>
+                    <equals arg1="${latex1-result}" arg2="0"/>
+                </not>
+            </condition>
+        </fail>
+
+        <!-- Run BibTeX -->
+        <echo>Running BibTeX</echo>
+        <exec executable="${bibtex-command}"
+              dir="${report-build-dir}"
+              outputProperty="bibtex-output"
+              resultProperty="bibtex-result">
+            <arg value="report"/>
+        </exec>
+        <fail message="${bibtex-output}">
+            <condition>
+                <not>
+                    <equals arg1="${bibtex-result}" arg2="0"/>
+                </not>
+            </condition>
+        </fail>
+
+        <!-- Run LaTeX - Pass #2 -->
+        <echo>Running LaTeX - Pass #2</echo>
+        <exec executable="${latex-command}"
+              dir="${report-build-dir}"
+              outputProperty="latex2-output"
+              resultProperty="latex2-result">
+            <arg value="report.tex"/>
+        </exec>
+        <fail message="${latex2-output}">
+            <condition>
+                <not>
+                    <equals arg1="${latex2-result}" arg2="0"/>
+                </not>
+            </condition>
+        </fail>
+
+        <!-- Run LaTeX - Pass #3 -->
+        <echo>Running LaTeX - Pass #3</echo>
+        <exec executable="${latex-command}"
+              dir="${report-build-dir}"
+              outputProperty="latex3-output"
+              resultProperty="latex3-result">
+            <arg value="report.tex"/>
+        </exec>
+        <fail message="${latex3-output}">
+            <condition>
+                <not>
+                    <equals arg1="${latex3-result}" arg2="0"/>
+                </not>
+            </condition>
+        </fail>
+
+        <!-- Copy results -->
+        <copy file="${report-build-dir}/report.pdf" tofile="report.pdf"/>
+
+        <echo>Successfully generated report.pdf</echo>
+    </target>
+
     <target name="submit" description="Submit TAR archive to TIGRIS" depends="tar">
         <property name="tigris.to" value="submit@tigris.csc.kth.se"/>
         <echo>Submitting from ${tigris.email} to ${tigris.to} using ID ${tigris.id}</echo>
