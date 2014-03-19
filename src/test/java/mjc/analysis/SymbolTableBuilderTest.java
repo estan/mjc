@@ -54,7 +54,7 @@ public class SymbolTableBuilderTest {
      * @throws LexerException if lexical analysis failed.
      */
     @Test
-    public void testInvalid() throws IOException, ParserException, LexerException {
+    public void testBuild() throws IOException, ParserException, LexerException {
         // Parse input.
         FileReader reader = new FileReader(path);
         Parser parser = new Parser(new Lexer(new PushbackReader(reader)));

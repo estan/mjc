@@ -44,7 +44,7 @@ public class ParserTest {
      * @throws LexerException if lexical analysis failed.
      */
     @Test(expected = ParserException.class)
-    public void testInvalid() throws IOException, ParserException, LexerException {
+    public void testParse() throws IOException, ParserException, LexerException {
         FileReader reader = new FileReader(path);
         Parser parser = new Parser(new Lexer(new PushbackReader(reader)));
         parser.parse();
