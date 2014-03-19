@@ -9,7 +9,11 @@ class ArrayAccessOnNewArray {
          * In Java this is syntactically OK, but a type error.
          *
          * In MiniJava we should reject it as well, but for another reason:
-         * It has no semantic meaning (no multidimensional arrays).
+         * The RHS has no semantic meaning (no multidimensional arrays).
+         *
+         * This tests that the grammar is set up such that this is not
+         * accidently interpreted as an array access on a newly created
+         * int[].
          */
         int foo; foo = new int[3][3];
     }
