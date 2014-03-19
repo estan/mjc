@@ -1,7 +1,7 @@
-\textbf{usage: mjc <infile> [options]}
- \textbf{-S}         output assembler code
- \textbf{-o <arg>}   output file
- \textbf{-p}         print abstract syntax tree
- \textbf{-g}         print abstract syntax tree in GraphViz format
- \textbf{-s}         print symbol table
- \textbf{-h}         show help message
+    \textbf{usage: mjc <infile> [options]}
+     \textbf{-S}         output assembler code
+     \textbf{-o <arg>}   output file
+     \textbf{-p}         print abstract syntax tree
+     \textbf{-g}         print abstract syntax tree in GraphViz format
+     \textbf{-s}         print symbol table
+     \textbf{-h}         show help message
