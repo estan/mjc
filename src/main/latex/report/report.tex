@@ -2,9 +2,19 @@
 
 \usepackage[english]{babel}
 \usepackage{xltxtra}
+\usepackage{listings}
+\usepackage{color}
 \usepackage[backend=bibtex]{biblatex}
 
 \bibliography{references}
+
+\definecolor{lightgray}{rgb}{0.9,0.9,0.9}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{lightgray},
+    frame=single
+}
 
 \title{MiniJava Compiler (\texttt{mjc})}
 
@@ -50,6 +60,7 @@ Some info about building the compiler.
 
 \subsection{Running}
 Some info about running the compiler.
+\lstinputlisting{usage.txt}
 
 \subsection{Example}
 An example of invoking the compiler.
