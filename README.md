@@ -35,12 +35,12 @@ where `foo.java` is the MiniJava source file to be compiled. The available
 command line options are:
 
     usage: mjc <infile> [options]
-     -S         output assembler code
-     -o <arg>   output file
-     -p         print abstract syntax tree
-     -g         print abstract syntax tree in GraphViz format
-     -s         print symbol table
-     -h         show help message
+     -S             output assembly code
+     -o <outfile>   output file
+     -p             print abstract syntax tree
+     -g             print abstract syntax tree in GraphViz format
+     -s             print symbol table
+     -h             show help message
 
 Hacking in Eclipse
 ------------------

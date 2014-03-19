@@ -41,8 +41,11 @@ public class ARMMain {
     private final static int EXIT_FAILURE = 1;
 
     public ARMMain() {
-        options.addOption("S", false, "output assembler code");
-        options.addOption("o", true, "output file");
+        Option outputFileOption = new Option("o", true, "output file");
+        outputFileOption.setArgName("outfile");
+
+        options.addOption("S", false, "output assembly code");
+        options.addOption(outputFileOption);
         options.addOption("p", false, "print abstract syntax tree");
         options.addOption("g", false, "print abstract syntax tree in GraphViz format");
         options.addOption("s", false, "print symbol table");
