@@ -30,11 +30,13 @@ import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.containsInAnyOrder;;
 
 /**
- * Tests the type checker on input with type errors.
+ * Tests the type checker on both valid input and input with type errors.
  *
- * The test case will run once on each .java file in dataDir, and check that the
- * type-checker detected the expected errors listed in the corresponding .expected
- * file in the same directory.
+ * The test case will run one on each input file Foo.java in dataDirs. If the test
+ * finds a corresponding Foo.expected containing expected type errors, it will check
+ * that the TypeChecker found the expected errors (and only those). If there is no
+ * corresponding Foo.expected, the test will check that the TypeChecker found no
+ * errors.
  *
  * E.g. a check that assignment of long to int fails as expected would have
  *
@@ -61,8 +63,11 @@ import static org.hamcrest.Matchers.containsInAnyOrder;;
  * test will pass.
  */
 @RunWith(Parameterized.class)
-public class NonCompileTypeTest {
-    private static String dataDir = "src/test/resources/noncompile/type";
+public class TypeCheckerTest {
+    private static String[] dataDirs = {
+        "src/test/resources/compile",
+        "src/test/resources/noncompile/type"
+    };
 
     private String path; // Set once for each file in dataDir.
 
@@ -71,7 +76,7 @@ public class NonCompileTypeTest {
      *
      * @param path Path of file to test on.
      */
-    public NonCompileTypeTest(String path) {
+    public TypeCheckerTest(String path) {
         this.path = path;
     }
 
@@ -98,8 +103,16 @@ public class NonCompileTypeTest {
         // Run type-checker and assert that the errors are the expected ones.
         TypeChecker typeChecker = new TypeChecker();
         typeChecker.check(tree, symbolTable);
-        assertThat(typeChecker.getErrors(), containsInAnyOrder(readExpected(path).toArray()));
 
+        try {
+            List<MiniJavaErrorType> expectedErrors = readExpected(path);
+
+            // Assert that we got the expected errors.
+            assertThat(typeChecker.getErrors(), containsInAnyOrder(expectedErrors.toArray()));
+        } catch (IOException e) {
+            // No errors expected: Assert that the are none.
+            assertThat(typeChecker.getErrors(), is(emptyIterable()));
+        }
     }
 
     /**
@@ -112,8 +125,10 @@ public class NonCompileTypeTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> testValidData() throws IOException {
         ArrayList<Object[]> data = new ArrayList<>();
-        for (Path path : Files.newDirectoryStream(Paths.get(dataDir), "*.java")) {
-            data.add(new Object[] { path.toAbsolutePath().toString() });
+        for (String dataDir : dataDirs) {
+            for (Path path : Files.newDirectoryStream(Paths.get(dataDir), "*.java")) {
+                data.add(new Object[] { path.toAbsolutePath().toString() });
+            }
         }
         return data;
     }

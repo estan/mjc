@@ -22,7 +22,7 @@ import org.junit.runners.Parameterized.Parameters;
  * The test case will run once on each *.java file in dataDir.
  */
 @RunWith(Parameterized.class)
-public class NonCompileSyntaxTest {
+public class ParserTest {
     private static String dataDir = "src/test/resources/noncompile/syntax";
 
     private String path; // Set once for each file in dataDir.
@@ -32,7 +32,7 @@ public class NonCompileSyntaxTest {
      *
      * @param path Path of file to test on.
      */
-    public NonCompileSyntaxTest(String path) {
+    public ParserTest(String path) {
         this.path = path;
     }
 
