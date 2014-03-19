@@ -35,9 +35,4 @@ public class ClassType extends Type {
     public boolean isEqualComparableTo(final Type type) {
         return type.isUndefined() || type.isClass() && type.getName().equals(name);
     }
-
-    @Override
-    public String toString() {
-        return name;
-    }
 }

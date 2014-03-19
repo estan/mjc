@@ -59,9 +59,4 @@ public class UndefinedType extends Type {
     public boolean isConjunctableWith(final Type type) {
         return true;
     }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
 }

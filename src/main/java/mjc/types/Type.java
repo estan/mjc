@@ -134,4 +134,9 @@ public abstract class Type {
     public boolean isConjunctableWith(final Type type) {
         return false;
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
