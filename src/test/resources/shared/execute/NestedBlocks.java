@@ -1,6 +1,7 @@
 /**
- * Testing nested block declarations. Should print the numbers from the
- * TV series lost:
+ * Testing nested block declarations.
+ *
+ * The program should print the numbers from the TV series lost:
  *
  * 4
  * 8
