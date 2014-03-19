@@ -24,6 +24,9 @@
         <uptodate property="parser-out-of-date" targetfile="${parser-grammar}">
             <srcfiles dir="${parser-src-dir}" includes="**/*.java"/>
         </uptodate>
+        <uptodate property="report-up-to-date" targetfile="report.pdf">
+            <srcfiles dir="${report-src-dir}" includes="**/*"/>
+        </uptodate>
     </target>
 
     <target name="generate-parser" if="parser-out-of-date" depends="init">
@@ -102,58 +105,7 @@
         </jar>
     </target>
 
-    <target name="tar" description="Build compressed source-only TAR archive" depends="test">
-        <!-- If tigris.id/email is unset, use environment variables. -->
-        <property environment="env"/>
-        <condition property="tigris.id" value="${env.TIGRIS_ID}">
-            <isset property="env.TIGRIS_ID"/>
-        </condition>
-        <condition property="tigris.email" value="${env.TIGRIS_EMAIL}">
-            <isset property="env.TIGRIS_EMAIL"/>
-        </condition>
-
-        <!-- Fail unless we have both tigris.id/email. -->
-        <fail message="Use -Dtigris.id=YOUR_ID or set TIGRIS_ID environment variable!" unless="tigris.id"/>
-        <fail message="Use -Dtigris.email=YOUR_EMAIL or set TIGRIS_EMAIL environment variable!" unless="tigris.email"/>
-
-        <!-- Prepare TAR file contents in a temporary directory -->
-        <tempfile property="temp-dir"
-                  destDir="${java.io.tmpdir}"
-                  prefix="${ant.project.name}"/>
-        <mkdir dir="${temp-dir}/${ant.project.name}"/>
-        <copy todir="${temp-dir}/${ant.project.name}">
-            <fileset dir="${basedir}" id="tar-fileset">
-                <exclude name="**/${build-dir}/**"/>
-                <exclude name="${output-jar}"/>
-                <exclude name="${output-tar}"/>
-                <exclude name="**/*.classpath"/>
-                <exclude name="**/*.project"/>
-                <exclude name="**/*.settings"/>
-                <exclude name="**/*.swp"/>
-                <exclude name="**/*.class"/>
-            </fileset>
-        </copy>
-        <replace file="${temp-dir}/${ant.project.name}/DESC"
-                 token="@ID@"
-                 value="${tigris.id}"/>
-        <replace file="${temp-dir}/${ant.project.name}/DESC"
-                 token="@EMAIL@"
-                 value="${tigris.email}"/>
-
-        <!-- Create compressed TAR file and print what we included -->
-        <tar destfile="${output-tar}"
-             basedir="${temp-dir}"
-             compression="gzip"/>
-        <pathconvert pathsep="${line.separator}  "
-                     property="tar-fileset-formatted"
-                     refid="tar-fileset"/>
-        <echo message="Included files:"/>
-        <echo message="  ${tar-fileset-formatted}"/>
-
-        <delete dir="${temp-dir}"/>
-    </target>
-
-    <target name="report" description="Build report PDF file">
+    <target name="report" description="Build report PDF file" unless="report-up-to-date" depends="init">
         <echo>Generating report.pdf from LaTeX in ${report-src-dir}/report.tex</echo>
 
         <!-- Prepare build directory -->
@@ -230,6 +182,57 @@
         <copy file="${report-build-dir}/report.pdf" tofile="report.pdf"/>
 
         <echo>Successfully generated report.pdf</echo>
+    </target>
+
+    <target name="tar" description="Build compressed source-only TAR archive" depends="test,report">
+        <!-- If tigris.id/email is unset, use environment variables. -->
+        <property environment="env"/>
+        <condition property="tigris.id" value="${env.TIGRIS_ID}">
+            <isset property="env.TIGRIS_ID"/>
+        </condition>
+        <condition property="tigris.email" value="${env.TIGRIS_EMAIL}">
+            <isset property="env.TIGRIS_EMAIL"/>
+        </condition>
+
+        <!-- Fail unless we have both tigris.id/email. -->
+        <fail message="Use -Dtigris.id=YOUR_ID or set TIGRIS_ID environment variable!" unless="tigris.id"/>
+        <fail message="Use -Dtigris.email=YOUR_EMAIL or set TIGRIS_EMAIL environment variable!" unless="tigris.email"/>
+
+        <!-- Prepare TAR file contents in a temporary directory -->
+        <tempfile property="temp-dir"
+                  destDir="${java.io.tmpdir}"
+                  prefix="${ant.project.name}"/>
+        <mkdir dir="${temp-dir}/${ant.project.name}"/>
+        <copy todir="${temp-dir}/${ant.project.name}">
+            <fileset dir="${basedir}" id="tar-fileset">
+                <exclude name="**/${build-dir}/**"/>
+                <exclude name="${output-jar}"/>
+                <exclude name="${output-tar}"/>
+                <exclude name="**/*.classpath"/>
+                <exclude name="**/*.project"/>
+                <exclude name="**/*.settings"/>
+                <exclude name="**/*.swp"/>
+                <exclude name="**/*.class"/>
+            </fileset>
+        </copy>
+        <replace file="${temp-dir}/${ant.project.name}/DESC"
+                 token="@ID@"
+                 value="${tigris.id}"/>
+        <replace file="${temp-dir}/${ant.project.name}/DESC"
+                 token="@EMAIL@"
+                 value="${tigris.email}"/>
+
+        <!-- Create compressed TAR file and print what we included -->
+        <tar destfile="${output-tar}"
+             basedir="${temp-dir}"
+             compression="gzip"/>
+        <pathconvert pathsep="${line.separator}  "
+                     property="tar-fileset-formatted"
+                     refid="tar-fileset"/>
+        <echo message="Included files:"/>
+        <echo message="  ${tar-fileset-formatted}"/>
+
+        <delete dir="${temp-dir}"/>
     </target>
 
     <target name="submit" description="Submit TAR archive to TIGRIS" depends="tar">
