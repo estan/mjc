@@ -226,13 +226,9 @@
         <tar destfile="${output-tar}"
              basedir="${temp-dir}"
              compression="gzip"/>
-        <pathconvert pathsep="${line.separator}  "
-                     property="tar-fileset-formatted"
-                     refid="tar-fileset"/>
-        <echo message="Included files:"/>
-        <echo message="  ${tar-fileset-formatted}"/>
 
         <delete dir="${temp-dir}"/>
+        <echo>Successfully generated ${output-tar}</echo>
     </target>
 
     <target name="submit" description="Submit TAR archive to TIGRIS" depends="tar">
