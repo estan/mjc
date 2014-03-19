@@ -15,6 +15,6 @@ class ArrayAccessOnNewArray {
          * accidently interpreted as an array access on a newly created
          * int[].
          */
-        int foo; foo = new int[3][3];
+        int foo; foo = new int[3][2];
     }
 }
