@@ -117,7 +117,7 @@ public class TypeCheckerTest {
 
     /**
      * Provides the absolute path of each *.java file in dataDir as input to
-     * testInvalid().
+     * testCheck().
      *
      * @return an iterable over paths.
      * @throws IOException if an I/O error occurred.

@@ -69,7 +69,7 @@ public class SymbolTableBuilderTest {
 
     /**
      * Provides the absolute path of each *.java file in dataDir as input to
-     * testInvalid().
+     * testBuild().
      *
      * @return an iterable over paths.
      * @throws IOException if an I/O error occurred.

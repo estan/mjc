@@ -53,7 +53,7 @@ public class ParserTest {
 
     /**
      * Provides the absolute path of each *.java file in dataDir as input to
-     * testInvalid().
+     * testParse().
      *
      * @return an iterable over paths.
      * @throws IOException if an I/O error occurred.
