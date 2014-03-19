@@ -106,8 +106,6 @@
     </target>
 
     <target name="report" description="Build report PDF file" unless="report-up-to-date" depends="init">
-        <echo>Generating report.pdf from LaTeX in ${report-src-dir}/report.tex</echo>
-
         <!-- Prepare build directory -->
         <delete dir="${report-build-dir}"/>
         <copy todir="${report-build-dir}">
@@ -181,7 +179,7 @@
         <!-- Copy results -->
         <copy file="${report-build-dir}/report.pdf" tofile="report.pdf"/>
 
-        <echo>Successfully generated report.pdf</echo>
+        <echo>Successfully generated report.pdf from LaTeX in ${report-src-dir}/report.tex</echo>
     </target>
 
     <target name="tar" description="Build compressed source-only TAR archive" depends="test,report">
