@@ -1,5 +1,5 @@
 /**
- * This is a combination of our type checker test. It should cover most
+ * This is a combination of our type checker tests. It should cover most
  * type-valid constructs of our extended language.
  *
  * @author Elvis Stansvik <elvstone@gmail.com>
