@@ -26,9 +26,9 @@ with the following extensions:
 Building
 --------
 
-Type `ant` in the top-level directory. This will build the compiler
-and unit tests, and produce `mjc.jar`. See `ant -projecthelp` for the
-different available targets. Here's a hopefully up to date list:
+Type `ant` in the top-level directory. This will build the compiler,
+run the unit tests, and produce `mjc.jar`. See `ant -projecthelp` for
+the different available targets. Here's a hopefully up to date list:
 
     Main targets:
      clean    Delete all generated files
