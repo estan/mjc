@@ -23,6 +23,6 @@ public class UnsupportedType extends Type {
 
     @Override
     public String getName() {
-        return name;
+        return name + " (unsupported)";
     }
 }
