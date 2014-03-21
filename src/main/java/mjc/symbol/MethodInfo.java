@@ -138,7 +138,7 @@ public class MethodInfo {
      */
     public VariableInfo getLocal(final String name) {
         for (VariableInfo local : locals.get(name)) {
-            if (local.getName().equals(name) && isVisible(local)) {
+            if (isVisible(local)) {
                 return local;
             }
         }
