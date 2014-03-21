@@ -3,7 +3,14 @@ package mjc.types;
 /**
  * UndefinedType represents an undefined type.
  *
- * Operations with undefined types are always allowed.
+ * The undefined type is compatible with all operations on all other types. In
+ * that sense it acts as a "chameleon" type.
+ *
+ * The undefined type appear during symbol table construction and type checking; As
+ * undeclared identifiers or type errors are encountered, the offending expression
+ * gets assigned the undefined type, thereby suppressing any further errors about
+ * expressions in which it takes part, letting the programmer focus on the real
+ * (first) error.
  *
  * There is only one single static instance of this class.
  */
