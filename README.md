@@ -113,6 +113,6 @@ environment variables. By default the submission is sent to
 `submit@tigris.csc.kth.se`. This may be changed using the `-Dtigris.to`
 option.
 
-The target uses the script in `tools/submit`. The script depends on the
+The target uses the `tools/submit` script, which in turn depends on the
 `uuencode` command from GNU sharutils and uses the `mail` command to send
 the mail.
