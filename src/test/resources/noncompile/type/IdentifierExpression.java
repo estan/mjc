@@ -1,7 +1,7 @@
 class IdentifierExpressionTest {
     public static void main(String[] args) {
         int a;
-        a = args; // UNDECLARED_IDENTIFIER (yes!)
+        a = args; // INVALID_ASSIGNMENT
     }
 }
 class A {

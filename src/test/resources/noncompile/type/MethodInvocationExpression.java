@@ -60,7 +60,7 @@ class MethodInvocationExpressionTest {
         i = cB.f_all(i, ia, l, la, b, cA, i); // INVALID_PARAM_COUNT
         i = cB.f_all(i, ia, l, la, b); // INVALID_PARAM_COUNT
         i = cB.u(); // UNDECLARED_METHOD
-        i = this.main(i); // CALL_TO_MAIN
+        i = this.main(args); // INVALID_PARAM_TYPE + INVALID_ASSIGNMENT (yes!)
         i = i.f(); // CALL_ON_NON_CLASS
         i = ia.f(); // CALL_ON_NON_CLASS
         i = l.f(); // CALL_ON_NON_CLASS

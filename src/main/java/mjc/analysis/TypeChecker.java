@@ -450,9 +450,6 @@ public class TypeChecker extends DepthFirstAdapter {
         } else if ((methodInfo = symbolTable.getClassInfo(classId).getMethod(methodId)) == null) {
             error(UNDECLARED_METHOD.on(line, column, methodId));
             types.put(expression, UndefinedType.Instance);
-        } else if (methodInfo == symbolTable.getMainMethod()) {
-            error(CALL_TO_MAIN.on(line, column));
-            types.put(expression, UndefinedType.Instance);
         } else {
             final List<PExpression> actuals = expression.getActuals();
             final List<VariableInfo> formals = methodInfo.getParameters();

@@ -102,13 +102,13 @@ Productions
         class_keyword [name]:identifier
         [class_begin]:lbrace
             public_keyword static_keyword void_keyword [method_name]:identifier
-                lparen string_keyword lbrack rbrack identifier rparen
+                lparen string_keyword lbrack rbrack [method_parameter]:identifier rparen
             [method_begin]:lbrace
                 [locals]:variable_declaration*
                 [statements]:statement*
             [method_end]:rbrace
         [class_end]:rbrace
-            {-> New main_class_declaration(name, method_name, [locals], [statements])};
+            {-> New main_class_declaration(name, method_name, method_parameter, [locals], [statements])};
 
     class_declaration =
         class_keyword [name]:identifier
@@ -314,6 +314,7 @@ Abstract Syntax Tree
     main_class_declaration =
         [name]:identifier
         [method_name]:identifier
+        [method_parameter]:identifier
         [locals]:variable_declaration*
         [statements]:statement*;
 

@@ -29,6 +29,7 @@ import mjc.types.BuiltInType;
 import mjc.types.ClassType;
 import mjc.types.Type;
 import mjc.types.UndefinedType;
+import mjc.types.UnsupportedType;
 import mjc.error.MiniJavaError;
 import static mjc.error.MiniJavaErrorType.*;
 
@@ -184,21 +185,20 @@ public class SymbolTableBuilder {
                 error(MISSING_MAIN.on(line, column, currentClass.getName()));
             }
 
-            /*
-             * Create MethodInfo for main method.
-             *
-             * Since explicit calls to the main method are forbidden anyway, the return type
-             * doesn't matter, and we give the method the UndefinedType return type.
-             *
-             * Furthermore, since the String[] parameter should be inaccessible to code inside
-             * the main method, we just don't add any parameter.
-             */
+            // Create MethodInfo for main method.
             final MethodInfo methodInfo = new MethodInfo(
                     methodId,
-                    UndefinedType.Instance,
+                    UnsupportedType.Void,
                     line, column);
 
-            symbolTable.setMainMethod(methodInfo); // To make it identifiable.
+            // Create VariableInfo for main method parameter.
+            final TIdentifier paramId = declaration.getMethodParameter();
+            final int paramLine = paramId.getLine();
+            final int paramColumn = paramId.getPos();
+            methodInfo.addParameter(new VariableInfo(
+                    paramId.getText(),
+                    UnsupportedType.StringArray,
+                    paramLine, paramColumn));
 
             currentMethod = currentClass.addMethod(methodInfo.getName(), methodInfo);
             currentMethod.enterBlock();
