@@ -64,10 +64,10 @@ public class LexerTest {
      */
     @Test
     public void testIdentifiers() throws Exception {
-        assertTokens("this_is0_anIdentifier andthis but not this",
+        assertTokens("this_is0_anIdentifier _andthis andthis but not this",
                 TIdentifier.class, w, TIdentifier.class, w,
                 TIdentifier.class, w, TIdentifier.class, w,
-                TThisKeyword.class);
+                TIdentifier.class, w, TThisKeyword.class);
         assertTokens("3foo", TInteger.class, TIdentifier.class);
     }
 
