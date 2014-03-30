@@ -72,14 +72,6 @@ public class LexerTest {
     }
 
     /**
-     * Test tokenization of invalid identifier (leading underscore).
-     */
-    @Test(expected = LexerException.class)
-    public void testIdentifierLeadingUnderscore() throws Exception {
-        assertTokens("_invalid_identifier", TIdentifier.class);
-    }
-
-    /**
      * Test tokenization of integer literals.
      */
     @Test

@@ -80,7 +80,7 @@ Tokens
     // Miscellaneous
     comment = block_comment | line_comment;
     whitespace = (' ' | ht | ff | eol)+;
-    identifier = letter (letter | digit | '_')*;
+    identifier = (letter | '_') (letter | digit | '_')*;
     integer = ('0' | non_zero_digit digit*);
     long = ('0' | non_zero_digit digit*) ('L' | 'l');
 
