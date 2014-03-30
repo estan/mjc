@@ -106,6 +106,7 @@ class TypeCheckTest {
         if (b && b) {}
         if (b || b) {}
         if (!b) {}
+        if (!!b) {}
 
         // Array access
         i = ia[i];

@@ -263,8 +263,8 @@ Productions
     unary_expression {-> expression} =
         {primary} primary_expression
             {-> primary_expression.expression} |
-        {negation} not primary_expression
-            {-> New expression.not(not, primary_expression.expression)};
+        {negation} not unary_expression
+            {-> New expression.not(not, unary_expression.expression)};
 
     primary_expression {-> expression} =
         {new_int_array} new_keyword int_keyword lbrack [size]:expression rbrack
