@@ -1,5 +1,6 @@
 package mjc;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.FileReader;
@@ -13,6 +14,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.google.common.io.Files;
+
 import mjc.lexer.Lexer;
 import mjc.lexer.LexerException;
 import mjc.parser.Parser;
@@ -25,7 +28,6 @@ import mjc.analysis.ASTPrinter;
 import mjc.analysis.SymbolTableBuilder;
 import mjc.analysis.TypeChecker;
 import mjc.error.MiniJavaError;
-
 import static mjc.error.MiniJavaErrorType.LEXER_ERROR;
 import static mjc.error.MiniJavaErrorType.PARSER_ERROR;
 
@@ -143,6 +145,16 @@ public class ARMMain {
 
         if (builder.hasErrors() || typeChecker.hasErrors()) {
             return EXIT_FAILURE; // Abort compilation.
+        }
+
+        // Just write an empty output file for now.
+        final String baseName = Files.getNameWithoutExtension(commandLine.getArgs()[0]);
+        File out = new File(baseName + ".s");
+        try {
+            out.createNewFile();
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            System.exit(EXIT_FAILURE);
         }
 
         return EXIT_SUCCESS;
