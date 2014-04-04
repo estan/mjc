@@ -1,7 +1,7 @@
 package mjc.tree;
 
 public class MEM extends Exp {
-    public Exp expression;
+    public final Exp expression;
 
     public MEM(final Exp expression) {
         this.expression = expression;
