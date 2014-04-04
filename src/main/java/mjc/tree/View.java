@@ -207,7 +207,7 @@ public class View {
 
     void addExp(CALL e, DefaultMutableTreeNode parent) {
         DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("CALL");
-        addExp(e.method, thisNode);
+        addExp(e.function, thisNode);
         for (ExpList a = e.arguments; a != null; a = a.tail) {
             addExp(a.head, thisNode);
         }

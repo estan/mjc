@@ -221,7 +221,7 @@ public class Print {
     void prExp(CALL e, int d) {
         indent(d);
         sayln("CALL(");
-        prExp(e.method, d + 1);
+        prExp(e.function, d + 1);
         for (ExpList a = e.arguments; a != null; a = a.tail) {
             sayln(",");
             prExp(a.head, d + 2);
