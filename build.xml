@@ -114,7 +114,12 @@
                  includenosourcepackages="true">
             <classpath refid="project-classpath"/>
             <fileset dir="${main-src-dir}"/>
-            <fileset dir="${parser-src-dir}"/>
+            <fileset dir="${parser-src-dir}">
+                <!-- These are not very interesting -->
+                <exclude name="mjc/lexer/**"/>
+                <exclude name="mjc/parser/**"/>
+                <exclude name="mjc/node/**"/>
+            </fileset>
         </javadoc>
     </target>
 
