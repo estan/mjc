@@ -105,6 +105,18 @@
         </jar>
     </target>
 
+    <target name="doc" description="Generate JavaDoc documentation in doc/" depends="generate-parser">
+        <javadoc package="mjc"
+                 destdir="${doc-dir}"
+                 doclet="mjc.doclets.TextDoclet"
+                 docletpath="${lib-dir}/mjc-doclets.jar"
+                 includenosourcepackages="true">
+            <classpath refid="project-classpath"/>
+            <fileset dir="${main-src-dir}"/>
+            <fileset dir="${parser-src-dir}"/>
+        </javadoc>
+    </target>
+
     <target name="report" description="Build report PDF file" unless="report-up-to-date" depends="init">
         <!-- Prepare build directory -->
         <delete dir="${report-build-dir}"/>
@@ -241,6 +253,7 @@
 
     <target name="clean" description="Delete all generated files">
         <delete dir="${build-dir}"/>
+        <delete dir="${doc-dir}"/>
         <delete file="${output-jar}"/>
         <delete file="${output-tar}"/>
     </target>

@@ -33,6 +33,7 @@ the different available targets. Here's a hopefully up to date list:
     Main targets:
      clean    Delete all generated files
      compile  Compile all sources
+     doc      Generate JavaDoc documentation in doc/
      jar      Build compiler JAR file
      report   Build report PDF file
      submit   Submit TAR archive to TIGRIS

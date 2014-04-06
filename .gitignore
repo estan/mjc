@@ -7,3 +7,6 @@ build/
 .project
 .classpath
 .settings/
+
+# JavaDoc
+doc/
