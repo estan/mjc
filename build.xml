@@ -106,6 +106,7 @@
     </target>
 
     <target name="doc" description="Generate JavaDoc documentation in doc/" depends="generate-parser">
+        <delete dir="${doc-dir}"/>
         <javadoc package="mjc"
                  destdir="${doc-dir}"
                  doclet="mjc.doclets.TextDoclet"
