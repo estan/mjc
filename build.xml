@@ -111,7 +111,8 @@
                  destdir="${doc-dir}"
                  doclet="mjc.doclets.TextDoclet"
                  docletpath="${lib-dir}/mjc-doclets.jar"
-                 includenosourcepackages="true">
+                 includenosourcepackages="true"
+                 Private="true">
             <classpath refid="project-classpath"/>
             <fileset dir="${main-src-dir}"/>
             <fileset dir="${parser-src-dir}">
