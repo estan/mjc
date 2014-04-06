@@ -5,7 +5,7 @@ import mjc.tree.Exp;
 import mjc.tree.Stm;
 
 /**
- * TreeNode represents the (lazy) IR translation of an AST node.
+ * TreeNode represents the IR translation of an AST node.
  *
  * A TreeNode may be evaluated into the final IR in three different ways:
  *
@@ -14,6 +14,8 @@ import mjc.tree.Stm;
  *     <li>For its side-effects (using {@link #asStm()})</li>
  *     <li>For flow control (using {@link #asCond(Label, Label)})</li>
  * </ul>
+ *
+ * Subclasses must implement these methods to return the appropriate IR tree.
  *
  * During translation, an AST node is translated into an appropriate TreeNode subclass.
  * Depending on the context, the translation code will then call either {@link #asExp()},

@@ -8,7 +8,7 @@ import mjc.tree.Exp;
 import mjc.tree.Stm;
 
 /**
- * Abstract base class for expression nodes.
+ * ExpNode represents the IR translation of an expression.
  */
 class ExpNode extends TreeNode {
     final Exp expression;

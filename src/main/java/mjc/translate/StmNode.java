@@ -1,11 +1,13 @@
 package mjc.translate;
 
+import mjc.temp.Label;
+import mjc.tree.Exp;
 import mjc.tree.Stm;
 
 /**
- * Abstract base class for statement nodes.
+ * StmNode represents the IR translation of a statement.
  */
-abstract class StmNode extends TreeNode {
+class StmNode extends TreeNode {
     final Stm statement;
 
     StmNode(Stm statement) {
@@ -13,7 +15,17 @@ abstract class StmNode extends TreeNode {
     }
 
     @Override
+    Exp asExp() {
+        throw new Error("StmNode has no expression representation");
+    }
+
+    @Override
     Stm asStm() {
         return statement;
+    }
+
+    @Override
+    Stm asCond(Label trueLabel, Label falseLabel) {
+        throw new Error("StmNode has no conditional representation");
     }
 }

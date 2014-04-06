@@ -13,7 +13,9 @@ import mjc.tree.Stm;
 import mjc.tree.TEMP;
 
 /**
- * Abstract base class for conditional nodes.
+ * CondNode represents the IR translation of a conditional.
+ *
+ * Subclasses must implement the {@link #asCond(Label, Label)} method.
  */
 abstract class CondNode extends TreeNode {
 
