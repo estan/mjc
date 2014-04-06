@@ -15,9 +15,9 @@ import com.google.common.collect.ArrayListMultimap;
  * kept in a multimap, since there may be several local variables with the same name but
  * declared in blocks that can't see each other.
  *
- * The scope of added local variables is controlled by calling {@link #enterBlock()
- * enterBlock} and {@link #leaveBlock() leaveBlock}. The mechanism behind these methods
- * is quite simple, but here's an explanation:
+ * The scope of added local variables is controlled by calling {@link #enterBlock()} and
+ * {@link #leaveBlock()}. The mechanism behind these methods is quite simple, but here's
+ * an explanation:
  *
  * Each block within a method is given a number from 0, 1, ..., N as it is encountered.
  *
@@ -29,8 +29,8 @@ import com.google.common.collect.ArrayListMultimap;
  * a matching number of calls to enterBlock()/leaveBlock(), to not leave the MethodInfo in
  * an unknown state for the next user.
  *
- * When a local variable is added using {@link #addLocal(VariableInfo) addLocal} it gets its
- * block set to the current block (top of the stack) before being added to the multimap.
+ * When a local variable is added using {@link #addLocal(VariableInfo)} it gets its block
+ * set to the current block (top of the stack) before being added to the multimap.
  *
  * When a local variable is looked up using {@link #getLocal(String)}, the multimap is first
  * queried for the variable with the given name. If the variable is found, we check if its
@@ -90,9 +90,8 @@ public class MethodInfo {
     /**
      * Returns information about a parameter of the method.
      *
-     * Since parameters are always visible within a method, the return value of
-     * this method is unaffected by calls to {@link #enterBlock() enterBlock} and
-     * {@link #leaveBlock() leaveBlock}.
+     * Since parameters are always visible within a method, the return value of this method
+     * is unaffected by calls to {@link #enterBlock()} and {@link #leaveBlock()}.
      *
      * @param name Parameter name.
      * @return Parameter information, or null if method has no such parameter.
@@ -129,8 +128,8 @@ public class MethodInfo {
     /**
      * Returns information about a currently visible local variable.
      *
-     * The return value of this method depends on previous calls to
-     * {@link #enterBlock() enterBlock} and {@link #leaveBlock leaveBlock}.
+     * The return value of this method depends on previous calls to {@link #enterBlock()}
+     * and {@link #leaveBlock()}.
      *
      * @param name Variable name.
      * @return Variable information, or null if method has no such local variable or the
@@ -148,8 +147,8 @@ public class MethodInfo {
     /**
      * Adds information about a local variable declared in the current block.
      *
-     * Initially there is no block, so {@link #enterBlock() enterBlock} must have been
-     * called more times than {@link #leaveBlock() leaveBlock} before calling this method.
+     * Initially there is no block, so {@link #enterBlock()} must have been called more
+     * times than {@link #leaveBlock()} before calling this method.
      *
      * @param local Variable information.
      * @return The added VariableInfo.
@@ -179,9 +178,9 @@ public class MethodInfo {
     /**
      * Enter a new block.
      *
-     * This affects subsequent calls to {@link #addLocal(VariableInfo) addLocal} and
-     * {@link #getLocal(String) getLocal}. Previously declared variables will remain
-     * in scope after this method is called.
+     * This affects subsequent calls to {@link #addLocal(VariableInfo)} and
+     * {@link #getLocal(String)}. Previously declared variables will remain in scope
+     * after this method is called.
      */
     public void enterBlock() {
         blocks.push(nextBlock++);
@@ -190,9 +189,9 @@ public class MethodInfo {
     /**
      * Leave the current block.
      *
-     * This affects subsequent calls to {@link #addLocal(VariableInfo) addLocal} and
-     * {@link #getLocal(String) getLocal}. Variables declared in the current block
-     * will go out of scope after this method is called.
+     * This affects subsequent calls to {@link #addLocal(VariableInfo)} and
+     * {@link #getLocal(String)}. Variables declared in the current block will go out
+     * of scope after this method is called.
      */
     public void leaveBlock() {
         blocks.pop();

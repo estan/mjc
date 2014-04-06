@@ -71,7 +71,7 @@ public class VariableInfo {
     /**
      * Sets the block within the method in which a local variable is declared.
      *
-     * Note: This should really only be called by {@link MethodInfo#addLocal addLocal}.
+     * Note: This should really only be called by {@link MethodInfo#addLocal(VariableInfo)}.
      *
      * @param block The block in which the local variable is declared.
      */

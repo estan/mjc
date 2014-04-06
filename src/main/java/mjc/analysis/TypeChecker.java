@@ -59,8 +59,7 @@ import static mjc.error.MiniJavaErrorType.*;
  *
  * The TypeChecker class takes as input an abstract syntax tree and a symbol table and
  * performs type-checking of the program. Errors are collected during the checking and
- * may be queried for using the {@link #hasErrors() hasErrors} and {@link #getErrors()
- * getErrors} methods.
+ * may be queried for using the {@link #hasErrors()} and {@link #getErrors()} methods.
  *
  * If any errors exist after construction of the symbol table and type-checking has
  * completed, the compiler should abort and not proceed with later stages of compilation.
