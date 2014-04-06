@@ -153,8 +153,8 @@ public class MethodInfo {
      *
      * @param local Variable information.
      * @return The added VariableInfo.
-     * @see enterBlock()
-     * @see leaveBlock()
+     * @see #enterBlock()
+     * @see #leaveBlock()
      */
     public VariableInfo addLocal(final VariableInfo local) {
         local.setBlock(blocks.peek());
