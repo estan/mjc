@@ -18,8 +18,8 @@ import mjc.node.ALongType;
 import mjc.node.AMainClassDeclaration;
 import mjc.node.AMethodDeclaration;
 import mjc.node.AVariableDeclaration;
+import mjc.node.Node;
 import mjc.node.PType;
-import mjc.node.Start;
 import mjc.node.TIdentifier;
 import mjc.symbol.ClassInfo;
 import mjc.symbol.MethodInfo;
@@ -66,14 +66,14 @@ public class SymbolTableBuilder {
      * @param tree The input AST.
      * @return A symbol table constructed from the AST.
      */
-    public SymbolTable build(final Start tree) {
+    public SymbolTable build(final Node ast) {
         errors.clear();
 
         SymbolTable symbolTable = new SymbolTable();
 
         // Run the two passes to construct table.
-        tree.apply(new FirstPass(symbolTable));
-        tree.apply(new SecondPass(symbolTable));
+        ast.apply(new FirstPass(symbolTable));
+        ast.apply(new SecondPass(symbolTable));
 
         return symbolTable;
     }

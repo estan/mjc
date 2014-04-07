@@ -41,7 +41,6 @@ import mjc.node.ATrueExpression;
 import mjc.node.AWhileStatement;
 import mjc.node.Node;
 import mjc.node.PExpression;
-import mjc.node.Start;
 import mjc.node.TIdentifier;
 import mjc.symbol.ClassInfo;
 import mjc.symbol.MethodInfo;
@@ -76,18 +75,18 @@ public class TypeChecker extends DepthFirstAdapter {
     /**
      * Perform type-checking on the given tree using the given symbol table.
      *
-     * @param tree Input abstract syntax tree.
+     * @param ast Input abstract syntax tree.
      * @param symbolTable Symbol table for the tree.
      * @return true if checking completed without errors, otherwise false.
      */
-    public boolean check(final Start tree, final SymbolTable symbolTable) {
+    public boolean check(final Node ast, final SymbolTable symbolTable) {
         this.symbolTable = symbolTable;
 
         types = new HashMap<>();
         errors = new ArrayList<>();
 
         // Apply the type-checker.
-        tree.apply(this);
+        ast.apply(this);
 
         return !hasErrors();
     }
