@@ -22,7 +22,7 @@ public class View {
         tree = new JTree(top);
         JScrollPane pane = new JScrollPane(tree);
         JFrame frame = new JFrame("TREE Code Viewer " + title);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 800);
         frame.getContentPane().add(pane);
         frame.setVisible(true);
