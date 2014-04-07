@@ -42,10 +42,16 @@ public class View {
     }
 
     void addStm(SEQ s, DefaultMutableTreeNode parent) {
-        DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("SEQ");
-        addStm(s.left, thisNode);
-        addStm(s.right, thisNode);
-        parent.add(thisNode);
+        if (parent.getUserObject().equals("SEQ")) {
+            // Flatten SEQs.
+            addStm(s.left, parent);
+            addStm(s.right, parent);
+        } else {
+            DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("SEQ");
+            addStm(s.left, thisNode);
+            addStm(s.right, thisNode);
+            parent.add(thisNode);
+        }
     }
 
     void addStm(LABEL s, DefaultMutableTreeNode parent) {
@@ -187,10 +193,16 @@ public class View {
     }
 
     void addExp(ESEQ e, DefaultMutableTreeNode parent) {
-        DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("ESEQ");
-        addStm(e.statement, thisNode);
-        addExp(e.expression, thisNode);
-        parent.add(thisNode);
+        if (parent.getUserObject().equals("ESEQ")) {
+            // Flatten ESEQs.
+            addStm(e.statement, parent);
+            addExp(e.expression, parent);
+        } else {
+            DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("ESEQ");
+            addStm(e.statement, thisNode);
+            addExp(e.expression, thisNode);
+            parent.add(thisNode);
+        }
     }
 
     void addExp(NAME e, DefaultMutableTreeNode parent) {
