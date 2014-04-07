@@ -4,6 +4,7 @@ import mjc.temp.Label;
 import mjc.temp.LabelList;
 import mjc.temp.Temp;
 import mjc.temp.TempList;
+import mjc.temp.TempMap;
 
 public abstract class Instr {
     public String asm;
@@ -30,7 +31,7 @@ public abstract class Instr {
         }
     }
 
-    public String format(mjc.temp.TempMap m) {
+    public String format(TempMap m) {
         final TempList destination = def();
         final TempList source = use();
         final Targets targets = jumps();
