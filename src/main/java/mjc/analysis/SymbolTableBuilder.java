@@ -222,22 +222,6 @@ public class SymbolTableBuilder {
         }
 
         @Override
-        public void inAFieldDeclaration(final AFieldDeclaration declaration) {
-            final TIdentifier fieldId = declaration.getName();
-            final int line = fieldId.getLine();
-            final int column = fieldId.getPos();
-
-            if (currentClass.getField(fieldId.getText()) == null) {
-                currentClass.addField(new VariableInfo(
-                        fieldId.getText(),
-                        fromAbstract(declaration.getType()),
-                        line, column));
-            } else {
-                error(DUPLICATE_FIELD.on(line, column, fieldId.getText()));
-            }
-        }
-
-        @Override
         public void inAMethodDeclaration(final AMethodDeclaration declaration) {
             currentMethod = currentClass.getMethod(declaration.getName().getText());
 
@@ -266,6 +250,22 @@ public class SymbolTableBuilder {
         public void outAMethodDeclaration(final AMethodDeclaration declaration) {
             currentMethod.leaveBlock();
             currentMethod = null;
+        }
+
+        @Override
+        public void inAFieldDeclaration(final AFieldDeclaration declaration) {
+            final TIdentifier fieldId = declaration.getName();
+            final int line = fieldId.getLine();
+            final int column = fieldId.getPos();
+
+            if (currentClass.getField(fieldId.getText()) == null) {
+                currentClass.addField(new VariableInfo(
+                        fieldId.getText(),
+                        fromAbstract(declaration.getType()),
+                        line, column));
+            } else {
+                error(DUPLICATE_FIELD.on(line, column, fieldId.getText()));
+            }
         }
 
         @Override
