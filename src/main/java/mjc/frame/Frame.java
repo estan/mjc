@@ -94,15 +94,21 @@ public interface Frame {
     public List<Instr> procEntryExit2(List<Instr> inst);
 
     /**
-     * Produces first part of prologue: pseudo instructions to announce
-     * procedure start a label for the procedure name instruction to adjust
-     * stack pointer
+     * Produces first part of prologue:
      *
-     * Also produces last part of epilogue: Instruction to reset stack pointer
-     * The return instruction pseudo instructions to indicate procedure end
+     * <ul>
+     *     <li>Pseudo instructions to announce procedure start.</li>
+     *     <li>A label for the procedure name instruction to adjust stack pointer</li>
+     * </ul>
      *
-     * @param body The list of instructions to which the sink instruction should
-     *            be appended.
+     * Also produces last part of epilogue:
+     *
+     * <ul>
+     *     <li>Instruction to reset stack pointer</li>
+     *     <li>The return instruction pseudo instructions to indicate procedure end</li>
+     * </ul>
+     *
+     * @param body The list of instructions to which the sink instruction should be appended.
      * @return a Proc object
      */
     public Proc procEntryExit3(List<Instr> body);
