@@ -120,10 +120,16 @@ public class TypeChecker extends DepthFirstAdapter {
 
     public void outAMainClassDeclaration(final AMainClassDeclaration declaration) {
         currentMethod.leaveBlock();
+        currentMethod = null;
+        currentClass = null;
     }
 
     public void inAClassDeclaration(final AClassDeclaration declaration) {
         currentClass = symbolTable.getClassInfo(declaration.getName().getText());
+    }
+
+    public void outAClassDeclaration(final AClassDeclaration declaration) {
+        currentClass = null;
     }
 
     public void inAMethodDeclaration(final AMethodDeclaration declaration) {
@@ -143,6 +149,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
 
         currentMethod.leaveBlock();
+        currentMethod = null;
     }
 
     public void inABlockStatement(final ABlockStatement block) {

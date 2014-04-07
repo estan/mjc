@@ -207,11 +207,18 @@ public class SymbolTableBuilder {
         @Override
         public void outAMainClassDeclaration(final AMainClassDeclaration declaration) {
             currentMethod.leaveBlock();
+            currentMethod = null;
+            currentClass = null;
         }
 
         @Override
         public void inAClassDeclaration(final AClassDeclaration declaration) {
             currentClass = symbolTable.getClassInfo(declaration.getName().getText());
+        }
+
+        @Override
+        public void outAClassDeclaration(final AClassDeclaration declaration) {
+            currentClass = null;
         }
 
         @Override
@@ -258,6 +265,7 @@ public class SymbolTableBuilder {
         @Override
         public void outAMethodDeclaration(final AMethodDeclaration declaration) {
             currentMethod.leaveBlock();
+            currentMethod = null;
         }
 
         @Override
