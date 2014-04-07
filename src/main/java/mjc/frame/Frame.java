@@ -114,7 +114,7 @@ public interface Frame {
     public Proc procEntryExit3(List<Instr> body);
 
     /**
-     * @return The return value register register.
+     * @return The return value register.
      */
     public Temp RV();
 
