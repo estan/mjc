@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Interface for handling of frames on the runtime stack. The interface is
  * independent of the target architecture, but it is designed for real
- * processors. For virtual machines, use the @see VMFrame interface.
+ * processors.
  */
 public interface Frame {
 
