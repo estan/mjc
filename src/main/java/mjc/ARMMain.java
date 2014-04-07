@@ -59,7 +59,7 @@ public class ARMMain {
         try {
             // Run the compiler.
             if (!main.run(args)) {
-                System.exit(0);
+                System.exit(1);
             }
         } catch (ParseException e) {
             printHelp();
