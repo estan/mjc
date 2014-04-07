@@ -39,9 +39,6 @@ public class ARMMain {
     private final ASTPrinter astPrinter = new ASTPrinter();
     private final ASTGraphPrinter graphPrinter = new ASTGraphPrinter();
 
-    private final static int EXIT_SUCCESS = 0;
-    private final static int EXIT_FAILURE = 1;
-
     public ARMMain() {
         Option outputFileOption = new Option("o", true, "output file");
         outputFileOption.setArgName("outfile");
@@ -61,10 +58,12 @@ public class ARMMain {
 
         try {
             // Run the compiler.
-            System.exit(main.run(args));
+            if (!main.run(args)) {
+                System.exit(0);
+            }
         } catch (ParseException e) {
             printHelp();
-            System.exit(EXIT_FAILURE);
+            System.exit(1);
         }
     }
 
@@ -72,21 +71,21 @@ public class ARMMain {
      * Run compiler with the given command line arguments.
      *
      * @param args Command line arguments.
-     * @return EXIT_SUCCESS if compilation succeeded, otherwise EXIT_FAILURE.
+     * @return true if compilation succeeded, otherwise false.
      * @throws ParseException if parsing of command line arguments failed.
      */
-    private int run(String[] args) throws ParseException {
+    private boolean run(String[] args) throws ParseException {
 
         final CommandLine commandLine = commandLineParser.parse(options, args);
 
         if (commandLine.hasOption("h")) {
             printHelp();
-            return EXIT_SUCCESS;
+            return true;
         }
 
         if (commandLine.getArgs().length != 1) {
             printHelp();
-            return EXIT_FAILURE;
+            return false;
         }
 
         /****************************************
@@ -104,13 +103,13 @@ public class ARMMain {
             final int line = token.getLine();
             final int column = token.getPos();
             System.err.println(LEXER_ERROR.on(line, column, token.getText()));
-            return EXIT_FAILURE;
+            return false;
         } catch (ParserException e) {
             System.err.println(PARSER_ERROR.on(e.getLine(), e.getPos(), e.getError()));
-            return EXIT_FAILURE;
+            return false;
         } catch (IOException e) {
             System.err.println(e.getMessage());
-            return EXIT_FAILURE;
+            return false;
         }
 
         if (commandLine.hasOption("p"))
@@ -144,7 +143,7 @@ public class ARMMain {
         }
 
         if (builder.hasErrors() || typeChecker.hasErrors()) {
-            return EXIT_FAILURE; // Abort compilation.
+            return false; // Abort compilation.
         }
 
         // Just write an empty output file for now.
@@ -154,10 +153,10 @@ public class ARMMain {
             out.createNewFile();
         } catch (IOException e) {
             System.err.println(e.getMessage());
-            System.exit(EXIT_FAILURE);
+            return false;
         }
 
-        return EXIT_SUCCESS;
+        return true;
     }
 
     private static void printHelp() {
