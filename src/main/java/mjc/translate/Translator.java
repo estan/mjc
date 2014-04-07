@@ -71,12 +71,12 @@ public class Translator extends AnalysisAdapter {
     private List<ProcFrag> fragments;
 
     /**
-     * Translates the given AST into IR and returns the result as a tree.Exp.
+     * Translates the given AST into IR and returns the result as a list of procedure fragments.
      *
      * @param ast Input AST.
      * @param symbolTable Symbol table for the input program.
      * @param factory Factory for constructing frames and records.
-     * @return IR representation of @a ast.
+     * @return List of procedure fragments.
      */
     public List<ProcFrag> translate(final Node ast, final SymbolTable symbolTable, final Factory factory) {
         this.symbolTable = symbolTable;
@@ -128,7 +128,7 @@ public class Translator extends AnalysisAdapter {
                 new ArrayList<Boolean>()
         );
 
-        System.out.println("Translating " + currentClass.getName());
+        System.out.println("Translating class " + currentClass.getName());
 
         // TODO: Construct a ProcFrag from the locals, statements, and the current
         //       frame, then add it to the fragments list.
@@ -151,6 +151,8 @@ public class Translator extends AnalysisAdapter {
     public void caseAClassDeclaration(final AClassDeclaration declaration) {
         currentClass = symbolTable.getClassInfo(declaration.getName().getText());
 
+        System.out.println("Translating class " + currentClass.getName());
+
         for (PFieldDeclaration fieldDeclaration : declaration.getFields()) {
             fieldDeclaration.apply(this);
         }
@@ -171,7 +173,7 @@ public class Translator extends AnalysisAdapter {
                 Booleans.asList(new boolean[currentMethod.getParameters().size()])
         );
 
-        System.out.println("Translating " + currentMethod.getName());
+        System.out.println("Translating method " + currentMethod.getName());
 
         // TODO: Construct a ProcFrag from the formals, locals, statements,
         //       return expression and the current frame, then add it to the
@@ -186,7 +188,6 @@ public class Translator extends AnalysisAdapter {
         }
 
         for (PStatement statement : declaration.getStatements()) {
-            System.out.println("bja");
             statement.apply(this);
         }
 
@@ -214,6 +215,9 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAIfStatement(final AIfStatement statement) {
+
+        System.out.println("Translating if");
+
         currentTree = new If(
             treeOf(statement.getCondition()),
             treeOf(statement.getStatement())
@@ -222,7 +226,9 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAIfElseStatement(final AIfElseStatement statement) {
+
         System.out.println("Translating if-else");
+
         currentTree = new IfElse(
             treeOf(statement.getCondition()),
             treeOf(statement.getThen()),
@@ -238,6 +244,9 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAWhileStatement(final AWhileStatement statement) {
+
+        System.out.println("Translating while");
+
         final Label test = new Label();
         final Label trueLabel = new Label();
         final Label falseLabel = new Label();
@@ -252,162 +261,243 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAPrintlnStatement(final APrintlnStatement statement) {
+
+        System.out.println("Translating println");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAAssignStatement(final AAssignStatement statement) {
+
+        System.out.println("Translating assignment");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAArrayAssignStatement(final AArrayAssignStatement statement) {
+
+        System.out.println("Translating array assignment");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAAndExpression(final AAndExpression expression) {
+
+        System.out.println("Translating AND");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAOrExpression(final AOrExpression expression) {
+
+        System.out.println("Translating OR");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseALessThanExpression(final ALessThanExpression expression) {
+
+        System.out.println("Translating LT");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAGreaterThanExpression(final AGreaterThanExpression expression) {
+
+        System.out.println("Translating GT");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAGreaterEqualThanExpression(final AGreaterEqualThanExpression expression) {
+
+        System.out.println("Translating GE");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseALessEqualThanExpression(final ALessEqualThanExpression expression) {
+
+        System.out.println("Translating LE");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAEqualExpression(final AEqualExpression expression) {
+
+        System.out.println("Translating EQ");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseANotEqualExpression(final ANotEqualExpression expression) {
+
+        System.out.println("Translating NE");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAPlusExpression(final APlusExpression expression) {
+
+        System.out.println("Translating PLUS");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAMinusExpression(final AMinusExpression expression) {
+
+        System.out.println("Translating MINUS");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseATimesExpression(final ATimesExpression expression) {
+
+        System.out.println("Translating TIMES");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseANotExpression(final ANotExpression expression) {
+
+        System.out.println("Translating NOT");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAMethodInvocationExpression(final AMethodInvocationExpression expression) {
+
+        System.out.println("Translating method invocation");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAArrayAccessExpression(final AArrayAccessExpression expression) {
+
+        System.out.println("Translating array access");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAArrayLengthExpression(final AArrayLengthExpression expression) {
+
+        System.out.println("Translating array length");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseANewInstanceExpression(final ANewInstanceExpression expression) {
+
+        System.out.println("Translating new instance");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseANewIntArrayExpression(final ANewIntArrayExpression expression) {
+
+        System.out.println("Translating new int[]");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseANewLongArrayExpression(final ANewLongArrayExpression expression) {
+
+        System.out.println("Translating new long[]");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAIntegerExpression(final AIntegerExpression expression) {
+
+        System.out.println("Translating integer expression");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseALongExpression(final ALongExpression expression) {
+
+        System.out.println("Translating long expression");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseATrueExpression(final ATrueExpression expression) {
+
+        System.out.println("Translating true expression");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAFalseExpression(final AFalseExpression expression) {
+
+        System.out.println("Translating false expression");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAIdentifierExpression(final AIdentifierExpression expression) {
+
+        System.out.println("Translating identifier expression");
+
         // TODO
         currentTree = new TODONode();
     }
 
     @Override
     public void caseAThisExpression(final AThisExpression expression) {
+
+        System.out.println("Translating this expression");
+
         // TODO
         currentTree = new TODONode();
     }
