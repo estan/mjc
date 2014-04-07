@@ -112,31 +112,37 @@ public class TypeChecker extends DepthFirstAdapter {
         errors.add(error);
     }
 
+    @Override
     public void inAMainClassDeclaration(final AMainClassDeclaration declaration) {
         currentClass = symbolTable.getClassInfo(declaration.getName().getText());
         currentMethod = currentClass.getMethod(declaration.getMethodName().getText());
         currentMethod.enterBlock();
     }
 
+    @Override
     public void outAMainClassDeclaration(final AMainClassDeclaration declaration) {
         currentMethod.leaveBlock();
         currentMethod = null;
         currentClass = null;
     }
 
+    @Override
     public void inAClassDeclaration(final AClassDeclaration declaration) {
         currentClass = symbolTable.getClassInfo(declaration.getName().getText());
     }
 
+    @Override
     public void outAClassDeclaration(final AClassDeclaration declaration) {
         currentClass = null;
     }
 
+    @Override
     public void inAMethodDeclaration(final AMethodDeclaration declaration) {
         currentMethod = currentClass.getMethod(declaration.getName().getText());
         currentMethod.enterBlock();
     }
 
+    @Override
     public void outAMethodDeclaration(final AMethodDeclaration declaration) {
         final String id = declaration.getName().getText();
         final Type actualType = types.get(declaration.getReturnExpression());
@@ -152,14 +158,17 @@ public class TypeChecker extends DepthFirstAdapter {
         currentMethod = null;
     }
 
+    @Override
     public void inABlockStatement(final ABlockStatement block) {
         currentMethod.enterBlock();
     }
 
+    @Override
     public void outABlockStatement(final ABlockStatement block) {
         currentMethod.leaveBlock();
     }
 
+    @Override
     public void outAIfStatement(final AIfStatement statement) {
         final Type conditionType = types.get(statement.getCondition());
         final int line = statement.getIfKeyword().getLine();
@@ -170,6 +179,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
     public void outAIfElseStatement(final AIfElseStatement statement) {
         final Type conditionType = types.get(statement.getCondition());
         final int line = statement.getIfKeyword().getLine();
@@ -180,6 +190,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
     public void outAWhileStatement(final AWhileStatement statement) {
         final Type conditionType = types.get(statement.getCondition());
         final int line = statement.getWhileKeyword().getLine();
@@ -190,6 +201,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
     public void outAPrintlnStatement(final APrintlnStatement statement) {
         final Type valueType = types.get(statement.getValue());
         final int line = statement.getPrintlnKeyword().getLine();
@@ -200,6 +212,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
     public void outAAssignStatement(final AAssignStatement statement) {
         final String id = statement.getName().getText();
         final int line = statement.getAssign().getLine();
@@ -229,6 +242,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
     public void outAArrayAssignStatement(final AArrayAssignStatement statement) {
         final String id = statement.getName().getText();
         final int line = statement.getAssign().getLine();
@@ -269,6 +283,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
     public void outAAndExpression(final AAndExpression expression) {
         final Type left = types.get(expression.getLeft());
         final Type right = types.get(expression.getRight());
@@ -282,6 +297,7 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.Boolean);
     }
 
+    @Override
     public void outAOrExpression(final AOrExpression expression) {
         final Type left = types.get(expression.getLeft());
         final Type right = types.get(expression.getRight());
@@ -295,6 +311,7 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.Boolean);
     }
 
+    @Override
     public void outALessThanExpression(final ALessThanExpression expression) {
         final Type left = types.get(expression.getLeft());
         final Type right = types.get(expression.getRight());
@@ -308,6 +325,7 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.Boolean);
     }
 
+    @Override
     public void outAGreaterThanExpression(final AGreaterThanExpression expression) {
         final Type left = types.get(expression.getLeft());
         final Type right = types.get(expression.getRight());
@@ -321,6 +339,7 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.Boolean);
     }
 
+    @Override
     public void outAGreaterEqualThanExpression(final AGreaterEqualThanExpression expression) {
         final Type left = types.get(expression.getLeft());
         final Type right = types.get(expression.getRight());
@@ -334,6 +353,7 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.Boolean);
     }
 
+    @Override
     public void outALessEqualThanExpression(final ALessEqualThanExpression expression) {
         final Type left = types.get(expression.getLeft());
         final Type right = types.get(expression.getRight());
@@ -347,6 +367,7 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.Boolean);
     }
 
+    @Override
     public void outAEqualExpression(final AEqualExpression expression) {
         final Type left = types.get(expression.getLeft());
         final Type right = types.get(expression.getRight());
@@ -360,6 +381,7 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.Boolean);
     }
 
+    @Override
     public void outANotEqualExpression(final ANotEqualExpression expression) {
         final Type left = types.get(expression.getLeft());
         final Type right = types.get(expression.getRight());
@@ -373,6 +395,7 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.Boolean);
     }
 
+    @Override
     public void outAPlusExpression(final APlusExpression expression) {
         final Type left = types.get(expression.getLeft());
         final Type right = types.get(expression.getRight());
@@ -390,6 +413,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
     public void outAMinusExpression(final AMinusExpression expression) {
         final Type left = types.get(expression.getLeft());
         final Type right = types.get(expression.getRight());
@@ -407,6 +431,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
     public void outATimesExpression(final ATimesExpression expression) {
         final Type left = types.get(expression.getLeft());
         final Type right = types.get(expression.getRight());
@@ -424,6 +449,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
     public void outANotExpression(final ANotExpression expression) {
         final Type type = types.get(expression.getExpression());
 
@@ -436,6 +462,7 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.Boolean);
     }
 
+    @Override
     public void outAMethodInvocationExpression(final AMethodInvocationExpression expression) {
         final Type classType = types.get(expression.getInstance());
         final String classId = classType.getName();
@@ -476,6 +503,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
     public void outAArrayAccessExpression(final AArrayAccessExpression expression) {
         final Type type = types.get(expression.getArray());
         final Type indexType = types.get(expression.getIndex());
@@ -498,6 +526,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
     public void outAArrayLengthExpression(final AArrayLengthExpression expression) {
         final Type type = types.get(expression.getArray());
 
@@ -510,6 +539,7 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.Int);
     }
 
+    @Override
     public void outANewInstanceExpression(final ANewInstanceExpression expression) {
         final TIdentifier id = expression.getClassName();
         final ClassInfo classInfo = symbolTable.getClassInfo(id.getText());
@@ -524,6 +554,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
     public void outANewIntArrayExpression(final ANewIntArrayExpression expression) {
         final Type type = types.get(expression.getSize());
 
@@ -536,6 +567,7 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.IntArray);
     }
 
+    @Override
     public void outANewLongArrayExpression(final ANewLongArrayExpression expression) {
         final Type type = types.get(expression.getSize());
 
@@ -548,6 +580,7 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.LongArray);
     }
 
+    @Override
     public void outAIntegerExpression(final AIntegerExpression expression) {
         final String literal = expression.getInteger().getText();
 
@@ -562,6 +595,7 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.Int);
     }
 
+    @Override
     public void outALongExpression(final ALongExpression expression) {
         final String literal = expression.getLong().getText();
 
@@ -576,14 +610,17 @@ public class TypeChecker extends DepthFirstAdapter {
         types.put(expression, BuiltInType.Long);
     }
 
+    @Override
     public void outATrueExpression(final ATrueExpression expression) {
         types.put(expression, BuiltInType.Boolean);
     }
 
+    @Override
     public void outAFalseExpression(final AFalseExpression expression) {
         types.put(expression, BuiltInType.Boolean);
     }
 
+    @Override
     public void outAIdentifierExpression(final AIdentifierExpression expression) {
         final String id = expression.getIdentifier().getText();
         final int line = expression.getIdentifier().getLine();
@@ -606,6 +643,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
     public void outAThisExpression(final AThisExpression expression) {
         types.put(expression, currentClass.getType());
     }
