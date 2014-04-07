@@ -21,12 +21,14 @@ import mjc.lexer.LexerException;
 import mjc.parser.Parser;
 import mjc.parser.ParserException;
 import mjc.symbol.SymbolTable;
+import mjc.translate.Translator;
 import mjc.node.InvalidToken;
 import mjc.node.Start;
 import mjc.analysis.ASTGraphPrinter;
 import mjc.analysis.ASTPrinter;
 import mjc.analysis.SymbolTableBuilder;
 import mjc.analysis.TypeChecker;
+import mjc.arm.ARMFactory;
 import mjc.error.MiniJavaError;
 import static mjc.error.MiniJavaErrorType.LEXER_ERROR;
 import static mjc.error.MiniJavaErrorType.PARSER_ERROR;
@@ -145,6 +147,10 @@ public class ARMMain {
         if (builder.hasErrors() || typeChecker.hasErrors()) {
             return false; // Abort compilation.
         }
+
+        // Translate to IR.
+        final Translator translator = new Translator();
+        translator.translate(tree, symbolTable, new ARMFactory());
 
         // Just write an empty output file for now.
         final String baseName = Files.getNameWithoutExtension(commandLine.getArgs()[0]);
