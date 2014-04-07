@@ -143,7 +143,6 @@ public class TypeChecker extends DepthFirstAdapter {
         }
 
         currentMethod.leaveBlock();
-
     }
 
     public void inABlockStatement(final ABlockStatement block) {
