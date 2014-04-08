@@ -217,6 +217,12 @@ public class View {
         parent.add(thisNode);
     }
 
+    void addExp(DCONST e, DefaultMutableTreeNode parent) {
+        DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("DCONST");
+        thisNode.add(new DefaultMutableTreeNode(String.valueOf(e.value)));
+        parent.add(thisNode);
+    }
+
     void addExp(CALL e, DefaultMutableTreeNode parent) {
         DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("CALL");
         addExp(e.function, thisNode);

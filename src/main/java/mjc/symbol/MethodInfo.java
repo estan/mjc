@@ -53,6 +53,7 @@ public class MethodInfo {
     private final int line;
     private final int column;
 
+    private int nextOffset = 0;
     private int nextBlock = 0;
 
     /**
@@ -156,8 +157,10 @@ public class MethodInfo {
      * @see #leaveBlock()
      */
     public VariableInfo addLocal(final VariableInfo local) {
+        local.setOffset(nextOffset);
         local.setBlock(blocks.peek());
         locals.put(local.getName(), local);
+        nextOffset += local.getType().getSize();
         return local;
     }
 

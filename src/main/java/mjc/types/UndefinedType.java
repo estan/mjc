@@ -23,6 +23,11 @@ public class UndefinedType extends Type {
     }
 
     @Override
+    public int getSize() {
+        return -1;
+    }
+
+    @Override
     public boolean isUndefined() {
         return true;
     }

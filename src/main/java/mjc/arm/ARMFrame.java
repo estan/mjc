@@ -36,8 +36,8 @@ public class ARMFrame implements Frame {
 
     @Override
     public Access allocLocal(boolean escape) {
-        // TODO Auto-generated method stub
-        return null;
+        // More to do?
+        return new ARMInReg(new Temp());
     }
 
     @Override

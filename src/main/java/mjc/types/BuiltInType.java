@@ -31,6 +31,11 @@ public class BuiltInType extends Type {
     }
 
     @Override
+    public int getSize() {
+        return isLong() ? 8 : 4;
+    }
+
+    @Override
     public boolean isBuiltIn() {
         return true;
     }

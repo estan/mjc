@@ -1,5 +1,6 @@
 package mjc.symbol;
 
+import mjc.frame.Access;
 import mjc.types.Type;
 
 /**
@@ -12,7 +13,9 @@ public class VariableInfo {
     private final int line;
     private final int column;
 
-    private int block; // Only used for local variables.
+    private int offset;
+    private int block;   // Only used for local variables.
+    private Access access;
 
     /**
      * Constructs a new VariableInfo.
@@ -77,6 +80,23 @@ public class VariableInfo {
      */
     public void setBlock(int block) {
         this.block = block;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    // Only used by addLocal/addField...
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public Access getAccess() {
+        return access;
+    }
+
+    public void setAccess(Access access) {
+        this.access = access;
     }
 
     @Override

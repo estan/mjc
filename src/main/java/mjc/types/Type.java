@@ -9,6 +9,9 @@ public abstract class Type {
      */
     public abstract String getName();
 
+    //blah
+    public abstract int getSize();
+
     /**
      * @return true if this is a built-in type.
      */

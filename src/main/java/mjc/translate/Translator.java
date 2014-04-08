@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.common.primitives.Booleans;
 
 import mjc.analysis.AnalysisAdapter;
+import mjc.frame.Access;
 import mjc.frame.Factory;
 import mjc.frame.Frame;
 import mjc.node.AAndExpression;
@@ -17,6 +18,8 @@ import mjc.node.ABlockStatement;
 import mjc.node.AClassDeclaration;
 import mjc.node.AEqualExpression;
 import mjc.node.AFalseExpression;
+import mjc.node.AFieldDeclaration;
+import mjc.node.AFormalParameter;
 import mjc.node.AGreaterEqualThanExpression;
 import mjc.node.AGreaterThanExpression;
 import mjc.node.AIdentifierExpression;
@@ -42,6 +45,7 @@ import mjc.node.AProgram;
 import mjc.node.AThisExpression;
 import mjc.node.ATimesExpression;
 import mjc.node.ATrueExpression;
+import mjc.node.AVariableDeclaration;
 import mjc.node.AWhileStatement;
 import mjc.node.Node;
 import mjc.node.PClassDeclaration;
@@ -51,13 +55,23 @@ import mjc.node.PMethodDeclaration;
 import mjc.node.PStatement;
 import mjc.node.PVariableDeclaration;
 import mjc.node.Start;
+import mjc.node.TIdentifier;
 import mjc.symbol.ClassInfo;
 import mjc.symbol.MethodInfo;
 import mjc.symbol.SymbolTable;
+import mjc.symbol.VariableInfo;
 import mjc.temp.Label;
+import mjc.tree.BINOP;
+import mjc.tree.CJUMP;
+import mjc.tree.CONST;
+import mjc.tree.DCONST;
+import mjc.tree.Exp;
 import mjc.tree.LABEL;
+import mjc.tree.MOVE;
 import mjc.tree.SEQ;
+import mjc.tree.TEMP;
 import mjc.tree.View;
+import mjc.types.Type;
 
 public class Translator extends AnalysisAdapter {
     private SymbolTable symbolTable;
@@ -189,6 +203,10 @@ public class Translator extends AnalysisAdapter {
 
         for (PStatement statement : declaration.getStatements()) {
             statement.apply(this);
+
+            View viewer = new View("if-else");
+            viewer.addStm(currentTree.asStm());
+            viewer.expandTree();
         }
 
         declaration.getReturnExpression().apply(this);
@@ -196,6 +214,21 @@ public class Translator extends AnalysisAdapter {
         currentFrame = null;
         currentMethod.leaveBlock();
         currentMethod = null;
+    }
+
+    @Override
+    public void caseAFieldDeclaration(final AFieldDeclaration declaration) {
+        // TODO
+    }
+
+    @Override
+    public void caseAFormalParameter(final AFormalParameter declaration) {
+        // TODO
+    }
+
+    @Override
+    public void caseAVariableDeclaration(final AVariableDeclaration declaration) {
+        currentMethod.getLocal(declaration.getName().getText()).setAccess(currentFrame.allocLocal(false));
     }
 
     @Override
@@ -234,12 +267,6 @@ public class Translator extends AnalysisAdapter {
             treeOf(statement.getThen()),
             treeOf(statement.getElse())
         );
-
-        /*
-        View viewer = new View("if-else");
-        viewer.addStm(currentTree.asStm());
-        viewer.expandTree();
-        */
     }
 
     @Override
@@ -273,8 +300,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating assignment");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new StmNode(new MOVE(getVariable(statement.getName()), treeOf(statement.getValue()).asExp()));
     }
 
     @Override
@@ -309,8 +335,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating LT");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new RelCond(CJUMP.LT, treeOf(expression.getLeft()), treeOf(expression.getRight()));
     }
 
     @Override
@@ -318,8 +343,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating GT");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new RelCond(CJUMP.GT, treeOf(expression.getLeft()), treeOf(expression.getRight()));
     }
 
     @Override
@@ -327,8 +351,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating GE");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new RelCond(CJUMP.GE, treeOf(expression.getLeft()), treeOf(expression.getRight()));
     }
 
     @Override
@@ -336,8 +359,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating LE");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new RelCond(CJUMP.LE, treeOf(expression.getLeft()), treeOf(expression.getRight()));
     }
 
     @Override
@@ -345,8 +367,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating EQ");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new RelCond(CJUMP.EQ, treeOf(expression.getLeft()), treeOf(expression.getRight()));
     }
 
     @Override
@@ -354,8 +375,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating NE");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new RelCond(CJUMP.NE, treeOf(expression.getLeft()), treeOf(expression.getRight()));
     }
 
     @Override
@@ -363,8 +383,9 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating PLUS");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new ExpNode(new BINOP(BINOP.PLUS,
+                treeOf(expression.getLeft()).asExp(),
+                treeOf(expression.getRight()).asExp()));
     }
 
     @Override
@@ -372,8 +393,9 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating MINUS");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new ExpNode(new BINOP(BINOP.MINUS,
+                treeOf(expression.getLeft()).asExp(),
+                treeOf(expression.getRight()).asExp()));
     }
 
     @Override
@@ -381,8 +403,9 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating TIMES");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new ExpNode(new BINOP(BINOP.MUL,
+                treeOf(expression.getLeft()).asExp(),
+                treeOf(expression.getRight()).asExp()));
     }
 
     @Override
@@ -390,8 +413,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating NOT");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new ExpNode(new BINOP(BINOP.MINUS, new CONST(1), treeOf(expression.getExpression()    ).asExp()));
     }
 
     @Override
@@ -453,8 +475,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating integer expression");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new ExpNode(new CONST(Integer.parseInt(expression.getInteger().getText())));
     }
 
     @Override
@@ -462,8 +483,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating long expression");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new ExpNode(new DCONST(Long.parseLong(expression.getLong().getText())));
     }
 
     @Override
@@ -471,8 +491,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating true expression");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new ExpNode(new CONST(1));
     }
 
     @Override
@@ -480,8 +499,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating false expression");
 
-        // TODO
-        currentTree = new TODONode();
+        currentTree = new ExpNode(new CONST(0));
     }
 
     @Override
@@ -500,5 +518,21 @@ public class Translator extends AnalysisAdapter {
 
         // TODO
         currentTree = new TODONode();
+    }
+
+    private Exp getVariable(TIdentifier id) {
+        final String name = id.getText();
+
+        final VariableInfo localInfo, paramInfo, fieldInfo;
+        if ((localInfo = currentMethod.getLocal(name)) != null) {
+            Access access = localInfo.getAccess();
+            return access.exp(new TEMP(currentFrame.FP()));
+        } else if ((paramInfo = currentMethod.getParameter(name)) != null) {
+            return null;
+        } else if ((fieldInfo = currentClass.getField(name)) != null) {
+            return null;
+        } else {
+            throw new Error("Dåligt");
+        }
     }
 }
