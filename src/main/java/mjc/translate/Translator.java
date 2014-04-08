@@ -71,7 +71,6 @@ import mjc.tree.MOVE;
 import mjc.tree.SEQ;
 import mjc.tree.TEMP;
 import mjc.tree.View;
-import mjc.types.Type;
 
 public class Translator extends AnalysisAdapter {
     private SymbolTable symbolTable;
@@ -532,7 +531,7 @@ public class Translator extends AnalysisAdapter {
         } else if ((fieldInfo = currentClass.getField(name)) != null) {
             return null;
         } else {
-            throw new Error("Dåligt");
+            throw new Error("No such symbol: " + name);
         }
     }
 }
