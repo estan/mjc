@@ -1,6 +1,8 @@
 package mjc.translate;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.primitives.Booleans;
@@ -66,9 +68,11 @@ import mjc.tree.CJUMP;
 import mjc.tree.CONST;
 import mjc.tree.DCONST;
 import mjc.tree.Exp;
+import mjc.tree.ExpList;
 import mjc.tree.LABEL;
 import mjc.tree.MOVE;
 import mjc.tree.SEQ;
+import mjc.tree.Stm;
 import mjc.tree.TEMP;
 import mjc.tree.View;
 
@@ -143,15 +147,19 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating class " + currentClass.getName());
 
-        // TODO: Construct a ProcFrag from the locals, statements, and the current
-        //       frame, then add it to the fragments list.
+        final LinkedList<Node> nodes = new LinkedList<>();
+        nodes.addAll(declaration.getLocals());
+        nodes.addAll(declaration.getStatements());
 
-        for (PVariableDeclaration variableDeclaration : declaration.getLocals()) {
-            variableDeclaration.apply(this);
-        }
+        Translation tree = buildStm(nodes);
 
-        for (PStatement statement : declaration.getStatements()) {
-            statement.apply(this);
+        if (tree != null) {
+            currentTree = tree;
+
+            View viewer = new View("if-else");
+            viewer.addStm(currentTree.asStm());
+            viewer.expandTree();
+            fragments.add(new ProcFrag(currentFrame.procEntryExit1(currentTree.asStm()), currentFrame));
         }
 
         currentFrame = null;
@@ -188,27 +196,18 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating method " + currentMethod.getName());
 
-        // TODO: Construct a ProcFrag from the formals, locals, statements,
-        //       return expression and the current frame, then add it to the
-        //       fragments list.
+        final LinkedList<Node> nodes = new LinkedList<>();
+        nodes.addAll(declaration.getFormals());
+        nodes.addAll(declaration.getLocals());
+        nodes.addAll(declaration.getStatements());
+        nodes.add(declaration.getReturnExpression());
 
-        for (PFormalParameter formalParameter : declaration.getFormals()) {
-            formalParameter.apply(this);
+        Translation tree = buildStm(nodes);
+
+        if (tree != null) {
+            currentTree = tree;
+            fragments.add(new ProcFrag(currentFrame.procEntryExit1(currentTree.asStm()), currentFrame));
         }
-
-        for (PVariableDeclaration variableDeclaration : declaration.getLocals()) {
-            variableDeclaration.apply(this);
-        }
-
-        for (PStatement statement : declaration.getStatements()) {
-            statement.apply(this);
-
-            View viewer = new View("if-else");
-            viewer.addStm(currentTree.asStm());
-            viewer.expandTree();
-        }
-
-        declaration.getReturnExpression().apply(this);
 
         currentFrame = null;
         currentMethod.leaveBlock();
@@ -245,15 +244,13 @@ public class Translator extends AnalysisAdapter {
     public void caseABlockStatement(final ABlockStatement block) {
         currentMethod.enterBlock();
 
-        // TODO: Construct a SEQ of everything inside the block.
+        final LinkedList<Node> nodes = new LinkedList<>();
+        nodes.addAll(block.getLocals());
+        nodes.addAll(block.getStatements());
+        Translation tree = buildStm(nodes);
 
-        for (PVariableDeclaration variableDeclaration : block.getLocals()) {
-            variableDeclaration.apply(this);
-        }
-
-        for (PStatement statement : block.getStatements()) {
-            statement.apply(this);
-        }
+        if (tree != null)
+            currentTree = tree;
 
         currentMethod.leaveBlock();
     }
@@ -303,8 +300,9 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating println");
 
-        // TODO
-        currentTree = new TODO();
+        currentTree = new Expression(
+            currentFrame.externalCall("_minijavalib_println",
+            new ExpList(treeOf(statement.getValue()).asExp())));
     }
 
     @Override
@@ -321,8 +319,12 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating array assignment");
 
-        // TODO
-        currentTree = new TODO();
+        currentTree = new Statement(
+            new MOVE(new BINOP(
+                    BINOP.PLUS,
+                    getVariable(statement.getName()),
+                    treeOf(statement.getIndex()).asExp()),
+                treeOf(statement.getValue()).asExp()));
     }
 
     @Override
@@ -569,5 +571,29 @@ public class Translator extends AnalysisAdapter {
         } else {
             throw new Error("No such symbol: " + name);
         }
+    }
+
+    private Translation buildStm(LinkedList<Node> statements) {
+        if (statements.isEmpty())
+            return null;
+
+        if (statements.size() == 1)
+            return treeOf(statements.get(0));
+
+        final Iterator<Node> it = statements.iterator();
+
+        SEQ result = new SEQ(treeOf(it.next()).asStm(), null);
+        SEQ current = result;
+        while (it.hasNext()) {
+            Node next = it.next();
+            if (it.hasNext()) {
+                current.right = new SEQ(treeOf(next).asStm(), null);
+                current = (SEQ) current.right;
+            } else {
+                current.right = treeOf(next).asStm();
+            }
+        }
+
+        return new Statement(result);
     }
 }

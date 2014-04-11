@@ -42,12 +42,12 @@ public class View {
     }
 
     void addStm(SEQ s, DefaultMutableTreeNode parent) {
-        if (parent.getUserObject().equals("SEQ")) {
+        if (false && parent.getUserObject().equals("SEQ")) {
             // Flatten SEQs.
             addStm(s.left, parent);
             addStm(s.right, parent);
         } else {
-            DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("SEQ");
+            DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("");
             addStm(s.left, thisNode);
             addStm(s.right, thisNode);
             parent.add(thisNode);
@@ -193,7 +193,7 @@ public class View {
     }
 
     void addExp(ESEQ e, DefaultMutableTreeNode parent) {
-        if (parent.getUserObject().equals("ESEQ")) {
+        if (false && parent.getUserObject().equals("ESEQ")) {
             // Flatten ESEQs.
             addStm(e.statement, parent);
             addExp(e.expression, parent);

@@ -1,8 +1,8 @@
 package mjc.tree;
 
 public class SEQ extends Stm {
-    public final Stm left;
-    public final Stm right;
+    public Stm left;
+    public Stm right;
 
     public SEQ(final Stm left, final Stm right) {
         this.left = left;

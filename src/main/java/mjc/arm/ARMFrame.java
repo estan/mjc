@@ -55,7 +55,7 @@ public class ARMFrame implements Frame {
     @Override
     public Stm procEntryExit1(Stm body) {
         // TODO Auto-generated method stub
-        return null;
+        return body;
     }
 
     @Override
