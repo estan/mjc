@@ -8,30 +8,27 @@ import mjc.tree.Exp;
 import mjc.tree.Stm;
 
 /**
- * ExpNode represents the IR translation of an expression.
+ * Expression represents the translation of an expression.
  */
-class ExpNode extends TreeNode {
+class Expression implements Translation {
     final Exp expression;
 
-    ExpNode(Exp expression) {
+    Expression(Exp expression) {
         this.expression = expression;
     }
 
     @Override
-    Exp asExp() {
+    public Exp asExp() {
         return expression;
     }
 
     @Override
-    Stm asStm() {
-        // Apply EXP to evaluate expression and discard the result.
+    public Stm asStm() {
         return new EXP(asExp());
     }
 
     @Override
-    Stm asCond(Label trueLabel, Label falseLabel) {
-        // Jump to trueLabel or falseLabel based on evaluation of expression.
+    public Stm asCond(Label trueLabel, Label falseLabel) {
         return new CJUMP(CJUMP.NE, asExp(), new CONST(0), trueLabel, falseLabel);
     }
-
 }

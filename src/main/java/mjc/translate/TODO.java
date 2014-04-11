@@ -6,19 +6,22 @@ import mjc.tree.Exp;
 import mjc.tree.LABEL;
 import mjc.tree.Stm;
 
-public class TODONode extends TreeNode {
+/**
+ * This is just a temporary class we use for constructs we have not translated yet.
+ */
+public class TODO implements Translation {
     @Override
-    Exp asExp() {
+    public Exp asExp() {
         return new CONST(42);
     }
 
     @Override
-    Stm asStm() {
+    public Stm asStm() {
         return new LABEL(new Label("TODO"));
     }
 
     @Override
-    Stm asCond(Label trueLabel, Label falseLabel) {
+    public Stm asCond(Label trueLabel, Label falseLabel) {
         return new LABEL(new Label("TODO"));
     }
 }

@@ -13,24 +13,19 @@ import mjc.tree.Stm;
 import mjc.tree.TEMP;
 
 /**
- * CondNode represents the IR translation of a conditional.
+ * Condition represents the translation of a conditional expression.
  *
- * Subclasses must implement the {@link #asCond(Label, Label)} method.
+ * Implementations of {@link #asExp()} and {@link #asStm()} are provided, while
+ * subclasses are left to implement {@link #asCond(Label, Label)} on their own.
  */
-abstract class CondNode extends TreeNode {
+abstract class Condition implements Translation {
 
     @Override
-    Exp asExp() {
+    public Exp asExp() {
         final Temp result = new Temp();
         final Label trueLabel = new Label();
         final Label falseLabel = new Label();
 
-        /*
-         * result = 1
-         * if (!cond)
-         *     result = 0
-         * return result
-         */
         return new ESEQ(
             new SEQ(new MOVE(new TEMP(result), new CONST(1)),
             new SEQ(asCond(trueLabel, falseLabel),
@@ -41,10 +36,10 @@ abstract class CondNode extends TreeNode {
     }
 
     @Override
-    Stm asStm() {
-        // Apply EXP to evaluate expression and discard the result.
+    public Stm asStm() {
         return new EXP(asExp());
     }
 
-    abstract Stm asCond(Label trueLabel, Label falseLabel);
+    @Override
+    public abstract Stm asCond(Label trueLabel, Label falseLabel);
 }

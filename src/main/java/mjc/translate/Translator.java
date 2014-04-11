@@ -79,7 +79,7 @@ public class Translator extends AnalysisAdapter {
     private ClassInfo currentClass;
     private MethodInfo currentMethod;
     private Frame currentFrame;
-    private TreeNode currentTree;
+    private Translation currentTree;
 
     private List<ProcFrag> fragments;
 
@@ -110,9 +110,9 @@ public class Translator extends AnalysisAdapter {
      * @param astNode input AST node.
      * @return IR representation of @a astNode.
      */
-    private TreeNode treeOf(final Node astNode) {
+    private Translation treeOf(final Node astNode) {
         astNode.apply(this);
-        final TreeNode result = this.currentTree;
+        final Translation result = this.currentTree;
         this.currentTree = null;
         return result;
     }
@@ -218,16 +218,19 @@ public class Translator extends AnalysisAdapter {
     @Override
     public void caseAFieldDeclaration(final AFieldDeclaration declaration) {
         // TODO
+        currentTree = new TODO();
     }
 
     @Override
     public void caseAFormalParameter(final AFormalParameter declaration) {
         // TODO
+        currentTree = new TODO();
     }
 
     @Override
     public void caseAVariableDeclaration(final AVariableDeclaration declaration) {
-        currentMethod.getLocal(declaration.getName().getText()).setAccess(currentFrame.allocLocal(false));
+        final VariableInfo variableInfo = currentMethod.getLocal(declaration.getName().getText());
+        variableInfo.setAccess(currentFrame.allocLocal(false));
     }
 
     @Override
@@ -277,7 +280,7 @@ public class Translator extends AnalysisAdapter {
         final Label trueLabel = new Label();
         final Label falseLabel = new Label();
 
-        currentTree = new StmNode(
+        currentTree = new Statement(
             new SEQ(new LABEL(test),
             new SEQ(treeOf(statement.getCondition()).asCond(trueLabel, falseLabel),
             new SEQ(new LABEL(trueLabel),
@@ -291,7 +294,7 @@ public class Translator extends AnalysisAdapter {
         System.out.println("Translating println");
 
         // TODO
-        currentTree = new TODONode();
+        currentTree = new TODO();
     }
 
     @Override
@@ -299,7 +302,8 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating assignment");
 
-        currentTree = new StmNode(new MOVE(getVariable(statement.getName()), treeOf(statement.getValue()).asExp()));
+        currentTree = new Statement(
+            new MOVE(getVariable(statement.getName()), treeOf(statement.getValue()).asExp()));
     }
 
     @Override
@@ -308,7 +312,7 @@ public class Translator extends AnalysisAdapter {
         System.out.println("Translating array assignment");
 
         // TODO
-        currentTree = new TODONode();
+        currentTree = new TODO();
     }
 
     @Override
@@ -317,7 +321,7 @@ public class Translator extends AnalysisAdapter {
         System.out.println("Translating AND");
 
         // TODO
-        currentTree = new TODONode();
+        currentTree = new TODO();
     }
 
     @Override
@@ -326,7 +330,7 @@ public class Translator extends AnalysisAdapter {
         System.out.println("Translating OR");
 
         // TODO
-        currentTree = new TODONode();
+        currentTree = new TODO();
     }
 
     @Override
@@ -334,7 +338,10 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating LT");
 
-        currentTree = new RelCond(CJUMP.LT, treeOf(expression.getLeft()), treeOf(expression.getRight()));
+        currentTree = new RelationalCondition(
+            CJUMP.LT,
+            treeOf(expression.getLeft()),
+            treeOf(expression.getRight()));
     }
 
     @Override
@@ -342,7 +349,10 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating GT");
 
-        currentTree = new RelCond(CJUMP.GT, treeOf(expression.getLeft()), treeOf(expression.getRight()));
+        currentTree = new RelationalCondition(
+            CJUMP.GT,
+            treeOf(expression.getLeft()),
+            treeOf(expression.getRight()));
     }
 
     @Override
@@ -350,7 +360,10 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating GE");
 
-        currentTree = new RelCond(CJUMP.GE, treeOf(expression.getLeft()), treeOf(expression.getRight()));
+        currentTree = new RelationalCondition(
+            CJUMP.GE,
+            treeOf(expression.getLeft()),
+            treeOf(expression.getRight()));
     }
 
     @Override
@@ -358,7 +371,10 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating LE");
 
-        currentTree = new RelCond(CJUMP.LE, treeOf(expression.getLeft()), treeOf(expression.getRight()));
+        currentTree = new RelationalCondition(
+            CJUMP.LE,
+            treeOf(expression.getLeft()),
+            treeOf(expression.getRight()));
     }
 
     @Override
@@ -366,7 +382,10 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating EQ");
 
-        currentTree = new RelCond(CJUMP.EQ, treeOf(expression.getLeft()), treeOf(expression.getRight()));
+        currentTree = new RelationalCondition(
+            CJUMP.EQ,
+            treeOf(expression.getLeft()),
+            treeOf(expression.getRight()));
     }
 
     @Override
@@ -374,7 +393,10 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating NE");
 
-        currentTree = new RelCond(CJUMP.NE, treeOf(expression.getLeft()), treeOf(expression.getRight()));
+        currentTree = new RelationalCondition(
+            CJUMP.NE,
+            treeOf(expression.getLeft()),
+            treeOf(expression.getRight()));
     }
 
     @Override
@@ -382,9 +404,9 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating PLUS");
 
-        currentTree = new ExpNode(new BINOP(BINOP.PLUS,
-                treeOf(expression.getLeft()).asExp(),
-                treeOf(expression.getRight()).asExp()));
+        currentTree = new Expression(new BINOP(BINOP.PLUS,
+            treeOf(expression.getLeft()).asExp(),
+            treeOf(expression.getRight()).asExp()));
     }
 
     @Override
@@ -392,9 +414,9 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating MINUS");
 
-        currentTree = new ExpNode(new BINOP(BINOP.MINUS,
-                treeOf(expression.getLeft()).asExp(),
-                treeOf(expression.getRight()).asExp()));
+        currentTree = new Expression(new BINOP(BINOP.MINUS,
+            treeOf(expression.getLeft()).asExp(),
+            treeOf(expression.getRight()).asExp()));
     }
 
     @Override
@@ -402,9 +424,9 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating TIMES");
 
-        currentTree = new ExpNode(new BINOP(BINOP.MUL,
-                treeOf(expression.getLeft()).asExp(),
-                treeOf(expression.getRight()).asExp()));
+        currentTree = new Expression(new BINOP(BINOP.MUL,
+            treeOf(expression.getLeft()).asExp(),
+            treeOf(expression.getRight()).asExp()));
     }
 
     @Override
@@ -412,7 +434,10 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating NOT");
 
-        currentTree = new ExpNode(new BINOP(BINOP.MINUS, new CONST(1), treeOf(expression.getExpression()    ).asExp()));
+        currentTree = new Expression(new BINOP(
+            BINOP.MINUS,
+            new CONST(1),
+            treeOf(expression.getExpression()).asExp()));
     }
 
     @Override
@@ -421,7 +446,7 @@ public class Translator extends AnalysisAdapter {
         System.out.println("Translating method invocation");
 
         // TODO
-        currentTree = new TODONode();
+        currentTree = new TODO();
     }
 
     @Override
@@ -430,7 +455,7 @@ public class Translator extends AnalysisAdapter {
         System.out.println("Translating array access");
 
         // TODO
-        currentTree = new TODONode();
+        currentTree = new TODO();
     }
 
     @Override
@@ -439,7 +464,7 @@ public class Translator extends AnalysisAdapter {
         System.out.println("Translating array length");
 
         // TODO
-        currentTree = new TODONode();
+        currentTree = new TODO();
     }
 
     @Override
@@ -448,7 +473,7 @@ public class Translator extends AnalysisAdapter {
         System.out.println("Translating new instance");
 
         // TODO
-        currentTree = new TODONode();
+        currentTree = new TODO();
     }
 
     @Override
@@ -457,7 +482,7 @@ public class Translator extends AnalysisAdapter {
         System.out.println("Translating new int[]");
 
         // TODO
-        currentTree = new TODONode();
+        currentTree = new TODO();
     }
 
     @Override
@@ -466,7 +491,7 @@ public class Translator extends AnalysisAdapter {
         System.out.println("Translating new long[]");
 
         // TODO
-        currentTree = new TODONode();
+        currentTree = new TODO();
     }
 
     @Override
@@ -474,7 +499,8 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating integer expression");
 
-        currentTree = new ExpNode(new CONST(Integer.parseInt(expression.getInteger().getText())));
+        currentTree = new Expression(
+            new CONST(Integer.parseInt(expression.getInteger().getText())));
     }
 
     @Override
@@ -482,7 +508,8 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating long expression");
 
-        currentTree = new ExpNode(new DCONST(Long.parseLong(expression.getLong().getText())));
+        currentTree = new Expression(
+            new DCONST(Long.parseLong(expression.getLong().getText())));
     }
 
     @Override
@@ -490,7 +517,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating true expression");
 
-        currentTree = new ExpNode(new CONST(1));
+        currentTree = new Expression(new CONST(1));
     }
 
     @Override
@@ -498,7 +525,7 @@ public class Translator extends AnalysisAdapter {
 
         System.out.println("Translating false expression");
 
-        currentTree = new ExpNode(new CONST(0));
+        currentTree = new Expression(new CONST(0));
     }
 
     @Override
@@ -507,7 +534,7 @@ public class Translator extends AnalysisAdapter {
         System.out.println("Translating identifier expression");
 
         // TODO
-        currentTree = new TODONode();
+        currentTree = new TODO();
     }
 
     @Override
@@ -516,7 +543,7 @@ public class Translator extends AnalysisAdapter {
         System.out.println("Translating this expression");
 
         // TODO
-        currentTree = new TODONode();
+        currentTree = new TODO();
     }
 
     private Exp getVariable(TIdentifier id) {
@@ -524,8 +551,7 @@ public class Translator extends AnalysisAdapter {
 
         final VariableInfo localInfo, paramInfo, fieldInfo;
         if ((localInfo = currentMethod.getLocal(name)) != null) {
-            Access access = localInfo.getAccess();
-            return access.exp(new TEMP(currentFrame.FP()));
+            return localInfo.getAccess().exp(new TEMP(currentFrame.FP()));
         } else if ((paramInfo = currentMethod.getParameter(name)) != null) {
             return null;
         } else if ((fieldInfo = currentClass.getField(name)) != null) {

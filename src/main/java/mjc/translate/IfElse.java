@@ -13,19 +13,19 @@ import mjc.tree.SEQ;
 import mjc.tree.Stm;
 import mjc.tree.TEMP;
 
-public class IfElse extends TreeNode {
-    final TreeNode condition;
-    final TreeNode thenBody;
-    final TreeNode elseBody;
+public class IfElse implements Translation {
+    final Translation condition;
+    final Translation thenBody;
+    final Translation elseBody;
 
-    IfElse(TreeNode condition, TreeNode thenBody, TreeNode elseBody) {
+    IfElse(Translation condition, Translation thenBody, Translation elseBody) {
         this.condition = condition;
         this.thenBody = thenBody;
         this.elseBody = elseBody;
     }
 
     @Override
-    Exp asExp() {
+    public Exp asExp() {
         final Temp result = new Temp();
         final Label trueLabel = new Label();
         final Label falseLabel = new Label();
@@ -43,7 +43,7 @@ public class IfElse extends TreeNode {
     }
 
     @Override
-    Stm asStm() {
+    public Stm asStm() {
         final Label joinLabel = new Label();
         final Label trueLabel = new Label();
         final Label falseLabel = new Label();
@@ -58,7 +58,7 @@ public class IfElse extends TreeNode {
     }
 
     @Override
-    Stm asCond(Label trueLabel, Label falseLabel) {
+    public Stm asCond(Label trueLabel, Label falseLabel) {
         return new CJUMP(CJUMP.NE, asExp(), new CONST(0), trueLabel, falseLabel);
     }
 }

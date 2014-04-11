@@ -12,17 +12,17 @@ import mjc.tree.SEQ;
 import mjc.tree.Stm;
 import mjc.tree.TEMP;
 
-public class If extends TreeNode {
-    final TreeNode condition;
-    final TreeNode body;
+public class If implements Translation {
+    final Translation condition;
+    final Translation body;
 
-    If(TreeNode condition, TreeNode body) {
+    If(Translation condition, Translation body) {
         this.condition = condition;
         this.body = body;
     }
 
     @Override
-    Exp asExp() {
+    public Exp asExp() {
         final Temp result = new Temp();
         final Label trueLabel = new Label();
         final Label falseLabel = new Label();
@@ -36,7 +36,7 @@ public class If extends TreeNode {
     }
 
     @Override
-    Stm asStm() {
+    public Stm asStm() {
         final Label trueLabel = new Label();
         final Label falseLabel = new Label();
 
@@ -47,7 +47,7 @@ public class If extends TreeNode {
     }
 
     @Override
-    Stm asCond(Label trueLabel, Label falseLabel) {
+    public Stm asCond(Label trueLabel, Label falseLabel) {
         return new CJUMP(CJUMP.NE, asExp(), new CONST(0), trueLabel, falseLabel);
     }
 }
