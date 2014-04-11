@@ -52,10 +52,7 @@ import mjc.node.AWhileStatement;
 import mjc.node.Node;
 import mjc.node.PClassDeclaration;
 import mjc.node.PFieldDeclaration;
-import mjc.node.PFormalParameter;
 import mjc.node.PMethodDeclaration;
-import mjc.node.PStatement;
-import mjc.node.PVariableDeclaration;
 import mjc.node.Start;
 import mjc.node.TIdentifier;
 import mjc.symbol.ClassInfo;
@@ -72,7 +69,6 @@ import mjc.tree.ExpList;
 import mjc.tree.LABEL;
 import mjc.tree.MOVE;
 import mjc.tree.SEQ;
-import mjc.tree.Stm;
 import mjc.tree.TEMP;
 import mjc.tree.View;
 
@@ -128,7 +124,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAProgram(final AProgram program) {
-        System.out.println("Translating program");
         program.getMainClassDeclaration().apply(this);
         for (PClassDeclaration classDeclaration : program.getClasses()) {
             classDeclaration.apply(this);
@@ -144,8 +139,6 @@ public class Translator extends AnalysisAdapter {
                 new Label(currentClass.getName() + '$' + currentMethod.getName()),
                 new ArrayList<Boolean>()
         );
-
-        System.out.println("Translating class " + currentClass.getName());
 
         final LinkedList<Node> nodes = new LinkedList<>();
         nodes.addAll(declaration.getLocals());
@@ -172,8 +165,6 @@ public class Translator extends AnalysisAdapter {
     public void caseAClassDeclaration(final AClassDeclaration declaration) {
         currentClass = symbolTable.getClassInfo(declaration.getName().getText());
 
-        System.out.println("Translating class " + currentClass.getName());
-
         for (PFieldDeclaration fieldDeclaration : declaration.getFields()) {
             fieldDeclaration.apply(this);
         }
@@ -193,8 +184,6 @@ public class Translator extends AnalysisAdapter {
                 new Label(currentClass.getName() + '$' + currentMethod.getName()),
                 Booleans.asList(new boolean[currentMethod.getParameters().size()])
         );
-
-        System.out.println("Translating method " + currentMethod.getName());
 
         final LinkedList<Node> nodes = new LinkedList<>();
         nodes.addAll(declaration.getFormals());
@@ -257,9 +246,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAIfStatement(final AIfStatement statement) {
-
-        System.out.println("Translating if");
-
         currentTree = new If(
             treeOf(statement.getCondition()),
             treeOf(statement.getStatement())
@@ -268,9 +254,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAIfElseStatement(final AIfElseStatement statement) {
-
-        System.out.println("Translating if-else");
-
         currentTree = new IfElse(
             treeOf(statement.getCondition()),
             treeOf(statement.getThen()),
@@ -280,9 +263,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAWhileStatement(final AWhileStatement statement) {
-
-        System.out.println("Translating while");
-
         final Label test = new Label();
         final Label trueLabel = new Label();
         final Label falseLabel = new Label();
@@ -297,9 +277,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAPrintlnStatement(final APrintlnStatement statement) {
-
-        System.out.println("Translating println");
-
         currentTree = new Expression(
             currentFrame.externalCall("_minijavalib_println",
             new ExpList(treeOf(statement.getValue()).asExp())));
@@ -307,18 +284,12 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAAssignStatement(final AAssignStatement statement) {
-
-        System.out.println("Translating assignment");
-
         currentTree = new Statement(
             new MOVE(getVariable(statement.getName()), treeOf(statement.getValue()).asExp()));
     }
 
     @Override
     public void caseAArrayAssignStatement(final AArrayAssignStatement statement) {
-
-        System.out.println("Translating array assignment");
-
         currentTree = new Statement(
             new MOVE(new BINOP(
                     BINOP.PLUS,
@@ -329,27 +300,18 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAAndExpression(final AAndExpression expression) {
-
-        System.out.println("Translating AND");
-
         // TODO
         currentTree = new TODO();
     }
 
     @Override
     public void caseAOrExpression(final AOrExpression expression) {
-
-        System.out.println("Translating OR");
-
         // TODO
         currentTree = new TODO();
     }
 
     @Override
     public void caseALessThanExpression(final ALessThanExpression expression) {
-
-        System.out.println("Translating LT");
-
         currentTree = new RelationalCondition(
             CJUMP.LT,
             treeOf(expression.getLeft()),
@@ -358,9 +320,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAGreaterThanExpression(final AGreaterThanExpression expression) {
-
-        System.out.println("Translating GT");
-
         currentTree = new RelationalCondition(
             CJUMP.GT,
             treeOf(expression.getLeft()),
@@ -369,9 +328,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAGreaterEqualThanExpression(final AGreaterEqualThanExpression expression) {
-
-        System.out.println("Translating GE");
-
         currentTree = new RelationalCondition(
             CJUMP.GE,
             treeOf(expression.getLeft()),
@@ -380,9 +336,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseALessEqualThanExpression(final ALessEqualThanExpression expression) {
-
-        System.out.println("Translating LE");
-
         currentTree = new RelationalCondition(
             CJUMP.LE,
             treeOf(expression.getLeft()),
@@ -391,9 +344,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAEqualExpression(final AEqualExpression expression) {
-
-        System.out.println("Translating EQ");
-
         currentTree = new RelationalCondition(
             CJUMP.EQ,
             treeOf(expression.getLeft()),
@@ -402,9 +352,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseANotEqualExpression(final ANotEqualExpression expression) {
-
-        System.out.println("Translating NE");
-
         currentTree = new RelationalCondition(
             CJUMP.NE,
             treeOf(expression.getLeft()),
@@ -413,9 +360,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAPlusExpression(final APlusExpression expression) {
-
-        System.out.println("Translating PLUS");
-
         currentTree = new Expression(new BINOP(BINOP.PLUS,
             treeOf(expression.getLeft()).asExp(),
             treeOf(expression.getRight()).asExp()));
@@ -423,9 +367,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAMinusExpression(final AMinusExpression expression) {
-
-        System.out.println("Translating MINUS");
-
         currentTree = new Expression(new BINOP(BINOP.MINUS,
             treeOf(expression.getLeft()).asExp(),
             treeOf(expression.getRight()).asExp()));
@@ -433,9 +374,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseATimesExpression(final ATimesExpression expression) {
-
-        System.out.println("Translating TIMES");
-
         currentTree = new Expression(new BINOP(BINOP.MUL,
             treeOf(expression.getLeft()).asExp(),
             treeOf(expression.getRight()).asExp()));
@@ -443,9 +381,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseANotExpression(final ANotExpression expression) {
-
-        System.out.println("Translating NOT");
-
         currentTree = new Expression(new BINOP(
             BINOP.MINUS,
             new CONST(1),
@@ -454,106 +389,70 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAMethodInvocationExpression(final AMethodInvocationExpression expression) {
-
-        System.out.println("Translating method invocation");
-
         // TODO
         currentTree = new TODO();
     }
 
     @Override
     public void caseAArrayAccessExpression(final AArrayAccessExpression expression) {
-
-        System.out.println("Translating array access");
-
         // TODO
         currentTree = new TODO();
     }
 
     @Override
     public void caseAArrayLengthExpression(final AArrayLengthExpression expression) {
-
-        System.out.println("Translating array length");
-
         // TODO
         currentTree = new TODO();
     }
 
     @Override
     public void caseANewInstanceExpression(final ANewInstanceExpression expression) {
-
-        System.out.println("Translating new instance");
-
         // TODO
         currentTree = new TODO();
     }
 
     @Override
     public void caseANewIntArrayExpression(final ANewIntArrayExpression expression) {
-
-        System.out.println("Translating new int[]");
-
         // TODO
         currentTree = new TODO();
     }
 
     @Override
     public void caseANewLongArrayExpression(final ANewLongArrayExpression expression) {
-
-        System.out.println("Translating new long[]");
-
         // TODO
         currentTree = new TODO();
     }
 
     @Override
     public void caseAIntegerExpression(final AIntegerExpression expression) {
-
-        System.out.println("Translating integer expression");
-
         currentTree = new Expression(
             new CONST(Integer.parseInt(expression.getInteger().getText())));
     }
 
     @Override
     public void caseALongExpression(final ALongExpression expression) {
-
-        System.out.println("Translating long expression");
-
         currentTree = new Expression(
             new DCONST(Long.parseLong(expression.getLong().getText())));
     }
 
     @Override
     public void caseATrueExpression(final ATrueExpression expression) {
-
-        System.out.println("Translating true expression");
-
         currentTree = new Expression(new CONST(1));
     }
 
     @Override
     public void caseAFalseExpression(final AFalseExpression expression) {
-
-        System.out.println("Translating false expression");
-
         currentTree = new Expression(new CONST(0));
     }
 
     @Override
     public void caseAIdentifierExpression(final AIdentifierExpression expression) {
-
-        System.out.println("Translating identifier expression");
-
         // TODO
         currentTree = new TODO();
     }
 
     @Override
     public void caseAThisExpression(final AThisExpression expression) {
-
-        System.out.println("Translating this expression");
-
         // TODO
         currentTree = new TODO();
     }
