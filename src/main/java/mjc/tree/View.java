@@ -29,11 +29,11 @@ public class View {
     }
 
     public void addStm(Stm s) {
-        addStm(s, top);
+        addStm(s, top, true);
     }
 
     public void addExp(Exp e) {
-        addExp(e, top);
+        addExp(e, top, true);
     }
 
     public void expandTree() {
@@ -41,16 +41,15 @@ public class View {
             tree.expandRow(i);
     }
 
-    void addStm(SEQ s, DefaultMutableTreeNode parent) {
-        if (false && parent.getUserObject().equals("SEQ")) {
-            // Flatten SEQs.
-            addStm(s.left, parent);
-            addStm(s.right, parent);
-        } else {
-            DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("");
-            addStm(s.left, thisNode);
-            addStm(s.right, thisNode);
+    void addStm(SEQ s, DefaultMutableTreeNode parent, boolean createNew) {
+        if (createNew) {
+            DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("SEQ");
+            addStm(s.left, thisNode, true);
+            addStm(s.right, thisNode, false);
             parent.add(thisNode);
+        } else {
+            addStm(s.left, parent, true);
+            addStm(s.right, parent, false);
         }
     }
 
@@ -62,7 +61,7 @@ public class View {
 
     void addStm(JUMP s, DefaultMutableTreeNode parent) {
         DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("JUMP");
-        addExp(s.expression, thisNode);
+        addExp(s.expression, thisNode, true);
         parent.add(thisNode);
     }
 
@@ -102,8 +101,8 @@ public class View {
             default:
                 throw new Error("View.addStm.CJUMP");
         }
-        addExp(s.left, thisNode);
-        addExp(s.right, thisNode);
+        addExp(s.left, thisNode, true);
+        addExp(s.right, thisNode, true);
         thisNode.add(new DefaultMutableTreeNode(s.trueLabel.toString()));
         thisNode.add(new DefaultMutableTreeNode(s.falseLabel.toString()));
         parent.add(thisNode);
@@ -111,20 +110,20 @@ public class View {
 
     void addStm(MOVE s, DefaultMutableTreeNode parent) {
         DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("MOVE");
-        addExp(s.destination, thisNode);
-        addExp(s.source, thisNode);
+        addExp(s.destination, thisNode, true);
+        addExp(s.source, thisNode, true);
         parent.add(thisNode);
     }
 
     void addStm(EXP s, DefaultMutableTreeNode parent) {
         DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("EXP");
-        addExp(s.expression, thisNode);
+        addExp(s.expression, thisNode, true);
         parent.add(thisNode);
     }
 
-    void addStm(Stm s, DefaultMutableTreeNode parent) {
+    void addStm(Stm s, DefaultMutableTreeNode parent, boolean createNew) {
         if (s instanceof SEQ)
-            addStm((SEQ) s, parent);
+            addStm((SEQ) s, parent, createNew);
         else if (s instanceof LABEL)
             addStm((LABEL) s, parent);
         else if (s instanceof JUMP)
@@ -175,14 +174,14 @@ public class View {
             default:
                 throw new Error("View.addExp.BINOP");
         }
-        addExp(e.left, thisNode);
-        addExp(e.right, thisNode);
+        addExp(e.left, thisNode, true);
+        addExp(e.right, thisNode, true);
         parent.add(thisNode);
     }
 
     void addExp(MEM e, DefaultMutableTreeNode parent) {
         DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("MEM");
-        addExp(e.expression, thisNode);
+        addExp(e.expression, thisNode, true);
         parent.add(thisNode);
     }
 
@@ -192,16 +191,15 @@ public class View {
         parent.add(thisNode);
     }
 
-    void addExp(ESEQ e, DefaultMutableTreeNode parent) {
-        if (false && parent.getUserObject().equals("ESEQ")) {
-            // Flatten ESEQs.
-            addStm(e.statement, parent);
-            addExp(e.expression, parent);
-        } else {
+    void addExp(ESEQ e, DefaultMutableTreeNode parent, boolean createNew) {
+        if (createNew) {
             DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("ESEQ");
-            addStm(e.statement, thisNode);
-            addExp(e.expression, thisNode);
+            addStm(e.statement, thisNode, true);
+            addExp(e.expression, thisNode, false);
             parent.add(thisNode);
+        } else {
+            addStm(e.statement, parent, true);
+            addExp(e.expression, parent, false);
         }
     }
 
@@ -225,14 +223,14 @@ public class View {
 
     void addExp(CALL e, DefaultMutableTreeNode parent) {
         DefaultMutableTreeNode thisNode = new DefaultMutableTreeNode("CALL");
-        addExp(e.function, thisNode);
+        addExp(e.function, thisNode, true);
         for (ExpList a = e.arguments; a != null; a = a.tail) {
-            addExp(a.head, thisNode);
+            addExp(a.head, thisNode, true);
         }
         parent.add(thisNode);
     }
 
-    void addExp(Exp e, DefaultMutableTreeNode parent) {
+    void addExp(Exp e, DefaultMutableTreeNode parent, boolean createNew) {
         if (e instanceof BINOP)
             addExp((BINOP) e, parent);
         else if (e instanceof MEM)
@@ -240,7 +238,7 @@ public class View {
         else if (e instanceof TEMP)
             addExp((TEMP) e, parent);
         else if (e instanceof ESEQ)
-            addExp((ESEQ) e, parent);
+            addExp((ESEQ) e, parent, createNew);
         else if (e instanceof NAME)
             addExp((NAME) e, parent);
         else if (e instanceof CONST)
