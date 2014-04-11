@@ -245,6 +245,8 @@ public class Translator extends AnalysisAdapter {
     public void caseABlockStatement(final ABlockStatement block) {
         currentMethod.enterBlock();
 
+        // TODO: Construct a SEQ of everything inside the block.
+
         for (PVariableDeclaration variableDeclaration : block.getLocals()) {
             variableDeclaration.apply(this);
         }
