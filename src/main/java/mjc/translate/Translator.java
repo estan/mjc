@@ -223,14 +223,22 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAFormalParameter(final AFormalParameter declaration) {
-        // TODO
-        currentTree = new TODO();
+        final VariableInfo variableInfo = currentMethod.getLocal(declaration.getName().getText());
+        final Access access = currentFrame.allocLocal(false);
+
+        variableInfo.setAccess(access);
+
+        currentTree = new Expression(access.exp(new TEMP(currentFrame.FP())));
     }
 
     @Override
     public void caseAVariableDeclaration(final AVariableDeclaration declaration) {
         final VariableInfo variableInfo = currentMethod.getLocal(declaration.getName().getText());
-        variableInfo.setAccess(currentFrame.allocLocal(false));
+        final Access access = currentFrame.allocLocal(false);
+
+        variableInfo.setAccess(access);
+
+        currentTree = new Expression(access.exp(new TEMP(currentFrame.FP())));
     }
 
     @Override
