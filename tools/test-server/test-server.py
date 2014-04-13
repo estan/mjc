@@ -17,6 +17,9 @@ if all went well, or
     { "status": "error", "output": "<linker/program output>" }
 
 if linking failed or the resulting executable left a non-zero status code.
+
+The server requires libminijava to be built in the libsrc directory. To do
+this, enter the directory and type "make".
 """
 
 from tempfile import mkdtemp

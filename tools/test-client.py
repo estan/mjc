@@ -100,9 +100,9 @@ if __name__ == '__main__':
 
     try:
         if cmd == 'java':
-            print_decoded(run_java(infile, classname), end='')
+            print_decoded(run_java(infile, classname))
         elif cmd == 'mjc':
-            print_decoded(run_mjc(infile), end='')
+            print_decoded(run_mjc(infile))
         elif cmd == 'compare':
             try:
                 java_out = run_java(infile, classname)
