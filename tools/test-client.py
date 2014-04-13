@@ -3,7 +3,7 @@
 """
 Basic test client script.
 
-The script requires Python Requests which can be installed install with
+The script requires Python Requests which can be installed with
 `pip install --user requests`.
 
 Usage: test-client.py java|mjc|compare <infile> [<classname>]
