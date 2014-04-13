@@ -1,9 +1,10 @@
 package mjc;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.FileReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Comparator;
 
 import org.apache.commons.cli.CommandLine;
@@ -153,10 +154,11 @@ public class ARMMain {
         translator.translate(tree, symbolTable, new ARMFactory());
 
         // Just write an empty output file for now.
+        final Path parentPath = Paths.get(commandLine.getArgs()[0]).getParent();
         final String baseName = Files.getNameWithoutExtension(commandLine.getArgs()[0]);
-        File out = new File(baseName + ".s");
+        final Path outputPath = Paths.get(parentPath.toString(), baseName + ".s");
         try {
-            out.createNewFile();
+            outputPath.toFile().createNewFile();
         } catch (IOException e) {
             System.err.println(e.getMessage());
             return false;
