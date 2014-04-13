@@ -153,12 +153,44 @@ public class ARMMain {
         final Translator translator = new Translator();
         translator.translate(tree, symbolTable, new ARMFactory());
 
-        // Just write an empty output file for now.
+        // Just print "42" courtesy of GCC for now.
         final Path parentPath = Paths.get(commandLine.getArgs()[0]).getParent();
         final String baseName = Files.getNameWithoutExtension(commandLine.getArgs()[0]);
         final Path outputPath = Paths.get(parentPath.toString(), baseName + ".s");
         try {
-            outputPath.toFile().createNewFile();
+            java.nio.file.Files.write(outputPath, (
+                "       .arch armv4t\n" +
+                "       .fpu softvfp\n" +
+                "       .eabi_attribute 20, 1\n" +
+                "       .eabi_attribute 21, 1\n" +
+                "       .eabi_attribute 23, 3\n" +
+                "       .eabi_attribute 24, 1\n" +
+                "       .eabi_attribute 25, 1\n" +
+                "       .eabi_attribute 26, 2\n" +
+                "       .eabi_attribute 30, 6\n" +
+                "       .eabi_attribute 18, 4\n" +
+                "       .file   \"test.c\"\n" +
+                "       .text\n" +
+                "       .align  2\n" +
+                "       .global main\n" +
+                "       .type   main, %function\n" +
+                "main:\n" +
+                "       @ Function supports interworking.\n" +
+                "       @ args = 0, pretend = 0, frame = 0\n" +
+                "       @ frame_needed = 1, uses_anonymous_args = 0\n" +
+                "       stmfd   sp!, {fp, lr}\n" +
+                "       add     fp, sp, #4\n" +
+                "       mov     r0, #42\n" +
+                "       bl      _minijavalib_println\n" +
+                "       mov     r3, #0\n" +
+                "       mov     r0, r3\n" +
+                "       sub     sp, fp, #4\n" +
+                "       ldmfd   sp!, {fp, lr}\n" +
+                "       bx      lr\n" +
+                "       .size   main, .-main\n" +
+                "       .ident  \"GCC: (Debian 4.6.3-14) 4.6.3\"\n" +
+                "       .section        .note.GNU-stack,\"\",%progbits\n"
+            ).getBytes());
         } catch (IOException e) {
             System.err.println(e.getMessage());
             return false;
