@@ -99,7 +99,7 @@ public class View {
                 thisNode.add(new DefaultMutableTreeNode("UGE"));
                 break;
             default:
-                throw new Error("View.addStm.CJUMP");
+                throw new Error("Unknown CJUMP operator " + s.op);
         }
         addExp(s.left, thisNode, true);
         addExp(s.right, thisNode, true);
@@ -134,8 +134,10 @@ public class View {
             addStm((MOVE) s, parent);
         else if (s instanceof EXP)
             addStm((EXP) s, parent);
+        else if (s == null)
+            throw new Error("s == null");
         else
-            throw new Error("View.addStm");
+            throw new Error("Unknown Stm `" + s.getClass().getName() + "`");
     }
 
     void addExp(BINOP e, DefaultMutableTreeNode parent) {
@@ -172,7 +174,7 @@ public class View {
                 thisNode.add(new DefaultMutableTreeNode("XOR"));
                 break;
             default:
-                throw new Error("View.addExp.BINOP");
+                throw new Error("Unknown BINOP operator " + e.op);
         }
         addExp(e.left, thisNode, true);
         addExp(e.right, thisNode, true);
@@ -247,7 +249,9 @@ public class View {
             addExp((DCONST) e, parent);
         else if (e instanceof CALL)
             addExp((CALL) e, parent);
+        else if (e == null)
+            throw new Error("e == null");
         else
-            throw new Error("View.addExp");
+            throw new Error("Unknown Exp `" + e.getClass().getName() + "`");
     }
 }
