@@ -257,12 +257,11 @@ public class Translator extends AnalysisAdapter {
         nodes.addAll(declaration.getStatements());
         nodes.add(declaration.getReturnExpression());
 
-        Translation tree = translate(nodes);
+        currentTree = translate(nodes);
 
-        if (tree != null) {
-            currentTree = tree;
-            fragments.add(new ProcFrag(currentFrame.procEntryExit1(currentTree.asStm()), currentFrame));
-        }
+        fragments.add(new ProcFrag(
+                currentFrame.procEntryExit1(currentTree.asStm()),
+                currentFrame));
 
         currentFrame = null;
         currentMethod.leaveBlock();
