@@ -10,6 +10,7 @@ import mjc.temp.Label;
 import mjc.temp.Temp;
 import mjc.temp.TempList;
 import mjc.temp.TempMap;
+import mjc.tree.CONST;
 import mjc.tree.Exp;
 import mjc.tree.ExpList;
 import mjc.tree.Stm;
@@ -48,8 +49,8 @@ public class ARMFrame implements Frame {
 
     @Override
     public Exp externalCall(String func, ExpList args) {
-        // TODO Auto-generated method stub
-        return null;
+        // TODO
+        return new CONST(0);
     }
 
     @Override
