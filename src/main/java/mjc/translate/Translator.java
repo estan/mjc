@@ -153,6 +153,8 @@ public class Translator extends AnalysisAdapter {
             viewer.addStm(currentTree.asStm());
             viewer.expandTree();
             fragments.add(new ProcFrag(currentFrame.procEntryExit1(currentTree.asStm()), currentFrame));
+        } else {
+            currentTree = new Expression(new CONST(0));
         }
 
         currentFrame = null;
@@ -211,10 +213,10 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAFormalParameter(final AFormalParameter declaration) {
-        final VariableInfo variableInfo = currentMethod.getLocal(declaration.getName().getText());
+        final VariableInfo paramInfo = currentMethod.getParameter(declaration.getName().getText());
         final Access access = currentFrame.allocLocal(false);
 
-        variableInfo.setAccess(access);
+        paramInfo.setAccess(access);
 
         currentTree = new Expression(access.exp(new TEMP(currentFrame.FP())));
     }
@@ -238,8 +240,11 @@ public class Translator extends AnalysisAdapter {
         nodes.addAll(block.getStatements());
         Translation tree = buildStm(nodes);
 
-        if (tree != null)
+        if (tree != null) {
             currentTree = tree;
+        } else {
+            currentTree = new Expression(new CONST(0));
+        }
 
         currentMethod.leaveBlock();
     }
