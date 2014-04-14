@@ -60,10 +60,12 @@ import mjc.symbol.MethodInfo;
 import mjc.symbol.SymbolTable;
 import mjc.symbol.VariableInfo;
 import mjc.temp.Label;
+import mjc.temp.Temp;
 import mjc.tree.BINOP;
 import mjc.tree.CJUMP;
 import mjc.tree.CONST;
 import mjc.tree.DCONST;
+import mjc.tree.ESEQ;
 import mjc.tree.Exp;
 import mjc.tree.ExpList;
 import mjc.tree.LABEL;
@@ -364,8 +366,21 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAAndExpression(final AAndExpression expression) {
-        // TODO
-        currentTree = new TODO();
+        final Temp result = new Temp();
+        final Label testRight = new Label();
+        final Label setTrue = new Label();
+        final Label finished = new Label();
+
+        currentTree = new Expression(new ESEQ(
+            new SEQ(new MOVE(new TEMP(result), new CONST(0)),
+            new SEQ(translate(expression.getLeft()).asCond(testRight, finished),
+            new SEQ(new LABEL(testRight),
+            new SEQ(translate(expression.getRight()).asCond(setTrue, finished),
+            new SEQ(new LABEL(setTrue),
+            new SEQ(new MOVE(new TEMP(result), new CONST(1)),
+                    new LABEL(finished))))))),
+                    new TEMP(result)
+        ));
     }
 
     @Override
