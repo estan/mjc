@@ -95,6 +95,11 @@ public class Translator extends AnalysisAdapter {
         this.symbolTable = symbolTable;
         this.factory = factory;
 
+        this.currentClass = null;
+        this.currentMethod = null;
+        this.currentFrame = null;
+        this.currentTree = null;
+
         fragments = new ArrayList<>();
 
         ast.apply(this);
