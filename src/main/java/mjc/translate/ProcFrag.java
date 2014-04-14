@@ -12,11 +12,11 @@ public class ProcFrag {
         this.frame = frame;
     }
 
-    Stm getBody() {
+    public Stm getBody() {
         return body;
     }
 
-    Frame getFrame() {
+    public Frame getFrame() {
         return frame;
     }
 }

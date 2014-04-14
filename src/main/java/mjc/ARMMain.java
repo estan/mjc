@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -22,7 +23,9 @@ import mjc.lexer.LexerException;
 import mjc.parser.Parser;
 import mjc.parser.ParserException;
 import mjc.symbol.SymbolTable;
+import mjc.translate.ProcFrag;
 import mjc.translate.Translator;
+import mjc.tree.View;
 import mjc.node.InvalidToken;
 import mjc.node.Start;
 import mjc.analysis.ASTGraphPrinter;
@@ -155,7 +158,14 @@ public class ARMMain {
 
         // Translate to IR.
         final Translator translator = new Translator();
-        translator.translate(ast, symbolTable, new ARMFactory());
+        final List<ProcFrag> fragments = translator.translate(ast, symbolTable, new ARMFactory());
+
+        // DEBUG: Show view of fragments.
+        final View viewer = new View("FRAGMENTS");
+        for (ProcFrag fragment : fragments) {
+            viewer.addStm(fragment.getBody());
+        }
+        viewer.expandTree();
 
         /*****************************
          * Stage 4: Canonicalization *
