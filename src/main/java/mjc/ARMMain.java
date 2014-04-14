@@ -95,12 +95,12 @@ public class ARMMain {
          * Stage 1: Lexical Analysis / Parsing. *
          ****************************************/
 
-        final Start tree;
+        final Start ast;
         try {
             final String fileName = commandLine.getArgs()[0];
             final PushbackReader reader = new PushbackReader(new FileReader(fileName));
             final Parser parser = new Parser(new Lexer(reader));
-            tree = parser.parse();
+            ast = parser.parse();
         } catch (LexerException e) {
             final InvalidToken token = e.getToken();
             final int line = token.getLine();
@@ -116,10 +116,10 @@ public class ARMMain {
         }
 
         if (commandLine.hasOption("p"))
-            astPrinter.print(tree);
+            astPrinter.print(ast);
 
         if (commandLine.hasOption("g"))
-            graphPrinter.print(tree);
+            graphPrinter.print(ast);
 
         /*******************************
          * Stage 2: Semantic Analysis. *
@@ -127,7 +127,7 @@ public class ARMMain {
 
         // Build symbol table.
         final SymbolTableBuilder builder = new SymbolTableBuilder();
-        final SymbolTable symbolTable = builder.build(tree);
+        final SymbolTable symbolTable = builder.build(ast);
         if (builder.hasErrors()) {
             for (MiniJavaError error : builder.getErrors()) {
                 System.err.println(error);
@@ -139,7 +139,7 @@ public class ARMMain {
 
         // Run type-check.
         final TypeChecker typeChecker = new TypeChecker();
-        if (!typeChecker.check(tree, symbolTable)) {
+        if (!typeChecker.check(ast, symbolTable)) {
             for (MiniJavaError error : typeChecker.getErrors()) {
                 System.err.println(error);
             }
@@ -155,7 +155,7 @@ public class ARMMain {
 
         // Translate to IR.
         final Translator translator = new Translator();
-        translator.translate(tree, symbolTable, new ARMFactory());
+        translator.translate(ast, symbolTable, new ARMFactory());
 
         /*****************************
          * Stage 4: Canonicalization *
