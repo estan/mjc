@@ -139,7 +139,7 @@ public class Translator extends AnalysisAdapter {
                 new ArrayList<Boolean>()
         );
 
-        final LinkedList<Node> nodes = new LinkedList<>();
+        final List<Node> nodes = new LinkedList<>();
         nodes.addAll(declaration.getLocals());
         nodes.addAll(declaration.getStatements());
 
@@ -182,7 +182,7 @@ public class Translator extends AnalysisAdapter {
                 Booleans.asList(new boolean[currentMethod.getParameters().size()])
         );
 
-        final LinkedList<Node> nodes = new LinkedList<>();
+        final List<Node> nodes = new LinkedList<>();
         nodes.addAll(declaration.getFormals());
         nodes.addAll(declaration.getLocals());
         nodes.addAll(declaration.getStatements());
@@ -230,7 +230,7 @@ public class Translator extends AnalysisAdapter {
     public void caseABlockStatement(final ABlockStatement block) {
         currentMethod.enterBlock();
 
-        final LinkedList<Node> nodes = new LinkedList<>();
+        final List<Node> nodes = new LinkedList<>();
         nodes.addAll(block.getLocals());
         nodes.addAll(block.getStatements());
         Translation tree = buildStm(nodes);
@@ -473,7 +473,7 @@ public class Translator extends AnalysisAdapter {
         }
     }
 
-    private Translation buildStm(LinkedList<Node> statements) {
+    private Translation buildStm(List<Node> statements) {
         if (statements.isEmpty())
             return null;
 
