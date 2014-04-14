@@ -95,7 +95,7 @@ public class ARMMain {
          * Stage 1: Lexical Analysis / Parsing. *
          ****************************************/
 
-        Start tree = new Start();
+        final Start tree;
         try {
             final String fileName = commandLine.getArgs()[0];
             final PushbackReader reader = new PushbackReader(new FileReader(fileName));
