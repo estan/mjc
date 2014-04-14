@@ -431,8 +431,9 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseALongExpression(final ALongExpression expression) {
+        final String literal = expression.getLong().getText();
         currentTree = new Expression(
-            new DCONST(Long.parseLong(expression.getLong().getText())));
+            new DCONST(Long.parseLong(literal.substring(0, literal.length() - 1)))); // Strip 'L'/'l'.
     }
 
     @Override
