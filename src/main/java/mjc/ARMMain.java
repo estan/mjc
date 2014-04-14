@@ -149,14 +149,69 @@ public class ARMMain {
             return false; // Abort compilation.
         }
 
+        /******************************
+         * Stage 3: Translation to IR *
+         ******************************/
+
         // Translate to IR.
         final Translator translator = new Translator();
         translator.translate(tree, symbolTable, new ARMFactory());
 
+        /*****************************
+         * Stage 4: Canonicalization *
+         *****************************/
+
+        // TODO
+
+        /**********************************
+         * Stage 5: Instruction Selection *
+         **********************************/
+
+        // TODO
+
+        /**********************************
+         * Stage 6: Control Flow Analysis *
+         **********************************/
+
+        // TODO
+
+        /*******************************
+         * Stage 7: Data Flow Analysis *
+         *******************************/
+
+        // TODO
+
+        /********************************
+         * Stage 8: Register Allocation *
+         ********************************/
+
+        // TODO
+
+        /**************************
+         * Stage 9: Code Emission *
+         **************************/
+
+        // Determine output file path.
+        final Path outputPath;
+        if (commandLine.hasOption("o")) {
+            // Option -o was given.
+            outputPath = Paths.get(commandLine.getOptionValue("o"));
+        } else {
+            // If input path is /foo/bar.java, then use output path /foo/bar.s.
+            try {
+                final String inputFileName = commandLine.getArgs()[0];
+                final Path inputPath = Paths.get(inputFileName).toRealPath();
+                final Path inputParentPath = inputPath.getParent();
+                final String baseName = Files.getNameWithoutExtension(inputFileName);
+                outputPath = Paths.get(inputParentPath.toString(), baseName + ".s");
+            } catch (IOException e) {
+                System.err.println("Failed to determine output path:");
+                System.err.println(e.getMessage());
+                return false;
+            }
+        }
+
         // Just print "42" courtesy of GCC for now.
-        final Path parentPath = Paths.get(commandLine.getArgs()[0]).getParent();
-        final String baseName = Files.getNameWithoutExtension(commandLine.getArgs()[0]);
-        final Path outputPath = Paths.get(parentPath.toString(), baseName + ".s");
         try {
             java.nio.file.Files.write(outputPath, (
                 "       .arch armv4t\n" +
