@@ -70,7 +70,6 @@ import mjc.tree.LABEL;
 import mjc.tree.MOVE;
 import mjc.tree.SEQ;
 import mjc.tree.TEMP;
-import mjc.tree.View;
 
 public class Translator extends AnalysisAdapter {
     private SymbolTable symbolTable;
@@ -148,10 +147,6 @@ public class Translator extends AnalysisAdapter {
 
         if (tree != null) {
             currentTree = tree;
-
-            View viewer = new View("if-else");
-            viewer.addStm(currentTree.asStm());
-            viewer.expandTree();
             fragments.add(new ProcFrag(currentFrame.procEntryExit1(currentTree.asStm()), currentFrame));
         } else {
             currentTree = new Expression(new CONST(0));
@@ -453,8 +448,7 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAIdentifierExpression(final AIdentifierExpression expression) {
-        // TODO
-        currentTree = new TODO();
+        currentTree = new Expression(getVariable(expression.getIdentifier()));
     }
 
     @Override
@@ -470,9 +464,10 @@ public class Translator extends AnalysisAdapter {
         if ((localInfo = currentMethod.getLocal(name)) != null) {
             return localInfo.getAccess().exp(new TEMP(currentFrame.FP()));
         } else if ((paramInfo = currentMethod.getParameter(name)) != null) {
-            return null;
+            return paramInfo.getAccess().exp(new TEMP(currentFrame.FP()));
         } else if ((fieldInfo = currentClass.getField(name)) != null) {
-            return null;
+            // TODO
+            return new TODO().asExp();
         } else {
             throw new Error("No such symbol: " + name);
         }
