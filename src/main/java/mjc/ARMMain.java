@@ -191,29 +191,9 @@ public class ARMMain {
          * Stage 9: Code Emission *
          **************************/
 
-        // Determine output file path.
-        final Path outputPath;
-        if (commandLine.hasOption("o")) {
-            // Option -o was given.
-            outputPath = Paths.get(commandLine.getOptionValue("o"));
-        } else {
-            // If input path is /foo/bar.java, then use output path /foo/bar.s.
-            try {
-                final String inputFileName = commandLine.getArgs()[0];
-                final Path inputPath = Paths.get(inputFileName).toRealPath();
-                final Path inputParentPath = inputPath.getParent();
-                final String baseName = Files.getNameWithoutExtension(inputFileName);
-                outputPath = Paths.get(inputParentPath.toString(), baseName + ".s");
-            } catch (IOException e) {
-                System.err.println("Failed to determine output path:");
-                System.err.println(e.getMessage());
-                return false;
-            }
-        }
-
         // Just print "42" courtesy of GCC for now.
         try {
-            java.nio.file.Files.write(outputPath, (
+            java.nio.file.Files.write(getOutputPath(commandLine), (
                 "       .arch armv4t\n" +
                 "       .fpu softvfp\n" +
                 "       .eabi_attribute 20, 1\n" +
@@ -254,6 +234,31 @@ public class ARMMain {
         return true;
     }
 
+    /**
+     * Helper method to determine the output file path to use.
+     *
+     * If the -o option is present on the given command line, this method returns the
+     * absolute path to the file specified by the option value. Otherwise, the input
+     * file path is returned, but with the file name suffix changed to ".s".
+     *
+     * @param commandLine The user-specified command line.
+     * @return Output file path to use.
+     * @throws IOException If an I/O error occurred.
+     */
+    private static Path getOutputPath(CommandLine commandLine) throws IOException {
+        final String inputFileName = commandLine.getArgs()[0];
+        if (commandLine.hasOption("o")) {
+            return Paths.get(commandLine.getOptionValue("o")).toAbsolutePath();
+        } else {
+            final String baseName = Files.getNameWithoutExtension(inputFileName);
+            final Path parentDir = Paths.get(inputFileName).toRealPath().getParent();
+            return parentDir.resolve(baseName + ".s");
+        }
+    }
+
+    /**
+     * Prints a help message to standard output.
+     */
     private static void printHelp() {
         helpFormatter.printHelp("mjc <infile> [options]", options);
     }
