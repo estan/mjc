@@ -243,6 +243,8 @@ public class View {
             addExp((NAME) e, parent);
         else if (e instanceof CONST)
             addExp((CONST) e, parent);
+        else if (e instanceof DCONST)
+            addExp((DCONST) e, parent);
         else if (e instanceof CALL)
             addExp((CALL) e, parent);
         else
