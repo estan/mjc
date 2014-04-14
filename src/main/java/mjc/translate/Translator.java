@@ -143,7 +143,7 @@ public class Translator extends AnalysisAdapter {
         nodes.addAll(declaration.getLocals());
         nodes.addAll(declaration.getStatements());
 
-        Translation tree = buildStm(nodes);
+        Translation tree = translate(nodes);
 
         if (tree != null) {
             currentTree = tree;
@@ -188,7 +188,7 @@ public class Translator extends AnalysisAdapter {
         nodes.addAll(declaration.getStatements());
         nodes.add(declaration.getReturnExpression());
 
-        Translation tree = buildStm(nodes);
+        Translation tree = translate(nodes);
 
         if (tree != null) {
             currentTree = tree;
@@ -233,7 +233,7 @@ public class Translator extends AnalysisAdapter {
         final List<Node> nodes = new LinkedList<>();
         nodes.addAll(block.getLocals());
         nodes.addAll(block.getStatements());
-        Translation tree = buildStm(nodes);
+        Translation tree = translate(nodes);
 
         if (tree != null) {
             currentTree = tree;
@@ -285,7 +285,7 @@ public class Translator extends AnalysisAdapter {
     @Override
     public void caseAAssignStatement(final AAssignStatement statement) {
         currentTree = new Statement(
-            new MOVE(getVariable(statement.getName()), treeOf(statement.getValue()).asExp()));
+            new MOVE(translate(statement.getName()), treeOf(statement.getValue()).asExp()));
     }
 
     @Override
@@ -293,7 +293,7 @@ public class Translator extends AnalysisAdapter {
         currentTree = new Statement(
             new MOVE(new BINOP(
                     BINOP.PLUS,
-                    getVariable(statement.getName()),
+                    translate(statement.getName()),
                     treeOf(statement.getIndex()).asExp()),
                 treeOf(statement.getValue()).asExp()));
     }
@@ -448,7 +448,7 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAIdentifierExpression(final AIdentifierExpression expression) {
-        currentTree = new Expression(getVariable(expression.getIdentifier()));
+        currentTree = new Expression(translate(expression.getIdentifier()));
     }
 
     @Override
@@ -457,7 +457,7 @@ public class Translator extends AnalysisAdapter {
         currentTree = new TODO();
     }
 
-    private Exp getVariable(TIdentifier id) {
+    private Exp translate(TIdentifier id) {
         final String name = id.getText();
 
         final VariableInfo localInfo, paramInfo, fieldInfo;
@@ -473,14 +473,14 @@ public class Translator extends AnalysisAdapter {
         }
     }
 
-    private Translation buildStm(List<Node> statements) {
-        if (statements.isEmpty())
+    private Translation translate(List<Node> nodes) {
+        if (nodes.isEmpty())
             return null;
 
-        if (statements.size() == 1)
-            return treeOf(statements.get(0));
+        if (nodes.size() == 1)
+            return treeOf(nodes.get(0));
 
-        final Iterator<Node> it = statements.iterator();
+        final Iterator<Node> it = nodes.iterator();
 
         SEQ result = new SEQ(treeOf(it.next()).asStm(), null);
         SEQ current = result;
