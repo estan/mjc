@@ -385,8 +385,21 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAOrExpression(final AOrExpression expression) {
-        // TODO
-        currentTree = new TODO();
+        final Temp result = new Temp();
+        final Label testRight = new Label();
+        final Label setFalse = new Label();
+        final Label finished = new Label();
+
+        currentTree = new Expression(new ESEQ(
+            new SEQ(new MOVE(new TEMP(result), new CONST(1)),
+            new SEQ(translate(expression.getLeft()).asCond(finished, testRight),
+            new SEQ(new LABEL(testRight),
+            new SEQ(translate(expression.getRight()).asCond(finished, setFalse),
+            new SEQ(new LABEL(setFalse),
+            new SEQ(new MOVE(new TEMP(result), new CONST(0)),
+                    new LABEL(finished))))))),
+                    new TEMP(result)
+        ));
     }
 
     @Override
