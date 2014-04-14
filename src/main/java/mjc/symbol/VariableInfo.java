@@ -13,8 +13,9 @@ public class VariableInfo {
     private final int line;
     private final int column;
 
-    private int offset;
-    private int block;   // Only used for local variables.
+    private final int offset;
+    private final int block;
+
     private Access access;
 
     /**
@@ -25,12 +26,13 @@ public class VariableInfo {
      * @param line Line of declaration.
      * @param column Column of declaration.
      */
-    public VariableInfo(String name, Type type, int line, int column) {
+    VariableInfo(String name, Type type, int line, int column, int offset, int block) {
         this.name = name;
         this.type = type;
-        this.block = -1;
         this.line = line;
         this.column = column;
+        this.offset = offset;
+        this.block = block;
     }
 
     /**
@@ -62,39 +64,42 @@ public class VariableInfo {
     }
 
     /**
-     * Returns the block within the method in which a local variable is declared,
-     * or -1 if the variable is a field or parameter.
+     * Returns the block in which the variable was declared.
      *
-     * @return Block of the local variable, or -1 if it is a field or parameter.
+     * This is always 0 for fields and parameters, but may be >= 0 for local variables.
+     *
+     * @return block in which the variable was declared.
      */
     public int getBlock() {
         return block;
     }
 
     /**
-     * Sets the block within the method in which a local variable is declared.
+     * Returns the byte offset of the variable within the class or method.
      *
-     * Note: This should really only be called by {@link MethodInfo#addLocal(VariableInfo)}.
-     *
-     * @param block The block in which the local variable is declared.
+     * @return the byte offset of the variable.
      */
-    void setBlock(int block) {
-        this.block = block;
-    }
-
     public int getOffset() {
         return offset;
     }
 
-    // Only used by addLocal/addField...
-    void setOffset(int offset) {
-        this.offset = offset;
-    }
-
+    /**
+     * Returns the Access for this variable.
+     *
+     * @return the Access for this variable, or null if there is none.
+     */
     public Access getAccess() {
         return access;
     }
 
+    /**
+     * Sets the Access for this variable.
+     *
+     * <em>Note: This should only really be called by the {@link Translator} during
+     *     translation to IR</em>
+     *
+     * @param access the Access to set for this variable.
+     */
     public void setAccess(Access access) {
         this.access = access;
     }

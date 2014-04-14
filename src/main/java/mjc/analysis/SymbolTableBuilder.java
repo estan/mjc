@@ -195,10 +195,10 @@ public class SymbolTableBuilder {
             final TIdentifier paramId = declaration.getMethodParameter();
             final int paramLine = paramId.getLine();
             final int paramColumn = paramId.getPos();
-            methodInfo.addParameter(new VariableInfo(
+            methodInfo.addParameter(
                     paramId.getText(),
                     UnsupportedType.StringArray,
-                    paramLine, paramColumn));
+                    paramLine, paramColumn);
 
             currentMethod = currentClass.addMethod(methodInfo.getName(), methodInfo);
             currentMethod.enterBlock();
@@ -259,10 +259,10 @@ public class SymbolTableBuilder {
             final int column = fieldId.getPos();
 
             if (currentClass.getField(fieldId.getText()) == null) {
-                currentClass.addField(new VariableInfo(
+                currentClass.addField(
                         fieldId.getText(),
                         fromAbstract(declaration.getType()),
-                        line, column));
+                        line, column);
             } else {
                 error(DUPLICATE_FIELD.on(line, column, fieldId.getText()));
             }
@@ -285,10 +285,10 @@ public class SymbolTableBuilder {
             final int column = paramId.getPos();
 
             if (currentMethod.getParameter(paramId.getText()) == null) {
-                currentMethod.addParameter(new VariableInfo(
+                currentMethod.addParameter(
                         paramId.getText(),
                         fromAbstract(declaration.getType()),
-                        line, column));
+                        line, column);
             } else {
                 error(DUPLICATE_PARAMETER.on(line, column, paramId.getText()));
             }
@@ -304,10 +304,10 @@ public class SymbolTableBuilder {
             final VariableInfo otherVariable = currentMethod.getLocal(variableId.getText());
 
             if (otherVariable == null && otherParam == null) {
-                currentMethod.addLocal(new VariableInfo(
+                currentMethod.addLocal(
                         variableId.getText(),
                         fromAbstract(declaration.getType()),
-                        line, column));
+                        line, column);
             } else {
                 error(DUPLICATE_VARIABLE.on(line, column, variableId.getText()));
             }

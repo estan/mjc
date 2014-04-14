@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mjc.types.ClassType;
+import mjc.types.Type;
 
 /**
  * ClassInfo represents information about a declared class.
@@ -18,6 +19,8 @@ public class ClassInfo {
     private final int line;
     private final int column;
 
+    private int nextOffset;
+
     /**
      * Construct a new ClassInfo.
      *
@@ -31,6 +34,7 @@ public class ClassInfo {
         this.type = type;
         this.line = line;
         this.column = column;
+        this.nextOffset = 0;
 
         fields = new HashMap<>();
         methods = new HashMap<>();
@@ -80,11 +84,16 @@ public class ClassInfo {
      * If there's already information about a field with the same name, it will be
      * replaced.
      *
-     * @param field Information about the field.
-     * @return The added VariableInfo.
+     * @param name Name of the field.
+     * @param type Type of the field.
+     * @param line Line of declaration.
+     * @param column Column of declaration.
+     * @return the VariableInfo that was added for the field.
      */
-    public VariableInfo addField(final VariableInfo field) {
-        fields.put(field.getName(), field);
+    public VariableInfo addField(String name, Type type, int line, int column) {
+        VariableInfo field = new VariableInfo(name, type, line, column, nextOffset, 0);
+        fields.put(name, field);
+        nextOffset += type.getSize();
         return field;
     }
 

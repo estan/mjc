@@ -39,10 +39,8 @@ public class MethodInfoTest {
             f.enterBlock(); // Enter block 0.
 
             if (run == 0) { // In the first iteration we add variables.
-                p1 = new VariableInfo("p1", BuiltInType.Boolean, 1, 15);
-                l1 = new VariableInfo("l1", BuiltInType.Long, 2, 4);
-                f.addParameter(p1);
-                f.addLocal(l1);
+                p1 = f.addParameter("p1", BuiltInType.Boolean, 1, 15);
+                l1  =f.addLocal("l1", BuiltInType.Long, 2, 4);
             } // Else: In the second iteration we just check.
 
             assertThat(f.getParameter("p1"), sameInstance(p1)); // Just became visible.
@@ -51,8 +49,7 @@ public class MethodInfoTest {
             f.enterBlock(); // Enter block 1.
 
             if (run == 0) { // In the first iteration we add variables.
-                l2 = new VariableInfo("l2", BuiltInType.Int, 4, 8);
-                f.addLocal(l2);
+                l2 = f.addLocal("l2", BuiltInType.Int, 4, 8);
             } // Else: In the second iteration we just check.
 
             assertThat(f.getLocal("l2"), sameInstance(l2));     // Just became visible.
@@ -62,8 +59,7 @@ public class MethodInfoTest {
             f.enterBlock(); // Enter block 2.
 
             if (run == 0) { // In the first iteration we add variables.
-                l3 = new VariableInfo("l3", BuiltInType.IntArray, 6, 12);
-                f.addLocal(l3);
+                l3 = f.addLocal("l3", BuiltInType.IntArray, 6, 12);
             } // Else: In the second iteration we just check.
 
             assertThat(f.getLocal("l3"), sameInstance(l3));     // Just became visible.
@@ -81,8 +77,7 @@ public class MethodInfoTest {
             f.enterBlock(); // Enter block 3.
 
             if (run == 0) { // In the first iteration we add variables.
-                l4 = new VariableInfo("l4", BuiltInType.LongArray, 9, 12);
-                f.addLocal(l4);
+                l4 = f.addLocal("l4", BuiltInType.LongArray, 9, 12);
             } // Else: In the second iteration we just check.
 
             assertThat(f.getLocal("l4"), sameInstance(l4));     // Just became visible.

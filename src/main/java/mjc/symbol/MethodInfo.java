@@ -29,8 +29,8 @@ import com.google.common.collect.ArrayListMultimap;
  * a matching number of calls to enterBlock()/leaveBlock(), to not leave the MethodInfo in
  * an unknown state for the next user.
  *
- * When a local variable is added using {@link #addLocal(VariableInfo)} it gets its block
- * set to the current block (top of the stack) before being added to the multimap.
+ * When a local variable is added using {@link #addLocal(String, Type, int, int)} it gets
+ * its block set to the current block (top of the stack) before being added to the multimap.
  *
  * When a local variable is looked up using {@link #getLocal(String)}, the multimap is first
  * queried for the variable with the given name. If the variable is found, we check if its
@@ -53,8 +53,8 @@ public class MethodInfo {
     private final int line;
     private final int column;
 
-    private int nextOffset = 0;
-    private int nextBlock = 0;
+    private int nextOffset;
+    private int nextBlock;
 
     /**
      * Construct a new MethodInfo.
@@ -67,11 +67,17 @@ public class MethodInfo {
     public MethodInfo(final String name, final Type returnType, int line, int column) {
         this.name = name;
         this.parameters = new ArrayList<>();
+
         this.locals = ArrayListMultimap.create();
         this.returnType = returnType;
+
         this.blocks = new Stack<>();
+
         this.line = line;
         this.column = column;
+
+        this.nextOffset = 0;
+        this.nextBlock = 0;
     }
 
     /**
@@ -107,23 +113,28 @@ public class MethodInfo {
     }
 
     /**
-     * @return List of method parameters.
-     */
-    public List<VariableInfo> getParameters() {
-        return parameters;
-    }
-
-    /**
      * Adds information about a parameter of the method.
      *
      * The information is added to the end of the list of parameters.
      *
-     * @param parameter Information about the parameter.
-     * @return The added VariableInfo.
+     * @param name Name of the parameter.
+     * @param type Type of the parameter.
+     * @param line Line of declaration.
+     * @param column Column of declaration.
+     * @return the VariableInfo that was added for the parameter.
      */
-    public VariableInfo addParameter(final VariableInfo parameter) {
-        parameters.add(parameter);
-        return parameter;
+    public VariableInfo addParameter(String name, Type type, int line, int column) {
+        VariableInfo param = new VariableInfo(name, type, line, column, nextOffset, 0);
+        parameters.add(param);
+        nextOffset += type.getSize();
+        return param;
+    }
+
+    /**
+     * @return List of method parameters.
+     */
+    public List<VariableInfo> getParameters() {
+        return parameters;
     }
 
     /**
@@ -151,16 +162,16 @@ public class MethodInfo {
      * Initially there is no block, so {@link #enterBlock()} must have been called more
      * times than {@link #leaveBlock()} before calling this method.
      *
-     * @param local Variable information.
-     * @return The added VariableInfo.
-     * @see #enterBlock()
-     * @see #leaveBlock()
+     * @param name Name of the local variable.
+     * @param type Type of the local variable.
+     * @param line Line of declaration.
+     * @param column Column of declaration.
+     * @return the VariableInfo that was added for the variable.
      */
-    public VariableInfo addLocal(final VariableInfo local) {
-        local.setOffset(nextOffset);
-        local.setBlock(blocks.peek());
-        locals.put(local.getName(), local);
-        nextOffset += local.getType().getSize();
+    public VariableInfo addLocal(String name, Type type, int line, int column) {
+        VariableInfo local = new VariableInfo(name, type, line, column, nextOffset, blocks.peek());
+        locals.put(name, local);
+        nextOffset += type.getSize();
         return local;
     }
 
