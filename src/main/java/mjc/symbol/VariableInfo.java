@@ -78,7 +78,7 @@ public class VariableInfo {
      *
      * @param block The block in which the local variable is declared.
      */
-    public void setBlock(int block) {
+    void setBlock(int block) {
         this.block = block;
     }
 
@@ -87,7 +87,7 @@ public class VariableInfo {
     }
 
     // Only used by addLocal/addField...
-    public void setOffset(int offset) {
+    void setOffset(int offset) {
         this.offset = offset;
     }
 
