@@ -246,10 +246,10 @@ public class ARMMain {
      * @throws IOException If an I/O error occurred.
      */
     private static Path getOutputPath(CommandLine commandLine) throws IOException {
-        final String inputFileName = commandLine.getArgs()[0];
         if (commandLine.hasOption("o")) {
             return Paths.get(commandLine.getOptionValue("o")).toAbsolutePath();
         } else {
+            final String inputFileName = commandLine.getArgs()[0];
             final String baseName = Files.getNameWithoutExtension(inputFileName);
             final Path parentDir = Paths.get(inputFileName).toRealPath().getParent();
             return parentDir.resolve(baseName + ".s");
