@@ -93,7 +93,7 @@ public class ARMMain {
 
         /****************************************
          * Stage 1: Lexical Analysis / Parsing. *
-         ***************************************/
+         ****************************************/
 
         Start tree = new Start();
         try {
