@@ -11,8 +11,8 @@ import mjc.node.Token;
 public class ASTGraphPrinter extends DepthFirstAdapter {
     private StringBuilder builder;
 
-    public void print(Start tree) {
-        tree.apply(this);
+    public void print(Node ast) {
+        ast.apply(this);
     }
 
     @Override

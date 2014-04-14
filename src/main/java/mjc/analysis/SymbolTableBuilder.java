@@ -63,7 +63,7 @@ public class SymbolTableBuilder {
      * If errors occurred, they may be queried for using {@link #hasErrors()} and
      * {@link #getErrors()}.
      *
-     * @param tree The input AST.
+     * @param ast The input AST.
      * @return A symbol table constructed from the AST.
      */
     public SymbolTable build(final Node ast) {

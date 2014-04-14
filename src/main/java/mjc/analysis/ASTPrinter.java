@@ -12,8 +12,8 @@ public class ASTPrinter extends DepthFirstAdapter {
     private int indent;            // Indentation level.
     private StringBuilder builder; // Builder for the output.
 
-    public void print(Start tree) {
-        tree.apply(this);
+    public void print(Node ast) {
+        ast.apply(this);
     }
 
     @Override
