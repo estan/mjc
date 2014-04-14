@@ -83,7 +83,8 @@ public class Translator extends AnalysisAdapter {
     private List<ProcFrag> fragments;
 
     /**
-     * Translates the given AST into IR and returns the result as a list of procedure fragments.
+     * Translates the given AST into IR and returns the result as a list of procedure
+     * fragments. This is the main API for this class.
      *
      * @param ast Input AST.
      * @param symbolTable Symbol table for the input program.
@@ -106,15 +107,75 @@ public class Translator extends AnalysisAdapter {
      *
      * Note: The {@link #currentTree} field will be set to null.
      *
-     * @param astNode input AST node.
-     * @return IR representation of @a astNode.
+     * @param node An AST node.
+     * @return The translation of @a node.
      */
-    private Translation treeOf(final Node astNode) {
-        astNode.apply(this);
+    private Translation translate(final Node node) {
+        node.apply(this);
         final Translation result = this.currentTree;
         this.currentTree = null;
         return result;
     }
+
+    /**
+     * Translates the given AST identifier into IR and returns the result.
+     *
+     * The identifier must be a field, parameter or local variable.
+     *
+     * @param id A field, parameter or local variable identifier.
+     * @return The translation of @a id.
+     */
+    private Exp translate(final TIdentifier id) {
+        final String name = id.getText();
+        final VariableInfo localInfo, paramInfo, fieldInfo;
+
+        if ((localInfo = currentMethod.getLocal(name)) != null) {
+            return localInfo.getAccess().exp(new TEMP(currentFrame.FP()));
+        } else if ((paramInfo = currentMethod.getParameter(name)) != null) {
+            return paramInfo.getAccess().exp(new TEMP(currentFrame.FP()));
+        } else if ((fieldInfo = currentClass.getField(name)) != null) {
+            // TODO
+            return new TODO().asExp();
+        } else {
+            throw new Error("No such symbol: " + name);
+        }
+    }
+
+    /**
+     * Translates the given list of AST nodes into IR and returns the result.
+     *
+     * If @a nodes is empty, null is returned. If @a nodes has a single element, the
+     * translation of this element is returned. Otherwise SEQ(t0, SEQ(t1, SEQ(...)))
+     * is returned, where t0, t1, ... is the translation of node[0], node[1], ...
+     *
+     * @param nodes A list of AST nodes.
+     * @return The translation of @a nodes as described above.
+     */
+    private Translation translate(final List<Node> nodes) {
+        if (nodes.isEmpty())
+            return null;
+
+        if (nodes.size() == 1)
+            return translate(nodes.get(0));
+
+        final Iterator<Node> it = nodes.iterator();
+
+        SEQ result = new SEQ(translate(it.next()).asStm(), null);
+        SEQ current = result;
+        while (it.hasNext()) {
+            Node next = it.next();
+            if (it.hasNext()) {
+                current.right = new SEQ(translate(next).asStm(), null);
+                current = (SEQ) current.right;
+            } else {
+                current.right = translate(next).asStm();
+            }
+        }
+
+        return new Statement(result);
+    }
+
+    // AST visitor methods below.
 
     @Override
     public void caseStart(final Start start) {
@@ -147,7 +208,10 @@ public class Translator extends AnalysisAdapter {
 
         if (tree != null) {
             currentTree = tree;
-            fragments.add(new ProcFrag(currentFrame.procEntryExit1(currentTree.asStm()), currentFrame));
+            fragments.add(new ProcFrag(
+                    currentFrame.procEntryExit1(currentTree.asStm()),
+                    currentFrame
+            ));
         } else {
             currentTree = new Expression(new CONST(0));
         }
@@ -247,17 +311,17 @@ public class Translator extends AnalysisAdapter {
     @Override
     public void caseAIfStatement(final AIfStatement statement) {
         currentTree = new If(
-            treeOf(statement.getCondition()),
-            treeOf(statement.getStatement())
+            translate(statement.getCondition()),
+            translate(statement.getStatement())
         );
     }
 
     @Override
     public void caseAIfElseStatement(final AIfElseStatement statement) {
         currentTree = new IfElse(
-            treeOf(statement.getCondition()),
-            treeOf(statement.getThen()),
-            treeOf(statement.getElse())
+            translate(statement.getCondition()),
+            translate(statement.getThen()),
+            translate(statement.getElse())
         );
     }
 
@@ -269,9 +333,9 @@ public class Translator extends AnalysisAdapter {
 
         currentTree = new Statement(
             new SEQ(new LABEL(test),
-            new SEQ(treeOf(statement.getCondition()).asCond(trueLabel, falseLabel),
+            new SEQ(translate(statement.getCondition()).asCond(trueLabel, falseLabel),
             new SEQ(new LABEL(trueLabel),
-            new SEQ(treeOf(statement.getStatement()).asStm(),
+            new SEQ(translate(statement.getStatement()).asStm(),
                     new LABEL(falseLabel))))));
     }
 
@@ -279,13 +343,13 @@ public class Translator extends AnalysisAdapter {
     public void caseAPrintlnStatement(final APrintlnStatement statement) {
         currentTree = new Expression(
             currentFrame.externalCall("_minijavalib_println",
-            new ExpList(treeOf(statement.getValue()).asExp())));
+            new ExpList(translate(statement.getValue()).asExp())));
     }
 
     @Override
     public void caseAAssignStatement(final AAssignStatement statement) {
         currentTree = new Statement(
-            new MOVE(translate(statement.getName()), treeOf(statement.getValue()).asExp()));
+            new MOVE(translate(statement.getName()), translate(statement.getValue()).asExp()));
     }
 
     @Override
@@ -294,8 +358,8 @@ public class Translator extends AnalysisAdapter {
             new MOVE(new BINOP(
                     BINOP.PLUS,
                     translate(statement.getName()),
-                    treeOf(statement.getIndex()).asExp()),
-                treeOf(statement.getValue()).asExp()));
+                    translate(statement.getIndex()).asExp()),
+                translate(statement.getValue()).asExp()));
     }
 
     @Override
@@ -314,69 +378,69 @@ public class Translator extends AnalysisAdapter {
     public void caseALessThanExpression(final ALessThanExpression expression) {
         currentTree = new RelationalCondition(
             CJUMP.LT,
-            treeOf(expression.getLeft()),
-            treeOf(expression.getRight()));
+            translate(expression.getLeft()),
+            translate(expression.getRight()));
     }
 
     @Override
     public void caseAGreaterThanExpression(final AGreaterThanExpression expression) {
         currentTree = new RelationalCondition(
             CJUMP.GT,
-            treeOf(expression.getLeft()),
-            treeOf(expression.getRight()));
+            translate(expression.getLeft()),
+            translate(expression.getRight()));
     }
 
     @Override
     public void caseAGreaterEqualThanExpression(final AGreaterEqualThanExpression expression) {
         currentTree = new RelationalCondition(
             CJUMP.GE,
-            treeOf(expression.getLeft()),
-            treeOf(expression.getRight()));
+            translate(expression.getLeft()),
+            translate(expression.getRight()));
     }
 
     @Override
     public void caseALessEqualThanExpression(final ALessEqualThanExpression expression) {
         currentTree = new RelationalCondition(
             CJUMP.LE,
-            treeOf(expression.getLeft()),
-            treeOf(expression.getRight()));
+            translate(expression.getLeft()),
+            translate(expression.getRight()));
     }
 
     @Override
     public void caseAEqualExpression(final AEqualExpression expression) {
         currentTree = new RelationalCondition(
             CJUMP.EQ,
-            treeOf(expression.getLeft()),
-            treeOf(expression.getRight()));
+            translate(expression.getLeft()),
+            translate(expression.getRight()));
     }
 
     @Override
     public void caseANotEqualExpression(final ANotEqualExpression expression) {
         currentTree = new RelationalCondition(
             CJUMP.NE,
-            treeOf(expression.getLeft()),
-            treeOf(expression.getRight()));
+            translate(expression.getLeft()),
+            translate(expression.getRight()));
     }
 
     @Override
     public void caseAPlusExpression(final APlusExpression expression) {
         currentTree = new Expression(new BINOP(BINOP.PLUS,
-            treeOf(expression.getLeft()).asExp(),
-            treeOf(expression.getRight()).asExp()));
+            translate(expression.getLeft()).asExp(),
+            translate(expression.getRight()).asExp()));
     }
 
     @Override
     public void caseAMinusExpression(final AMinusExpression expression) {
         currentTree = new Expression(new BINOP(BINOP.MINUS,
-            treeOf(expression.getLeft()).asExp(),
-            treeOf(expression.getRight()).asExp()));
+            translate(expression.getLeft()).asExp(),
+            translate(expression.getRight()).asExp()));
     }
 
     @Override
     public void caseATimesExpression(final ATimesExpression expression) {
         currentTree = new Expression(new BINOP(BINOP.MUL,
-            treeOf(expression.getLeft()).asExp(),
-            treeOf(expression.getRight()).asExp()));
+            translate(expression.getLeft()).asExp(),
+            translate(expression.getRight()).asExp()));
     }
 
     @Override
@@ -384,7 +448,7 @@ public class Translator extends AnalysisAdapter {
         currentTree = new Expression(new BINOP(
             BINOP.MINUS,
             new CONST(1),
-            treeOf(expression.getExpression()).asExp()));
+            translate(expression.getExpression()).asExp()));
     }
 
     @Override
@@ -455,45 +519,5 @@ public class Translator extends AnalysisAdapter {
     public void caseAThisExpression(final AThisExpression expression) {
         // TODO
         currentTree = new TODO();
-    }
-
-    private Exp translate(TIdentifier id) {
-        final String name = id.getText();
-
-        final VariableInfo localInfo, paramInfo, fieldInfo;
-        if ((localInfo = currentMethod.getLocal(name)) != null) {
-            return localInfo.getAccess().exp(new TEMP(currentFrame.FP()));
-        } else if ((paramInfo = currentMethod.getParameter(name)) != null) {
-            return paramInfo.getAccess().exp(new TEMP(currentFrame.FP()));
-        } else if ((fieldInfo = currentClass.getField(name)) != null) {
-            // TODO
-            return new TODO().asExp();
-        } else {
-            throw new Error("No such symbol: " + name);
-        }
-    }
-
-    private Translation translate(List<Node> nodes) {
-        if (nodes.isEmpty())
-            return null;
-
-        if (nodes.size() == 1)
-            return treeOf(nodes.get(0));
-
-        final Iterator<Node> it = nodes.iterator();
-
-        SEQ result = new SEQ(treeOf(it.next()).asStm(), null);
-        SEQ current = result;
-        while (it.hasNext()) {
-            Node next = it.next();
-            if (it.hasNext()) {
-                current.right = new SEQ(treeOf(next).asStm(), null);
-                current = (SEQ) current.right;
-            } else {
-                current.right = treeOf(next).asStm();
-            }
-        }
-
-        return new Statement(result);
     }
 }
