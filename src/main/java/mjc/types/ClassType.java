@@ -21,11 +21,6 @@ public class ClassType extends Type {
     }
 
     @Override
-    public int getSize() {
-        return 4;
-    }
-
-    @Override
     public boolean isClass() {
         return true;
     }

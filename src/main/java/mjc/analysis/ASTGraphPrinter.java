@@ -57,9 +57,7 @@ public class ASTGraphPrinter extends DepthFirstAdapter {
             case "+":
             case "-":
             case "int":
-            case "long":
             case "int[]":
-            case "long[]":
             case "boolean":
                 break; // Some noise in our AST that we can skip.
             default:

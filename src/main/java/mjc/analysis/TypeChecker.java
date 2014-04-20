@@ -22,14 +22,12 @@ import mjc.node.AIfStatement;
 import mjc.node.AIntegerExpression;
 import mjc.node.ALessEqualThanExpression;
 import mjc.node.ALessThanExpression;
-import mjc.node.ALongExpression;
 import mjc.node.AMainClassDeclaration;
 import mjc.node.AMethodDeclaration;
 import mjc.node.AMethodInvocationExpression;
 import mjc.node.AMinusExpression;
 import mjc.node.ANewInstanceExpression;
 import mjc.node.ANewIntArrayExpression;
-import mjc.node.ANewLongArrayExpression;
 import mjc.node.ANotEqualExpression;
 import mjc.node.ANotExpression;
 import mjc.node.AOrExpression;
@@ -207,7 +205,7 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = statement.getPrintlnKeyword().getLine();
         final int column = statement.getPrintlnKeyword().getPos();
 
-        if (!valueType.isInteger() && !valueType.isUndefined()) {
+        if (!valueType.isInt() && !valueType.isUndefined()) {
             error(INVALID_PRINTLN_TYPE.on(line, column, valueType));
         }
     }
@@ -272,10 +270,6 @@ public class TypeChecker extends DepthFirstAdapter {
             if (left.isIntArray()) {
                 if (!right.isAssignableTo(BuiltInType.Int)) {
                     error(INVALID_ASSIGNMENT.on(line, column, right, BuiltInType.Int));
-                }
-            } else if (left.isLongArray()) {
-                if (!right.isAssignableTo(BuiltInType.Long)) {
-                    error(INVALID_ASSIGNMENT.on(line, column, right, BuiltInType.Long));
                 }
             } else {
                 error(NOT_ARRAY_TYPE.on(line, column, left));
@@ -406,11 +400,7 @@ public class TypeChecker extends DepthFirstAdapter {
             error(INVALID_BINARY_OP.on(line, column, "+", left, right));
         }
 
-        if (left.isLong() || right.isLong()) {
-            types.put(expression, BuiltInType.Long);
-        } else {
-            types.put(expression, BuiltInType.Int);
-        }
+        types.put(expression, BuiltInType.Int);
     }
 
     @Override
@@ -424,11 +414,7 @@ public class TypeChecker extends DepthFirstAdapter {
             error(INVALID_BINARY_OP.on(line, column, "-", left, right));
         }
 
-        if (left.isLong() || right.isLong()) {
-            types.put(expression, BuiltInType.Long);
-        } else {
-            types.put(expression, BuiltInType.Int);
-        }
+        types.put(expression, BuiltInType.Int);
     }
 
     @Override
@@ -442,11 +428,7 @@ public class TypeChecker extends DepthFirstAdapter {
             error(INVALID_BINARY_OP.on(line, column, "*", left, right));
         }
 
-        if (left.isLong() || right.isLong()) {
-            types.put(expression, BuiltInType.Long);
-        } else {
-            types.put(expression, BuiltInType.Int);
-        }
+        types.put(expression, BuiltInType.Int);
     }
 
     @Override
@@ -514,23 +496,18 @@ public class TypeChecker extends DepthFirstAdapter {
             error(INVALID_INDEX_TYPE.on(line, column, indexType));
         }
 
-        if (type.isIntArray()) {
-            types.put(expression, BuiltInType.Int);
-        } else if (type.isLongArray()) {
-            types.put(expression, BuiltInType.Long);
-        } else {
-            if (!type.isUndefined()) {
-                error(NOT_ARRAY_TYPE.on(line, column, type));
-            }
-            types.put(expression, BuiltInType.Int);
+        if (!type.isIntArray() && !type.isUndefined()) {
+            error(NOT_ARRAY_TYPE.on(line, column, type));
         }
+
+        types.put(expression, BuiltInType.Int);
     }
 
     @Override
     public void outAArrayLengthExpression(final AArrayLengthExpression expression) {
         final Type type = types.get(expression.getArray());
 
-        if (!type.isArray() && !type.isUndefined()) {
+        if (!type.isIntArray() && !type.isUndefined()) {
             final int line = expression.getLengthKeyword().getLine();
             final int column = expression.getLengthKeyword().getPos();
             error(LENGTH_ON_NON_ARRAY.on(line, column, type));
@@ -568,19 +545,6 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void outANewLongArrayExpression(final ANewLongArrayExpression expression) {
-        final Type type = types.get(expression.getSize());
-
-        if (!type.isInt() && !type.isUndefined()) {
-            final int line = expression.getNewKeyword().getLine();
-            final int column = expression.getNewKeyword().getPos();
-            error(INVALID_SIZE_TYPE.on(line, column, type));
-        }
-
-        types.put(expression, BuiltInType.LongArray);
-    }
-
-    @Override
     public void outAIntegerExpression(final AIntegerExpression expression) {
         final String literal = expression.getInteger().getText();
 
@@ -593,21 +557,6 @@ public class TypeChecker extends DepthFirstAdapter {
         }
 
         types.put(expression, BuiltInType.Int);
-    }
-
-    @Override
-    public void outALongExpression(final ALongExpression expression) {
-        final String literal = expression.getLong().getText();
-
-        try {
-            Long.parseLong(literal.substring(0, literal.length() - 1)); // Strip 'L'/'l'.
-        } catch (NumberFormatException e) {
-            final int line = expression.getLong().getLine();
-            final int column = expression.getLong().getPos();
-            error(INVALID_LONG_LITERAL.on(line, column, literal));
-        }
-
-        types.put(expression, BuiltInType.Long);
     }
 
     @Override

@@ -27,11 +27,6 @@ public class UnsupportedType extends Type {
     }
 
     @Override
-    public int getSize() {
-        return -1;
-    }
-
-    @Override
     public String toString() {
         return name + " (unsupported)";
     }

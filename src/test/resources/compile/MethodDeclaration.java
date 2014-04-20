@@ -8,16 +8,11 @@ class A {}
 class B {
     int i;
     int[] ia;
-    long l;
-    long[] la;
     boolean b;
     A cA;
 
-    public int f1() { return i; } // OK!
-    public int[] f2() { return ia; } // OK!
-    public long f3() { return i; } // OK!
-    public long f4() { return l; } // OK!
-    public long[] f5() { return la; } // OK!
-    public boolean f6() { return b; } // OK!
-    public A f7() { return cA; } // OK!
+    public int f_i() { return i; } // OK!
+    public int[] f_ia() { return ia; } // OK!
+    public boolean f_b() { return b; } // OK!
+    public A f_A() { return cA; } // OK!
 }

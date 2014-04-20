@@ -11,8 +11,6 @@ public class UndefinedTypeTest {
     final Type[] allTypes = {
         BuiltInType.Int,
         BuiltInType.IntArray,
-        BuiltInType.Long,
-        BuiltInType.LongArray,
         BuiltInType.Boolean,
         UndefinedType.Instance,
         classType

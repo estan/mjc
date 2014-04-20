@@ -30,14 +30,12 @@ import mjc.node.AIfStatement;
 import mjc.node.AIntegerExpression;
 import mjc.node.ALessEqualThanExpression;
 import mjc.node.ALessThanExpression;
-import mjc.node.ALongExpression;
 import mjc.node.AMainClassDeclaration;
 import mjc.node.AMethodDeclaration;
 import mjc.node.AMethodInvocationExpression;
 import mjc.node.AMinusExpression;
 import mjc.node.ANewInstanceExpression;
 import mjc.node.ANewIntArrayExpression;
-import mjc.node.ANewLongArrayExpression;
 import mjc.node.ANotEqualExpression;
 import mjc.node.ANotExpression;
 import mjc.node.AOrExpression;
@@ -64,7 +62,6 @@ import mjc.temp.Temp;
 import mjc.tree.BINOP;
 import mjc.tree.CJUMP;
 import mjc.tree.CONST;
-import mjc.tree.DCONST;
 import mjc.tree.ESEQ;
 import mjc.tree.Exp;
 import mjc.tree.ExpList;
@@ -510,22 +507,9 @@ public class Translator extends AnalysisAdapter {
     }
 
     @Override
-    public void caseANewLongArrayExpression(final ANewLongArrayExpression expression) {
-        // TODO
-        currentTree = new TODO();
-    }
-
-    @Override
     public void caseAIntegerExpression(final AIntegerExpression expression) {
         currentTree = new Expression(
             new CONST(Integer.parseInt(expression.getInteger().getText())));
-    }
-
-    @Override
-    public void caseALongExpression(final ALongExpression expression) {
-        final String literal = expression.getLong().getText();
-        currentTree = new Expression(
-            new DCONST(Long.parseLong(literal.substring(0, literal.length() - 1)))); // Strip 'L'/'l'.
     }
 
     @Override

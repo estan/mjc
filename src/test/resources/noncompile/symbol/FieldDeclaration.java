@@ -4,6 +4,6 @@ class FieldDeclarationTest {
 }
 class A {
     int a;
-    long a; // DUPLICATE_FIELD
+    int a; // DUPLICATE_FIELD
     B b; // UNDECLARED_CLASS
 }

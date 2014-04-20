@@ -38,7 +38,6 @@ public enum MiniJavaErrorType {
     INVALID_PARAM_COUNT           (210, "in call to `%s`: %d parameters given, expected %d"),
     INVALID_SIZE_TYPE             (211, "size of type %s, expected int"),
     INVALID_INT_LITERAL           (212, "invalid int literal %s"),
-    INVALID_LONG_LITERAL          (213, "invalid long literal %s"),
     EXPECTED_VARIABLE_GOT_CLASS   (214, "`%s` is a class name, expected variable name"),
     NOT_ARRAY_TYPE                (215, "%s is not an array type"),
     LENGTH_ON_NON_ARRAY           (216, "length unsupported on non-array type %s"),

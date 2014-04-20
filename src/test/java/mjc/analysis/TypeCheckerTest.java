@@ -38,14 +38,14 @@ import static org.hamcrest.Matchers.containsInAnyOrder;;
  * corresponding Foo.expected, the test will check that the TypeChecker found no
  * errors.
  *
- * E.g. a check that assignment of long to int fails as expected would have
+ * E.g. a check that assignment of int[] to int fails as expected would have
  *
  * <code>
  * class Test {
  *     public static void main(String[] args) {
- *         long l;
+ *         int[] a;
  *         int i;
- *         i = l; // Bad! Assignment of long to int.
+ *         i = a; // Bad! Assignment of int[] to int.
  *     }
  * }
  * </code>

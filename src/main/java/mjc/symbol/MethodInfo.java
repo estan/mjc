@@ -53,7 +53,7 @@ public class MethodInfo {
     private final int line;
     private final int column;
 
-    private int nextOffset;
+    private int nextIndex;
     private int nextBlock;
 
     /**
@@ -76,7 +76,7 @@ public class MethodInfo {
         this.line = line;
         this.column = column;
 
-        this.nextOffset = 0;
+        this.nextIndex = 0;
         this.nextBlock = 0;
     }
 
@@ -124,9 +124,8 @@ public class MethodInfo {
      * @return the VariableInfo that was added for the parameter.
      */
     public VariableInfo addParameter(String name, Type type, int line, int column) {
-        VariableInfo param = new VariableInfo(name, type, line, column, nextOffset, 0);
+        VariableInfo param = new VariableInfo(name, type, line, column, nextIndex++, 0);
         parameters.add(param);
-        nextOffset += type.getSize();
         return param;
     }
 
@@ -169,9 +168,8 @@ public class MethodInfo {
      * @return the VariableInfo that was added for the variable.
      */
     public VariableInfo addLocal(String name, Type type, int line, int column) {
-        VariableInfo local = new VariableInfo(name, type, line, column, nextOffset, blocks.peek());
+        VariableInfo local = new VariableInfo(name, type, line, column, nextIndex++, blocks.peek());
         locals.put(name, local);
-        nextOffset += type.getSize();
         return local;
     }
 

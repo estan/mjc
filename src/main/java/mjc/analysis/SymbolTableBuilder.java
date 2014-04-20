@@ -13,8 +13,6 @@ import mjc.node.AFieldDeclaration;
 import mjc.node.AFormalParameter;
 import mjc.node.AIntArrayType;
 import mjc.node.AIntType;
-import mjc.node.ALongArrayType;
-import mjc.node.ALongType;
 import mjc.node.AMainClassDeclaration;
 import mjc.node.AMethodDeclaration;
 import mjc.node.AVariableDeclaration;
@@ -341,10 +339,6 @@ public class SymbolTableBuilder {
                 return BuiltInType.Int;
             } else if (abstractType instanceof AIntArrayType) {
                 return BuiltInType.IntArray;
-            } else if (abstractType instanceof ALongType) {
-                return BuiltInType.Long;
-            } else if (abstractType instanceof ALongArrayType) {
-                return BuiltInType.LongArray;
             } else if (abstractType instanceof ABooleanType) {
                 return BuiltInType.Boolean;
             } else {

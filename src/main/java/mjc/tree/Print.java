@@ -218,12 +218,6 @@ public class Print {
         say(String.valueOf(e.value));
     }
 
-    void prExp(DCONST e, int d) {
-        indent(d);
-        say("DCONST ");
-        say(String.valueOf(e.value));
-    }
-
     void prExp(CALL e, int d) {
         indent(d);
         sayln("CALL(");
@@ -248,8 +242,6 @@ public class Print {
             prExp((NAME) e, d);
         else if (e instanceof CONST)
             prExp((CONST) e, d);
-        else if (e instanceof DCONST)
-            prExp((DCONST) e, d);
         else if (e instanceof CALL)
             prExp((CALL) e, d);
         else

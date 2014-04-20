@@ -37,7 +37,6 @@ Tokens
     string_keyword = 'String';
     return_keyword = 'return';
     int_keyword = 'int';
-    long_keyword = 'long';
     boolean_keyword = 'boolean';
     if_keyword = 'if';
     else_keyword = 'else';
@@ -82,7 +81,6 @@ Tokens
     whitespace = (' ' | ht | ff | eol)+;
     identifier = (letter | '_') (letter | digit | '_')*;
     integer = ('0' | non_zero_digit digit*);
-    long = ('0' | non_zero_digit digit*) ('L' | 'l');
 
 Ignored Tokens
 
@@ -149,12 +147,8 @@ Productions
     type =
         {int} int_keyword
             {-> New type.int(int_keyword)} |
-        {long} long_keyword
-            {-> New type.long(long_keyword)} |
         {int_array} int_keyword lbrack rbrack
             {-> New type.int_array(int_keyword)} |
-        {long_array} long_keyword lbrack rbrack
-            {-> New type.long_array(long_keyword)} |
         {boolean} boolean_keyword
             {-> New type.boolean(boolean_keyword)} |
         {class} identifier
@@ -269,8 +263,6 @@ Productions
     primary_expression {-> expression} =
         {new_int_array} new_keyword int_keyword lbrack [size]:expression rbrack
             {-> New expression.new_int_array(new_keyword, size)} |
-        {new_long_array} new_keyword long_keyword lbrack [size]:expression rbrack
-            {-> New expression.new_long_array(new_keyword, size)} |
         {primary_no_new_array} primary_no_new_array_expression
             {-> primary_no_new_array_expression.expression};
 
@@ -295,8 +287,6 @@ Productions
     literal_expression {-> expression} =
         {integer} integer
             {-> New expression.integer(integer)} |
-        {long} long
-            {-> New expression.long(long)} |
         {true} true_keyword
             {-> New expression.true(true_keyword)} |
         {false} false_keyword
@@ -345,9 +335,7 @@ Abstract Syntax Tree
 
     type =
         {int} [name]:int_keyword |
-        {long} [name]:long_keyword |
         {int_array} [name]:int_keyword |
-        {long_array} [name]:long_keyword |
         {boolean} [name]:boolean_keyword |
         {class} [name]:identifier;
 
@@ -386,9 +374,7 @@ Abstract Syntax Tree
         {array_length} [array]:expression length_keyword |
         {new_instance} [class_name]:identifier |
         {new_int_array} new_keyword [size]:expression |
-        {new_long_array} new_keyword [size]:expression |
         {integer} integer |
-        {long} long |
         {true} true_keyword |
         {false} false_keyword |
         {identifier} identifier |

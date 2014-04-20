@@ -9,9 +9,6 @@ public abstract class Type {
      */
     public abstract String getName();
 
-    //blah
-    public abstract int getSize();
-
     /**
      * @return true if this is a built-in type.
      */
@@ -27,37 +24,9 @@ public abstract class Type {
     }
 
     /**
-     * @return true if this is the long type.
-     */
-    public boolean isLong() {
-        return false;
-    }
-
-    /**
-     * @return true if this is the int or long type.
-     */
-    public boolean isInteger() {
-        return false;
-    }
-
-    /**
      * @return true if this is the int array type.
      */
     public boolean isIntArray() {
-        return false;
-    }
-
-    /**
-     * @return true if this is the long array type.
-     */
-    public boolean isLongArray() {
-        return false;
-    }
-
-    /**
-     * @return true if this is the int array or long array type.
-     */
-    public boolean isArray() {
         return false;
     }
 

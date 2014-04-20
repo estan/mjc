@@ -13,7 +13,7 @@ public class VariableInfo {
     private final int line;
     private final int column;
 
-    private final int offset;
+    private final int index;
     private final int block;
 
     private Access access;
@@ -25,13 +25,15 @@ public class VariableInfo {
      * @param type Type of the variable.
      * @param line Line of declaration.
      * @param column Column of declaration.
+     * @param index Index within the class for fields, or index within method for
+     *              parameters and local variables.
      */
-    VariableInfo(String name, Type type, int line, int column, int offset, int block) {
+    VariableInfo(String name, Type type, int line, int column, int index, int block) {
         this.name = name;
         this.type = type;
         this.line = line;
         this.column = column;
-        this.offset = offset;
+        this.index = index;
         this.block = block;
     }
 
@@ -75,12 +77,12 @@ public class VariableInfo {
     }
 
     /**
-     * Returns the byte offset of the variable within the class or method.
+     * Returns the index of the variable within the class or method.
      *
-     * @return the byte offset of the variable.
+     * @return the index of the variable.
      */
-    public int getOffset() {
-        return offset;
+    public int getIndex() {
+        return index;
     }
 
     /**

@@ -16,14 +16,14 @@ public class MethodInfoTest {
          * We build the following test case:
          *
          *  1  int f(boolean p1) {   // Enter block 0
-         *  2     long l1;
+         *  2     int l1;
          *  3     {                  // Enter block 1
          *  4         int l2;
          *  5         {              // Enter block 2
          *  6             int[] l3;
          *  7         }              // Leave block 2
          *  8         {              // Enter block 3
-         *  9             long[] l4
+         *  9             int[] l4
          * 10         }              // Leave block 3
          * 11      }                 // Leave block 1
          * 12  }                     // Leave block 0
@@ -40,7 +40,7 @@ public class MethodInfoTest {
 
             if (run == 0) { // In the first iteration we add variables.
                 p1 = f.addParameter("p1", BuiltInType.Boolean, 1, 15);
-                l1  =f.addLocal("l1", BuiltInType.Long, 2, 4);
+                l1  =f.addLocal("l1", BuiltInType.Int, 2, 4);
             } // Else: In the second iteration we just check.
 
             assertThat(f.getParameter("p1"), sameInstance(p1)); // Just became visible.
@@ -77,7 +77,7 @@ public class MethodInfoTest {
             f.enterBlock(); // Enter block 3.
 
             if (run == 0) { // In the first iteration we add variables.
-                l4 = f.addLocal("l4", BuiltInType.LongArray, 9, 12);
+                l4 = f.addLocal("l4", BuiltInType.Int, 9, 12);
             } // Else: In the second iteration we just check.
 
             assertThat(f.getLocal("l4"), sameInstance(l4));     // Just became visible.

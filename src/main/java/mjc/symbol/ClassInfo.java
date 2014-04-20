@@ -19,7 +19,7 @@ public class ClassInfo {
     private final int line;
     private final int column;
 
-    private int nextOffset;
+    private int nextIndex;
 
     /**
      * Construct a new ClassInfo.
@@ -34,7 +34,7 @@ public class ClassInfo {
         this.type = type;
         this.line = line;
         this.column = column;
-        this.nextOffset = 0;
+        this.nextIndex = 0;
 
         fields = new HashMap<>();
         methods = new HashMap<>();
@@ -91,9 +91,8 @@ public class ClassInfo {
      * @return the VariableInfo that was added for the field.
      */
     public VariableInfo addField(String name, Type type, int line, int column) {
-        VariableInfo field = new VariableInfo(name, type, line, column, nextOffset, 0);
+        VariableInfo field = new VariableInfo(name, type, line, column, nextIndex++, 0);
         fields.put(name, field);
-        nextOffset += type.getSize();
         return field;
     }
 
