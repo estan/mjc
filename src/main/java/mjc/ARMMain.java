@@ -54,6 +54,7 @@ public class ARMMain {
         options.addOption("p", false, "print abstract syntax tree");
         options.addOption("g", false, "print abstract syntax tree in GraphViz format");
         options.addOption("s", false, "print symbol table");
+        options.addOption("f", false, "show tree view of procedure fragments");
         options.addOption("h", false, "show help message");
 
         helpFormatter.setOptionComparator(new OptionComparator<Option>());
@@ -160,12 +161,14 @@ public class ARMMain {
         final Translator translator = new Translator();
         final List<ProcFrag> fragments = translator.translate(ast, symbolTable, new ARMFactory());
 
-        // DEBUG: Show view of fragments.
-        final View viewer = new View("FRAGMENTS");
-        for (ProcFrag fragment : fragments) {
-            viewer.addStm(fragment.getBody());
+        if (commandLine.hasOption("f")) {
+            // Show IR frag
+            final View viewer = new View("FRAGMENTS");
+            for (ProcFrag fragment : fragments) {
+                viewer.addStm(fragment.getBody());
+            }
+            viewer.expandTree();
         }
-        viewer.expandTree();
 
         /*****************************
          * Stage 4: Canonicalization *
@@ -275,7 +278,7 @@ public class ARMMain {
 
     // Comparator for Options, to get them in the order we want in help output.
     class OptionComparator<T extends Option> implements Comparator<T> {
-        private static final String ORDER = "Sopgsh";
+        private static final String ORDER = "Sopgsfh";
 
         @Override
         public int compare(T option1, T option2) {

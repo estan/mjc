@@ -57,6 +57,7 @@ command line options are:
      -p             print abstract syntax tree
      -g             print abstract syntax tree in GraphViz format
      -s             print symbol table
+     -f             show tree view of procedure fragments
      -h             show help message
 
 Hacking in Eclipse
