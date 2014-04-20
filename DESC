@@ -2,7 +2,6 @@ MAIL=@EMAIL@
 ID=@ID@
 LANG=java
 ARM
-LONG
 IWE
 NBD
 ABC
