@@ -251,8 +251,9 @@ public class ARMMain {
      * Helper method to determine the output file path to use.
      *
      * If the -o option is present on the given command line, this method returns the
-     * absolute path to the file specified by the option value. Otherwise, the input
-     * file path is returned, but with the file name suffix changed to ".s".
+     * absolute path to the file specified by the option value. Otherwise, this method
+     * returns the absolute path to the current working directory with the input file
+     * base name added, but with the file name suffix changed to ".s".
      *
      * @param commandLine The user-specified command line.
      * @return Output file path to use.
@@ -262,10 +263,9 @@ public class ARMMain {
         if (commandLine.hasOption("o")) {
             return Paths.get(commandLine.getOptionValue("o")).toAbsolutePath();
         } else {
-            final String inputFileName = commandLine.getArgs()[0];
-            final String baseName = Files.getNameWithoutExtension(inputFileName);
-            final Path parentDir = Paths.get(inputFileName).toRealPath().getParent();
-            return parentDir.resolve(baseName + ".s");
+            final String inFileName = commandLine.getArgs()[0];
+            final String outFileName = Files.getNameWithoutExtension(inFileName) + ".s";
+            return Paths.get(outFileName).toAbsolutePath();
         }
     }
 
