@@ -16,7 +16,6 @@ with the following extensions:
 | Code                    | Description                                  |
 | ----------------------- | -------------------------------------------- |
 | **ARM**                 | ARM CPU backend with register allocation     |
-| **LONG**                | add long and long\[\]                        |
 | **IWE**                 | 'if' statements with or without 'else'       |
 | **NBD**                 | nested blocks with new variable declarations |
 | **ABC**                 | array bounds checks                          |
