@@ -250,9 +250,6 @@
 
     <target name="submit" description="Submit TAR archive to TIGRIS" depends="tar">
         <property name="tigris.to" value="submit@tigris.csc.kth.se"/>
-        <echo>Submitting from ${tigris.email} to ${tigris.to} using ID ${tigris.id}</echo>
-
-        <!-- The ANT mail task requires external JARs, so we just use our script instead -->
         <exec executable="tools/submit">
             <arg value="${tigris.to}"/>
         </exec>
