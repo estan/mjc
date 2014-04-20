@@ -162,7 +162,7 @@ public class ARMMain {
         final List<ProcFrag> fragments = translator.translate(ast, symbolTable, new ARMFactory());
 
         if (commandLine.hasOption("f")) {
-            // Show IR frag
+            // Show tree view of procedure fragments.
             final View viewer = new View("FRAGMENTS");
             for (ProcFrag fragment : fragments) {
                 viewer.addStm(fragment.getBody());
