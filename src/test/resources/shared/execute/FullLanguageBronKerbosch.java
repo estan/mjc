@@ -77,6 +77,7 @@ class Graph {
         int[] P;
         int[] X;
         int i;
+        boolean r;
         R = new int[size];
         P = new int[size];
         X = new int[size];
@@ -87,7 +88,7 @@ class Graph {
             X[i] = 0;
             i = i + 1;
         }
-        bronKerbosch(R, P, X);
+        r = this.bronKerbosch(R, P, X);
         return true;
     }
 
@@ -104,16 +105,17 @@ class Graph {
 
         if (set.isEmpty(P) && set.isEmpty(X)) { // IWE
             // R is a maximal clique.
-            set.print(R);
+            boolean r; // NBD
+            r = set.print(R);
             System.out.println(666);
         }
 
         // For each vertex v in P.
         v = 0;
         while (v < P.length) {
-            boolean has_v = P[v] == 1; // NBD + CEQ
-            if (has_v) {
-                bronKerbosch(
+            if (P[v] == 1) { // CEQ
+                boolean r;
+                r = this.bronKerbosch(
                         set.add(R, v),
                         set.intersect(P, edges, v * size),
                         set.intersect(X, edges, v * size));
