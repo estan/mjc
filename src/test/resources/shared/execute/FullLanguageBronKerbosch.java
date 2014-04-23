@@ -29,15 +29,15 @@ class FullLanguageBronKerbosch {
          * which has maximal cliques {0,1,2}, {2,3} and {3,4}.
          */
         Graph g;
-        boolean result;
+        boolean r; // Unused
         g = new Graph();
-        result = g.init(5);
-        result = g.addEdge(0, 1);
-        result = g.addEdge(0, 2);
-        result = g.addEdge(2, 3);
-        result = g.addEdge(1, 2);
-        result = g.addEdge(3, 4);
-        result = g.printMaxCliques();
+        r = g.init(5);
+        r = g.addEdge(0, 1);
+        r = g.addEdge(0, 2);
+        r = g.addEdge(2, 3);
+        r = g.addEdge(1, 2);
+        r = g.addEdge(3, 4);
+        r = g.printMaxCliques();
     }
 }
 
