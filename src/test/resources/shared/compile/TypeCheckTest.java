@@ -1,6 +1,6 @@
 /**
- * This is an amalgamation of our type checker tests. It should cover most
- * type-valid constructs of our extended language.
+ * This is an amalgamation of some of our type checker / parser tests.
+ * It should cover most type-valid constructs of our extended language.
  *
  * @author Elvis Stansvik <elvstone@gmail.com>
  */
