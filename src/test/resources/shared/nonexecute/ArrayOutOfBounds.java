@@ -1,5 +1,7 @@
 /**
  * Tests accessing an array out-of-bounds.
+ *
+ * @author Elvis Stansvik <elvstone@gmail.com>
  */
 
 //EXT:ABC
