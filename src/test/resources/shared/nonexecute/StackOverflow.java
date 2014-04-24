@@ -6,8 +6,9 @@
 class StackOverflow {
     public static void main(String[] args) {
         Overflower o;
+        int r;
         o = new Overflower();
-        o.overflow();
+        r = o.overflow();
     }
 }
 
