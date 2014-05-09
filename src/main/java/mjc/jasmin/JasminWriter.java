@@ -53,7 +53,7 @@ class JasminWriter {
     }
 
     /**
-     * Clears any statements added Jasmin statements.
+     * Removes all Jasmin statements that have been added to the writer.
      */
     void clear() {
         out.setLength(0);
