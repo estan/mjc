@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import mjc.node.AAndExpression;
 import mjc.node.AArrayAccessExpression;
@@ -47,8 +48,8 @@ import mjc.symbol.VariableInfo;
 import mjc.types.BuiltInType;
 import mjc.types.Type;
 import mjc.types.UndefinedType;
+import mjc.types.UnsupportedType;
 import mjc.error.MiniJavaError;
-
 import static mjc.error.MiniJavaErrorType.*;
 
 /**
@@ -87,6 +88,14 @@ public class TypeChecker extends DepthFirstAdapter {
         ast.apply(this);
 
         return !hasErrors();
+    }
+
+    /**
+     * TODO: Doc
+     * @return
+     */
+    public Map<Node, Type> getTypes() {
+        return types;
     }
 
     /**
@@ -594,6 +603,7 @@ public class TypeChecker extends DepthFirstAdapter {
 
     @Override
     public void outAThisExpression(final AThisExpression expression) {
+        // TODO: Check if we're in main class.
         types.put(expression, currentClass.getType());
     }
 }

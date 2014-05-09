@@ -54,6 +54,10 @@ public class ClassInfo {
         return type;
     }
 
+    public int getNumFields() {
+        return fields.size();
+    }
+
     /**
      * @return Line of declaration.
      */

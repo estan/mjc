@@ -10,8 +10,8 @@ import mjc.temp.Label;
 public class ARMFactory implements Factory {
 
     @Override
-    public Frame newFrame(Label name, List<Boolean> formals) {
-        return new ARMFrame();
+    public Frame newFrame(Label name, List<Boolean> escapes) {
+        return new ARMFrame(name, escapes);
     }
 
     @Override

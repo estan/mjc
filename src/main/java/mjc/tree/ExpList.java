@@ -1,8 +1,8 @@
 package mjc.tree;
 
 public class ExpList {
-    public final Exp head;
-    public final ExpList tail;
+    public Exp head;
+    public ExpList tail;
 
     public ExpList(final Exp head, final ExpList tail) {
         this.head = head;

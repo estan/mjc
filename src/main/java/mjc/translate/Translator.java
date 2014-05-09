@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.primitives.Booleans;
 
+import mjc.types.Type;
 import mjc.analysis.AnalysisAdapter;
 import mjc.frame.Access;
 import mjc.frame.Factory;
@@ -49,6 +51,7 @@ import mjc.node.AVariableDeclaration;
 import mjc.node.AWhileStatement;
 import mjc.node.Node;
 import mjc.node.PClassDeclaration;
+import mjc.node.PExpression;
 import mjc.node.PFieldDeclaration;
 import mjc.node.PMethodDeclaration;
 import mjc.node.Start;
@@ -60,18 +63,22 @@ import mjc.symbol.VariableInfo;
 import mjc.temp.Label;
 import mjc.temp.Temp;
 import mjc.tree.BINOP;
+import mjc.tree.CALL;
 import mjc.tree.CJUMP;
 import mjc.tree.CONST;
 import mjc.tree.ESEQ;
 import mjc.tree.Exp;
 import mjc.tree.ExpList;
 import mjc.tree.LABEL;
+import mjc.tree.MEM;
 import mjc.tree.MOVE;
+import mjc.tree.NAME;
 import mjc.tree.SEQ;
 import mjc.tree.TEMP;
 
 public class Translator extends AnalysisAdapter {
     private SymbolTable symbolTable;
+    private Map<Node, Type> types;
     private Factory factory;
 
     private ClassInfo currentClass;
@@ -90,8 +97,9 @@ public class Translator extends AnalysisAdapter {
      * @param factory Factory for constructing frames and records.
      * @return List of procedure fragments.
      */
-    public List<ProcFrag> translate(final Node ast, final SymbolTable symbolTable, final Factory factory) {
+    public List<ProcFrag> translate(final Node ast, final SymbolTable symbolTable, final Map<Node, Type> types, final Factory factory) {
         this.symbolTable = symbolTable;
+        this.types = types;
         this.factory = factory;
 
         this.currentClass = null;
@@ -138,8 +146,15 @@ public class Translator extends AnalysisAdapter {
         } else if ((paramInfo = currentMethod.getParameter(name)) != null) {
             return paramInfo.getAccess().exp(new TEMP(currentFrame.FP()));
         } else if ((fieldInfo = currentClass.getField(name)) != null) {
-            // TODO
-            return new TODO().asExp();
+            return new BINOP(
+                BINOP.PLUS,
+                currentFrame.formals().get(0).exp(new TEMP(currentFrame.FP())),
+                new BINOP(
+                    BINOP.MUL,
+                    new CONST(fieldInfo.getIndex()),
+                    new CONST(currentFrame.wordSize()
+                ))
+            );
         } else {
             throw new Error("No such symbol: " + name);
         }
@@ -201,7 +216,7 @@ public class Translator extends AnalysisAdapter {
         currentMethod.enterBlock();
         currentFrame = factory.newFrame(
                 new Label(currentClass.getName() + '$' + currentMethod.getName()),
-                new ArrayList<Boolean>()
+                Booleans.asList(new boolean[1])
         );
 
         final List<Node> nodes = new LinkedList<>();
@@ -243,16 +258,26 @@ public class Translator extends AnalysisAdapter {
         currentMethod.enterBlock();
         currentFrame = factory.newFrame(
                 new Label(currentClass.getName() + '$' + currentMethod.getName()),
-                Booleans.asList(new boolean[currentMethod.getParameters().size()])
+                Booleans.asList(new boolean[currentMethod.getParameters().size() + 1])
         );
 
         final List<Node> nodes = new LinkedList<>();
         nodes.addAll(declaration.getFormals());
         nodes.addAll(declaration.getLocals());
         nodes.addAll(declaration.getStatements());
-        nodes.add(declaration.getReturnExpression());
 
-        currentTree = translate(nodes);
+        final MOVE returnStatement = new MOVE(
+            new TEMP(currentFrame.RV()),
+            translate(declaration.getReturnExpression()).asExp());
+
+        if (nodes.isEmpty()) {
+            currentTree = new Statement(returnStatement);
+        } else {
+            currentTree = new Statement(new SEQ(
+                translate(nodes).asStm(),
+                returnStatement
+            ));
+        }
 
         fragments.add(new ProcFrag(
                 currentFrame.procEntryExit1(currentTree.asStm()),
@@ -265,8 +290,7 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAFieldDeclaration(final AFieldDeclaration declaration) {
-        // TODO
-        currentTree = new TODO();
+        currentTree = null;
     }
 
     @Override
@@ -357,8 +381,14 @@ public class Translator extends AnalysisAdapter {
             new MOVE(new BINOP(
                     BINOP.PLUS,
                     translate(statement.getName()),
-                    translate(statement.getIndex()).asExp()),
-                translate(statement.getValue()).asExp()));
+                    new BINOP(
+                        BINOP.MUL,
+                        translate(statement.getIndex()).asExp(),
+                        new CONST(currentFrame.wordSize())
+                    )
+                ),
+                translate(statement.getValue()).asExp())
+            );
     }
 
     @Override
@@ -478,32 +508,68 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAMethodInvocationExpression(final AMethodInvocationExpression expression) {
-        // TODO
-        currentTree = new TODO();
+        ExpList args = new ExpList(translate(expression.getInstance()).asExp());
+        ExpList current = args;
+        for (PExpression arg : expression.getActuals()) {
+            current.tail = new ExpList(translate(arg).asExp());
+            current = current.tail;
+        }
+
+        final String className = types.get(expression.getInstance()).getName();
+        final String methodName = expression.getName().getText();
+
+        currentTree = new Expression(
+            new CALL(
+                new NAME(new Label(className + '$' + methodName)),
+                args)
+            );
     }
 
     @Override
     public void caseAArrayAccessExpression(final AArrayAccessExpression expression) {
-        // TODO
-        currentTree = new TODO();
+        currentTree = new Expression(new MEM(
+            new BINOP(BINOP.PLUS,
+                translate(expression.getArray()).asExp(),
+                new BINOP(BINOP.MUL,
+                    translate(expression.getIndex()).asExp(),
+                    new CONST(currentFrame.wordSize())
+                )
+            )
+        ));
     }
 
     @Override
     public void caseAArrayLengthExpression(final AArrayLengthExpression expression) {
-        // TODO
-        currentTree = new TODO();
+        currentTree = new Expression(new MEM(
+            new BINOP(BINOP.MINUS,
+                translate(expression.getArray()).asExp(),
+                new CONST(currentFrame.wordSize())
+            )
+        ));
     }
 
     @Override
     public void caseANewInstanceExpression(final ANewInstanceExpression expression) {
-        // TODO
-        currentTree = new TODO();
+        currentTree = new Expression(
+            currentFrame.externalCall(
+                "_minijavalib_allocate",
+                new ExpList(new CONST(
+                    symbolTable.getClassInfo(
+                        expression.getClassName().getText()).getNumFields() * currentFrame.wordSize()
+                    )
+                )
+            )
+        );
     }
 
     @Override
     public void caseANewIntArrayExpression(final ANewIntArrayExpression expression) {
-        // TODO
-        currentTree = new TODO();
+        currentTree = new Expression(
+            currentFrame.externalCall(
+                "_minijavalib_initarray",
+                new ExpList(translate(expression.getSize()).asExp())
+            )
+        );
     }
 
     @Override
@@ -529,7 +595,6 @@ public class Translator extends AnalysisAdapter {
 
     @Override
     public void caseAThisExpression(final AThisExpression expression) {
-        // TODO
-        currentTree = new TODO();
+        currentTree = new Expression(currentFrame.formals().get(0).exp(new TEMP(currentFrame.FP())));
     }
 }

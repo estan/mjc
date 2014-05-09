@@ -159,7 +159,7 @@ public class ARMMain {
 
         // Translate to IR.
         final Translator translator = new Translator();
-        final List<ProcFrag> fragments = translator.translate(ast, symbolTable, new ARMFactory());
+        final List<ProcFrag> fragments = translator.translate(ast, symbolTable, typeChecker.getTypes(), new ARMFactory());
 
         if (commandLine.hasOption("f")) {
             // Show tree view of procedure fragments.
