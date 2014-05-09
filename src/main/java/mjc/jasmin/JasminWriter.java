@@ -32,7 +32,7 @@ class JasminWriter {
     }
 
     /**
-     * Adds a Jasmin label to the writers.
+     * Adds a Jasmin label to the writer.
      *
      * @param label Label to add.
      */
