@@ -15,7 +15,6 @@ with the following extensions:
 
 | Code                    | Description                                  |
 | ----------------------- | -------------------------------------------- |
-| **ARM**                 | ARM CPU backend with register allocation     |
 | **IWE**                 | 'if' statements with or without 'else'       |
 | **NBD**                 | nested blocks with new variable declarations |
 | **ABC**                 | array bounds checks                          |
@@ -52,12 +51,10 @@ where `foo.java` is the MiniJava source file to be compiled. The available
 command line options are:
 
     usage: mjc <infile> [options]
-     -S             output assembly code
-     -o <outfile>   output file
+     -S             output Jasmin assembly code
      -p             print abstract syntax tree
      -g             print abstract syntax tree in GraphViz format
      -s             print symbol table
-     -f             show tree view of procedure fragments
      -h             show help message
 
 Hacking in Eclipse

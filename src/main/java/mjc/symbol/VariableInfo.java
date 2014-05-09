@@ -1,6 +1,5 @@
 package mjc.symbol;
 
-import mjc.frame.Access;
 import mjc.types.Type;
 
 /**
@@ -15,8 +14,6 @@ public class VariableInfo {
 
     private final int index;
     private final int block;
-
-    private Access access;
 
     /**
      * Constructs a new VariableInfo.
@@ -83,27 +80,6 @@ public class VariableInfo {
      */
     public int getIndex() {
         return index;
-    }
-
-    /**
-     * Returns the Access for this variable.
-     *
-     * @return the Access for this variable, or null if there is none.
-     */
-    public Access getAccess() {
-        return access;
-    }
-
-    /**
-     * Sets the Access for this variable.
-     *
-     * <em>Note: This should only really be called by the {@link Translator} during
-     *     translation to IR</em>
-     *
-     * @param access the Access to set for this variable.
-     */
-    public void setAccess(Access access) {
-        this.access = access;
     }
 
     @Override

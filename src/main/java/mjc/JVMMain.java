@@ -3,10 +3,7 @@ package mjc;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.FileReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Comparator;
-import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -16,28 +13,22 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.google.common.io.Files;
-
 import mjc.lexer.Lexer;
 import mjc.lexer.LexerException;
 import mjc.parser.Parser;
 import mjc.parser.ParserException;
 import mjc.symbol.SymbolTable;
-import mjc.translate.ProcFrag;
-import mjc.translate.Translator;
-import mjc.tree.View;
 import mjc.node.InvalidToken;
 import mjc.node.Start;
 import mjc.analysis.ASTGraphPrinter;
 import mjc.analysis.ASTPrinter;
 import mjc.analysis.SymbolTableBuilder;
 import mjc.analysis.TypeChecker;
-import mjc.arm.ARMFactory;
 import mjc.error.MiniJavaError;
 import static mjc.error.MiniJavaErrorType.LEXER_ERROR;
 import static mjc.error.MiniJavaErrorType.PARSER_ERROR;
 
-public class ARMMain {
+public class JVMMain {
     private final static CommandLineParser commandLineParser = new GnuParser();
     private final static HelpFormatter helpFormatter = new HelpFormatter();
     private final static Options options = new Options();
@@ -45,23 +36,18 @@ public class ARMMain {
     private final ASTPrinter astPrinter = new ASTPrinter();
     private final ASTGraphPrinter graphPrinter = new ASTGraphPrinter();
 
-    public ARMMain() {
-        Option outputFileOption = new Option("o", true, "output file");
-        outputFileOption.setArgName("outfile");
-
-        options.addOption("S", false, "output assembly code");
-        options.addOption(outputFileOption);
+    public JVMMain() {
+        options.addOption("S", false, "output Jasmin assembly code");
         options.addOption("p", false, "print abstract syntax tree");
         options.addOption("g", false, "print abstract syntax tree in GraphViz format");
         options.addOption("s", false, "print symbol table");
-        options.addOption("f", false, "show tree view of procedure fragments");
         options.addOption("h", false, "show help message");
 
         helpFormatter.setOptionComparator(new OptionComparator<Option>());
     }
 
     public static void main(String[] args) {
-        ARMMain main = new ARMMain();
+        JVMMain main = new JVMMain();
 
         try {
             // Run the compiler.
@@ -153,120 +139,13 @@ public class ARMMain {
             return false; // Abort compilation.
         }
 
-        /******************************
-         * Stage 3: Translation to IR *
-         ******************************/
+        /****************************
+         * Stage 3: Code Generation *
+         ****************************/
 
-        // Translate to IR.
-        final Translator translator = new Translator();
-        final List<ProcFrag> fragments = translator.translate(ast, symbolTable, typeChecker.getTypes(), new ARMFactory());
-
-        if (commandLine.hasOption("f")) {
-            // Show tree view of procedure fragments.
-            final View viewer = new View("FRAGMENTS");
-            for (ProcFrag fragment : fragments) {
-                viewer.addStm(fragment.getBody());
-            }
-            viewer.expandTree();
-        }
-
-        /*****************************
-         * Stage 4: Canonicalization *
-         *****************************/
-
-        // TODO
-
-        /**********************************
-         * Stage 5: Instruction Selection *
-         **********************************/
-
-        // TODO
-
-        /**********************************
-         * Stage 6: Control Flow Analysis *
-         **********************************/
-
-        // TODO
-
-        /*******************************
-         * Stage 7: Data Flow Analysis *
-         *******************************/
-
-        // TODO
-
-        /********************************
-         * Stage 8: Register Allocation *
-         ********************************/
-
-        // TODO
-
-        /**************************
-         * Stage 9: Code Emission *
-         **************************/
-
-        // Just print "42" courtesy of GCC for now.
-        try {
-            java.nio.file.Files.write(getOutputPath(commandLine), (
-                "       .arch armv4t\n" +
-                "       .fpu softvfp\n" +
-                "       .eabi_attribute 20, 1\n" +
-                "       .eabi_attribute 21, 1\n" +
-                "       .eabi_attribute 23, 3\n" +
-                "       .eabi_attribute 24, 1\n" +
-                "       .eabi_attribute 25, 1\n" +
-                "       .eabi_attribute 26, 2\n" +
-                "       .eabi_attribute 30, 6\n" +
-                "       .eabi_attribute 18, 4\n" +
-                "       .file   \"test.c\"\n" +
-                "       .text\n" +
-                "       .align  2\n" +
-                "       .global main\n" +
-                "       .type   main, %function\n" +
-                "main:\n" +
-                "       @ Function supports interworking.\n" +
-                "       @ args = 0, pretend = 0, frame = 0\n" +
-                "       @ frame_needed = 1, uses_anonymous_args = 0\n" +
-                "       stmfd   sp!, {fp, lr}\n" +
-                "       add     fp, sp, #4\n" +
-                "       mov     r0, #42\n" +
-                "       bl      _minijavalib_println\n" +
-                "       mov     r3, #0\n" +
-                "       mov     r0, r3\n" +
-                "       sub     sp, fp, #4\n" +
-                "       ldmfd   sp!, {fp, lr}\n" +
-                "       bx      lr\n" +
-                "       .size   main, .-main\n" +
-                "       .ident  \"GCC: (Debian 4.6.3-14) 4.6.3\"\n" +
-                "       .section        .note.GNU-stack,\"\",%progbits\n"
-            ).getBytes());
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-            return false;
-        }
+        // TODO: Generate Jasmin code.
 
         return true;
-    }
-
-    /**
-     * Helper method to determine the output file path to use.
-     *
-     * If the -o option is present on the given command line, this method returns the
-     * absolute path to the file specified by the option value. Otherwise, this method
-     * returns the absolute path to the current working directory with the input file
-     * base name added, but with the file name suffix changed to ".s".
-     *
-     * @param commandLine The user-specified command line.
-     * @return Output file path to use.
-     * @throws IOException If an I/O error occurred.
-     */
-    private static Path getOutputPath(CommandLine commandLine) throws IOException {
-        if (commandLine.hasOption("o")) {
-            return Paths.get(commandLine.getOptionValue("o")).toAbsolutePath();
-        } else {
-            final String inFileName = commandLine.getArgs()[0];
-            final String outFileName = Files.getNameWithoutExtension(inFileName) + ".s";
-            return Paths.get(outFileName).toAbsolutePath();
-        }
     }
 
     /**
@@ -278,7 +157,7 @@ public class ARMMain {
 
     // Comparator for Options, to get them in the order we want in help output.
     class OptionComparator<T extends Option> implements Comparator<T> {
-        private static final String ORDER = "Sopgsfh";
+        private static final String ORDER = "Spgsh";
 
         @Override
         public int compare(T option1, T option2) {

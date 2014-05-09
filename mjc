@@ -7,4 +7,4 @@ if [ ! -f "$MJC_ROOT/mjc.jar" ]; then
     exit 1
 fi
 
-java -cp "$MJC_ROOT/mjc.jar:$MJC_ROOT/lib/*" mjc.ARMMain $@
+java -cp "$MJC_ROOT/mjc.jar:$MJC_ROOT/lib/*" mjc.JVMMain $@
