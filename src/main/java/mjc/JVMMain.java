@@ -19,7 +19,7 @@ import mjc.parser.Parser;
 import mjc.parser.ParserException;
 import mjc.symbol.SymbolTable;
 import mjc.node.InvalidToken;
-import mjc.node.Start;
+import mjc.node.Node;
 import mjc.analysis.ASTGraphPrinter;
 import mjc.analysis.ASTPrinter;
 import mjc.analysis.SymbolTableBuilder;
@@ -85,7 +85,7 @@ public class JVMMain {
          * Stage 1: Lexical Analysis / Parsing. *
          ****************************************/
 
-        final Start ast;
+        final Node ast;
         try {
             final String fileName = commandLine.getArgs()[0];
             final PushbackReader reader = new PushbackReader(new FileReader(fileName));
