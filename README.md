@@ -38,12 +38,8 @@ The compiler requires Java 7.
 
 Running
 -------
-To run the compiler, type
-
-    ./mjc foo.java -S
-
-where `foo.java` is the MiniJava source file to be compiled. The available
-command line options are:
+The compiler is invoked using the `mjc` script in the top-level directory.
+The available command line are:
 
     usage: mjc <infile> [options]
      -S             output Jasmin assembly code
@@ -51,4 +47,8 @@ command line options are:
      -g             print abstract syntax tree in GraphViz format
      -s             print symbol table
      -h             show help message
+
+For example, type `./mjc foo.java -S` to compile `foo.java`. The result is
+written as a set of Jasmin assembly code files (`.j`) into the current
+working directory, one file for each class.
 
