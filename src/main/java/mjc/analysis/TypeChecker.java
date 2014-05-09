@@ -90,8 +90,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     /**
-     * TODO: Doc
-     * @return
+     * @return the node to type mappings constructed during type checking.
      */
     public Map<Node, Type> getTypes() {
         return types;

@@ -190,7 +190,7 @@ public class MethodInfo {
     /**
      * Enter a new block.
      *
-     * This affects subsequent calls to {@link #addLocal(VariableInfo)} and
+     * This affects subsequent calls to {@link #addLocal(String, Type, int, int)} and
      * {@link #getLocal(String)}. Previously declared variables will remain in scope
      * after this method is called.
      */
@@ -201,7 +201,7 @@ public class MethodInfo {
     /**
      * Leave the current block.
      *
-     * This affects subsequent calls to {@link #addLocal(VariableInfo)} and
+     * This affects subsequent calls to {@link #addLocal(String, Type, int, int)} and
      * {@link #getLocal(String)}. Variables declared in the current block will go out
      * of scope after this method is called.
      */

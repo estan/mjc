@@ -45,11 +45,13 @@ import static mjc.error.MiniJavaErrorType.*;
  * It is OK to proceed with type checking even if errors occurred during symbol table
  * construction: The constructed table is still complete, but:
  *
- *   - Fields, parameters, local variables and methods with undeclared types / return
- *     types will have been entered with the UndefinedType type.
- *
- *   - Redeclared methods and classes will have been entered under new unique name
- *     and the AST will have been updated to match.
+ * <ul>
+ *     <li>Fields, parameters, local variables and methods with undeclared types /
+ *         return types will have been entered with the {@link mjc.types.UndefinedType}
+ *         type.</li>
+ *     <li>Redeclared methods and classes will have been entered under new unique name
+ *         and the AST will have been updated to match.</li>
+ * </ul>
  */
 public class SymbolTableBuilder {
 
