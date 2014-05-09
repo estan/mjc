@@ -13,6 +13,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import mjc.jasmin.CodeGenerator;
 import mjc.lexer.Lexer;
 import mjc.lexer.LexerException;
 import mjc.parser.Parser;
@@ -25,7 +26,6 @@ import mjc.analysis.ASTPrinter;
 import mjc.analysis.SymbolTableBuilder;
 import mjc.analysis.TypeChecker;
 import mjc.error.MiniJavaError;
-
 import static mjc.error.MiniJavaErrorType.LEXER_ERROR;
 import static mjc.error.MiniJavaErrorType.PARSER_ERROR;
 
@@ -144,7 +144,8 @@ public class JVMMain {
          * Stage 3: Code Generation *
          ****************************/
 
-        // TODO: Generate Jasmin code.
+        final CodeGenerator generator = new CodeGenerator(symbolTable, typeChecker.getTypes());
+        ast.apply(generator);
 
         return true;
     }
