@@ -19,22 +19,12 @@ with the following extensions:
 Building
 --------
 
-Type `ant` in the top-level directory. This will build the compiler,
-run the unit tests, and produce `mjc.jar`. See `ant -projecthelp` for
-the different available targets. Here's a hopefully up to date list:
+The compiler requires Java 7 and is built using Apache Ant.
 
-    Main targets:
-     clean    Delete all generated files
-     compile  Compile all sources
-     doc      Generate JavaDoc documentation in doc/
-     jar      Build compiler JAR file
-     report   Build report PDF file
-     submit   Submit TAR archive to TIGRIS
-     tar      Build compressed source-only TAR archive
-     test     Run the unit tests
-    Default target: jar
+Type `ant` in the top-level directory. The default ANT target builds the
+compiler, runs the unit tests, and produces the compiler JAR file (`mjc.jar`).
+See `ant -projecthelp` for other available targets.
 
-The compiler requires Java 7.
 
 Running
 -------
