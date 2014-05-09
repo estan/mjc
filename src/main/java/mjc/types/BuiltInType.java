@@ -3,7 +3,7 @@ package mjc.types;
 /**
  * BuiltInType represents a built-in MiniJava type.
  *
- * There are only five static instances of this class, one for each of the built-in
+ * There are only three static instances of this class, one for each of the built-in
  * types int, int[] and boolean.
  */
 public class BuiltInType extends Type {
