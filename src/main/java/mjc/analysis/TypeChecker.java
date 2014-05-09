@@ -48,7 +48,6 @@ import mjc.symbol.VariableInfo;
 import mjc.types.BuiltInType;
 import mjc.types.Type;
 import mjc.types.UndefinedType;
-import mjc.types.UnsupportedType;
 import mjc.error.MiniJavaError;
 import static mjc.error.MiniJavaErrorType.*;
 
