@@ -39,7 +39,7 @@ The compiler requires Java 7.
 Running
 -------
 The compiler is invoked using the `mjc` script in the top-level directory.
-The available command line are:
+The available command line options are:
 
     usage: mjc <infile> [options]
      -S             output Jasmin assembly code
