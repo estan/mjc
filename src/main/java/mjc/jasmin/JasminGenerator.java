@@ -139,6 +139,7 @@ public class JasminGenerator extends DepthFirstAdapter {
         direc("super java/lang/Object");
         nl();
 
+        // Default constructor.
         direc("method public <init>()V");
         instr("aload_0");
         instr("invokenonvirtual java/lang/Object/<init>()V");
@@ -146,6 +147,7 @@ public class JasminGenerator extends DepthFirstAdapter {
         direc("end method");
         nl();
 
+        // Main method.
         direc("method public static main([Ljava/lang/String;)V");
         direc("limit locals %d", currentMethod.getNextIndex());
         direc("limit stack %d", MAX_STACK_SIZE);
@@ -153,9 +155,11 @@ public class JasminGenerator extends DepthFirstAdapter {
 
     @Override
     public void outAMainClassDeclaration(final AMainClassDeclaration declaration) {
+        // End of main method.
         instr("return");
         direc("end method");
 
+        // Handle the result using the configured handler.
         handler.handle(currentClass.getName(), result);
 
         currentMethod.leaveBlock();
@@ -171,12 +175,12 @@ public class JasminGenerator extends DepthFirstAdapter {
 
         direc("class public %s", currentClass.getName());
         direc("super java/lang/Object");
+        nl();
     }
 
     @Override
     public void outAClassDeclaration(final AClassDeclaration declaration) {
-
-        nl();
+        // Default constructor.
         direc("method public <init>()V");
         instr("aload_0");
         instr("invokenonvirtual java/lang/Object/<init>()V");
@@ -184,9 +188,18 @@ public class JasminGenerator extends DepthFirstAdapter {
         direc("end method");
         nl();
 
+        // Handle the result using the configured handler.
         handler.handle(currentClass.getName(), result);
 
         currentClass = null;
+    }
+
+    @Override
+    public void inAFieldDeclaration(final AFieldDeclaration declaration) {
+        final String fieldName = declaration.getName().getText();
+        final Type fieldType = currentClass.getField(fieldName).getType();
+
+        direc("field protected %s %s", fieldName, typeDescriptor(fieldType));
     }
 
     @Override
@@ -212,14 +225,6 @@ public class JasminGenerator extends DepthFirstAdapter {
 
         currentMethod.leaveBlock();
         currentMethod = null;
-    }
-
-    @Override
-    public void inAFieldDeclaration(final AFieldDeclaration declaration) {
-        final String fieldName = declaration.getName().getText();
-        final Type fieldType = currentClass.getField(fieldName).getType();
-
-        direc("field protected %s %s", fieldName, typeDescriptor(fieldType));
     }
 
     @Override
