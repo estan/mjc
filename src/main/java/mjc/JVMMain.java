@@ -1,8 +1,14 @@
 package mjc;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.FileReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Comparator;
 
 import org.apache.commons.cli.CommandLine;
@@ -13,7 +19,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import mjc.jasmin.CodeGenerator;
+import mjc.jasmin.JasminGenerator;
+import mjc.jasmin.JasminHandler;
 import mjc.lexer.Lexer;
 import mjc.lexer.LexerException;
 import mjc.parser.Parser;
@@ -144,8 +151,19 @@ public class JVMMain {
          * Stage 3: Code Generation *
          ****************************/
 
-        final CodeGenerator generator = new CodeGenerator(symbolTable, typeChecker.getTypes());
-        ast.apply(generator);
+        final JasminGenerator generator = new JasminGenerator(new JasminHandler() {
+            public void handle(String className, StringBuilder code) {
+                // Write to .j file.
+                final Path path = Paths.get(className + ".j");
+                final Charset charset = StandardCharsets.UTF_8;
+                try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
+                    writer.append(code);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        generator.generate(ast, symbolTable, typeChecker.getTypes());
 
         return true;
     }
