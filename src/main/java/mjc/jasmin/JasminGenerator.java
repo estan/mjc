@@ -217,7 +217,7 @@ public class JasminGenerator extends DepthFirstAdapter {
         final String fieldName = declaration.getName().getText();
         final Type fieldType = currentClass.getField(fieldName).getType();
 
-        direc("field protected %s %s", typeDescriptor(fieldType), fieldName);
+        direc("field protected %s %s", fieldName, typeDescriptor(fieldType));
     }
 
     @Override
