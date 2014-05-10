@@ -161,6 +161,11 @@ public class JVMMain {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                if (!commandLine.hasOption("S")) {
+                    // Invoke Jasmin to assemble the file.
+                    jasmin.Main.main(new String[] { className + ".j" });
+                }
             }
         });
         generator.generate(ast, symbolTable, typeChecker.getTypes());
