@@ -1,5 +1,8 @@
 package mjc.jasmin;
 
+import static mjc.error.MiniJavaErrorType.EXPECTED_VARIABLE_GOT_CLASS;
+import static mjc.error.MiniJavaErrorType.UNDECLARED_IDENTIFIER;
+
 import java.util.Map;
 
 import mjc.analysis.DepthFirstAdapter;
@@ -7,6 +10,7 @@ import mjc.node.ABlockStatement;
 import mjc.node.AClassDeclaration;
 import mjc.node.AFalseExpression;
 import mjc.node.AFieldDeclaration;
+import mjc.node.AIdentifierExpression;
 import mjc.node.AIntegerExpression;
 import mjc.node.AMainClassDeclaration;
 import mjc.node.AMethodDeclaration;
@@ -23,6 +27,7 @@ import mjc.symbol.MethodInfo;
 import mjc.symbol.SymbolTable;
 import mjc.symbol.VariableInfo;
 import mjc.types.Type;
+import mjc.types.UndefinedType;
 
 /**
  * Jasmin code generator.
@@ -281,6 +286,26 @@ public class JasminGenerator extends DepthFirstAdapter {
     @Override
     public void outAFalseExpression(final AFalseExpression expression) {
         instr("iconst_0");
+    }
+
+    @Override
+    public void outAIdentifierExpression(final AIdentifierExpression expression) {
+        final String id = expression.getIdentifier().getText();
+        final VariableInfo localInfo, paramInfo, fieldInfo;
+
+        if ((localInfo = currentMethod.getLocal(id)) != null) {
+            final Type type = localInfo.getType();
+            final String instr = type.isInt() || type.isBoolean() ? "iload" : "aload";
+            instr("%s %d", instr, localInfo.getIndex());
+        } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
+            final Type type = paramInfo.getType();
+            final String instr = type.isInt() || type.isBoolean() ? "iload" : "aload";
+            instr("%s %d", instr, paramInfo.getIndex());
+        } else if ((fieldInfo = currentClass.getField(id)) != null) {
+            final String typeDescriptor = typeDescriptor(fieldInfo.getType());
+            instr("aload_0");
+            instr("getfield %s/%s %s", currentClass.getName(), id, typeDescriptor);
+        }
     }
 
     @Override
