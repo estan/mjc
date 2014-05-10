@@ -137,13 +137,6 @@ public class MethodInfo {
     }
 
     /**
-     * @returns Number of method parameters.
-     */
-    public int getNumParameters() {
-        return parameters.size();
-    }
-
-    /**
      * Returns information about a currently visible local variable.
      *
      * The return value of this method depends on previous calls to {@link #enterBlock()}
@@ -181,13 +174,6 @@ public class MethodInfo {
     }
 
     /**
-     * @returns Number of local variables.
-     */
-    public int getNumLocals() {
-        return locals.size();
-    }
-
-    /**
      * @return Line where the method is declared.
      */
     public int getLine() {
@@ -199,6 +185,13 @@ public class MethodInfo {
      */
     public int getColumn() {
         return column;
+    }
+
+    /**
+     * @return The next index to be used for added fields / local variables.
+     */
+    public int getNextIndex() {
+        return nextIndex;
     }
 
     /**

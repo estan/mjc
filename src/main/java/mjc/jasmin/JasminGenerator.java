@@ -144,10 +144,8 @@ public class JasminGenerator extends DepthFirstAdapter {
         direc("end method");
         nl();
 
-        final int numLocals = currentMethod.getNumParameters() + currentMethod.getNumLocals() + 1;
-
         direc("method public static main([Ljava/lang/String;)V");
-        direc("limit locals %d", numLocals);
+        direc("limit locals %d", currentMethod.getNextIndex());
         direc("limit stack %d", MAX_STACK_SIZE);
     }
 
@@ -196,11 +194,10 @@ public class JasminGenerator extends DepthFirstAdapter {
 
         final String methodName = currentMethod.getName();
         final String methodSignature = methodSignatureDescriptor(currentMethod);
-        final int numLocals = currentMethod.getNumParameters() + currentMethod.getNumLocals() + 1;
 
         nl();
         direc("method public %s%s", methodName, methodSignature);
-        direc("limit locals %d", numLocals);
+        direc("limit locals %d", currentMethod.getNextIndex() + 1);
         direc("limit stack %d", MAX_STACK_SIZE);
     }
 
