@@ -13,6 +13,7 @@ import mjc.node.AIntegerExpression;
 import mjc.node.AMainClassDeclaration;
 import mjc.node.AMethodDeclaration;
 import mjc.node.AMinusExpression;
+import mjc.node.ANewIntArrayExpression;
 import mjc.node.ANotExpression;
 import mjc.node.APlusExpression;
 import mjc.node.APrintlnStatement;
@@ -291,6 +292,11 @@ public class JasminGenerator extends DepthFirstAdapter {
     @Override
     public void outATimesExpression(final ATimesExpression expression) {
         instr("imul");
+    }
+
+    @Override
+    public void outANewIntArrayExpression(final ANewIntArrayExpression expression) {
+        instr("newarray int");
     }
 
     @Override
