@@ -12,6 +12,7 @@ import mjc.node.AIdentifierExpression;
 import mjc.node.AIntegerExpression;
 import mjc.node.AMainClassDeclaration;
 import mjc.node.AMethodDeclaration;
+import mjc.node.AMethodInvocationExpression;
 import mjc.node.AMinusExpression;
 import mjc.node.ANewInstanceExpression;
 import mjc.node.ANewIntArrayExpression;
@@ -44,6 +45,9 @@ public class JasminGenerator extends DepthFirstAdapter {
 
     private ClassInfo currentClass;
     private MethodInfo currentMethod;
+
+    // Index of first user param/local (0 in static methods, 1 in non-static).
+    private int baseIndex = 0;
 
     public JasminGenerator(JasminHandler handler) {
         this.handler = handler;
@@ -151,8 +155,10 @@ public class JasminGenerator extends DepthFirstAdapter {
 
         // Main method.
         direc("method public static main([Ljava/lang/String;)V");
-        direc("limit locals %d", currentMethod.getNextIndex());
+        direc("limit locals %d", baseIndex + currentMethod.getNextIndex());
         direc("limit stack %d", MAX_STACK_SIZE);
+
+        baseIndex = 0;
     }
 
     @Override
@@ -178,6 +184,8 @@ public class JasminGenerator extends DepthFirstAdapter {
         direc("class public %s", currentClass.getName());
         direc("super java/lang/Object");
         nl();
+
+        baseIndex = 1;
     }
 
     @Override
@@ -215,7 +223,7 @@ public class JasminGenerator extends DepthFirstAdapter {
 
         nl();
         direc("method public %s%s", methodName, methodSignature);
-        direc("limit locals %d", currentMethod.getNextIndex() + 1);
+        direc("limit locals %d", baseIndex + currentMethod.getNextIndex());
         direc("limit stack %d", MAX_STACK_SIZE);
     }
 
@@ -270,10 +278,10 @@ public class JasminGenerator extends DepthFirstAdapter {
 
         if ((localInfo = currentMethod.getLocal(id)) != null) {
             final Type type = localInfo.getType();
-            instr("%s %d", type.isReference() ? "astore" : "istore", localInfo.getIndex());
+            instr("%s %d", type.isReference() ? "astore" : "istore", baseIndex + localInfo.getIndex());
         } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
             final Type type = paramInfo.getType();
-            instr("%s %d", type.isReference() ? "astore" : "istore", paramInfo.getIndex());
+            instr("%s %d", type.isReference() ? "astore" : "istore", baseIndex + paramInfo.getIndex());
         } else if ((fieldInfo = currentClass.getField(id)) != null) {
             final String typeDescriptor = typeDescriptor(fieldInfo.getType());
             instr("putfield %s/%s %s", currentClass.getName(), id, typeDescriptor);
@@ -297,7 +305,12 @@ public class JasminGenerator extends DepthFirstAdapter {
 
     @Override
     public void outANewInstanceExpression(final ANewInstanceExpression expression) {
-        instr("new %s", expression.getClassName().getText());
+        final String className = expression.getClassName().getText();
+        instr("new %s", className);
+
+        // Call default constructor.
+        instr("dup");
+        instr("invokespecial %s/<init>()V", className);
     }
 
     @Override
@@ -316,6 +329,11 @@ public class JasminGenerator extends DepthFirstAdapter {
     }
 
     @Override
+    public void outAFalseExpression(final AFalseExpression expression) {
+        instr("iconst_0");
+    }
+
+    @Override
     public void inANotExpression(final ANotExpression expression) {
         instr("iconst_1");
     }
@@ -326,8 +344,15 @@ public class JasminGenerator extends DepthFirstAdapter {
     }
 
     @Override
-    public void outAFalseExpression(final AFalseExpression expression) {
-        instr("iconst_0");
+    public void outAMethodInvocationExpression(final AMethodInvocationExpression expression) {
+        final Type type = types.get(expression.getInstance());
+        final ClassInfo classInfo = symbolTable.getClassInfo(type.getName());
+        final MethodInfo methodInfo = classInfo.getMethod(expression.getName().getText());
+
+        instr("invokevirtual %s/%s%s",
+                classInfo.getName(),
+                methodInfo.getName(),
+                methodSignatureDescriptor(methodInfo));
     }
 
     @Override
@@ -337,10 +362,10 @@ public class JasminGenerator extends DepthFirstAdapter {
 
         if ((localInfo = currentMethod.getLocal(id)) != null) {
             final Type type = localInfo.getType();
-            instr("%s %d", type.isReference() ? "aload" : "iload", localInfo.getIndex());
+            instr("%s %d", type.isReference() ? "aload" : "iload", baseIndex + localInfo.getIndex());
         } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
             final Type type = paramInfo.getType();
-            instr("%s %d", type.isReference() ? "aload" : "iload", paramInfo.getIndex());
+            instr("%s %d", type.isReference() ? "aload" : "iload", baseIndex + paramInfo.getIndex());
         } else if ((fieldInfo = currentClass.getField(id)) != null) {
             final String typeDescriptor = typeDescriptor(fieldInfo.getType());
             instr("aload_0");
