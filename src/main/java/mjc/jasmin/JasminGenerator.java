@@ -3,6 +3,8 @@ package mjc.jasmin;
 import java.util.Map;
 
 import mjc.analysis.DepthFirstAdapter;
+import mjc.node.AArrayAccessExpression;
+import mjc.node.AArrayAssignStatement;
 import mjc.node.AAssignStatement;
 import mjc.node.ABlockStatement;
 import mjc.node.AClassDeclaration;
@@ -289,6 +291,27 @@ public class JasminGenerator extends DepthFirstAdapter {
     }
 
     @Override
+    public void inAArrayAssignStatement(final AArrayAssignStatement statement) {
+        final String id = statement.getName().getText();
+        final VariableInfo localInfo, paramInfo, fieldInfo;
+
+        if ((localInfo = currentMethod.getLocal(id)) != null) {
+            instr("aload %d", baseIndex + localInfo.getIndex());
+        } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
+            instr("aload %d", baseIndex + paramInfo.getIndex());
+        } else if ((fieldInfo = currentClass.getField(id)) != null) {
+            final String typeDescriptor = typeDescriptor(fieldInfo.getType());
+            instr("aload_0");
+            instr("getfield %s/%s %s", currentClass.getName(), id, typeDescriptor);
+        }
+    }
+
+    @Override
+    public void outAArrayAssignStatement(final AArrayAssignStatement statement) {
+        instr("iastore");
+    }
+
+    @Override
     public void outAPlusExpression(final APlusExpression expression) {
         instr("iadd");
     }
@@ -353,6 +376,11 @@ public class JasminGenerator extends DepthFirstAdapter {
                 classInfo.getName(),
                 methodInfo.getName(),
                 methodSignatureDescriptor(methodInfo));
+    }
+
+    @Override
+    public void outAArrayAccessExpression(final AArrayAccessExpression expression) {
+        instr("iaload");
     }
 
     @Override
