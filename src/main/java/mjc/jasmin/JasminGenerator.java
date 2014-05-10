@@ -3,6 +3,7 @@ package mjc.jasmin;
 import java.util.Map;
 
 import mjc.analysis.DepthFirstAdapter;
+import mjc.node.AAssignStatement;
 import mjc.node.ABlockStatement;
 import mjc.node.AClassDeclaration;
 import mjc.node.AFalseExpression;
@@ -242,6 +243,33 @@ public class JasminGenerator extends DepthFirstAdapter {
 
         instr("invokestatic java/lang/String/valueOf(%s)Ljava/lang/String;", typeDescriptor);
         instr("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
+    }
+
+    @Override
+    public void inAAssignStatement(final AAssignStatement statement) {
+        final String id = statement.getName().getText();
+
+        if (currentMethod.getLocal(id) == null && currentMethod.getParameter(id) == null) {
+            // Load this pointer in preparation for putfield.
+            instr("aload_0");
+        }
+    }
+
+    @Override
+    public void outAAssignStatement(final AAssignStatement statement) {
+        final String id = statement.getName().getText();
+        final VariableInfo localInfo, paramInfo, fieldInfo;
+
+        if ((localInfo = currentMethod.getLocal(id)) != null) {
+            final Type type = localInfo.getType();
+            instr("%s %d", type.isReference() ? "astore" : "istore", localInfo.getIndex());
+        } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
+            final Type type = paramInfo.getType();
+            instr("%s %d", type.isReference() ? "astore" : "istore", paramInfo.getIndex());
+        } else if ((fieldInfo = currentClass.getField(id)) != null) {
+            final String typeDescriptor = typeDescriptor(fieldInfo.getType());
+            instr("putfield %s/%s %s", currentClass.getName(), id, typeDescriptor);
+        }
     }
 
     @Override
