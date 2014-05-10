@@ -181,6 +181,7 @@ public class JasminGenerator extends DepthFirstAdapter {
     @Override
     public void outAClassDeclaration(final AClassDeclaration declaration) {
         // Default constructor.
+        nl();
         direc("method public <init>()V");
         instr("aload_0");
         instr("invokenonvirtual java/lang/Object/<init>()V");
