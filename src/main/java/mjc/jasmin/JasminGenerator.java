@@ -5,6 +5,7 @@ import java.util.Map;
 import mjc.analysis.DepthFirstAdapter;
 import mjc.node.AArrayAccessExpression;
 import mjc.node.AArrayAssignStatement;
+import mjc.node.AArrayLengthExpression;
 import mjc.node.AAssignStatement;
 import mjc.node.ABlockStatement;
 import mjc.node.AClassDeclaration;
@@ -381,6 +382,11 @@ public class JasminGenerator extends DepthFirstAdapter {
     @Override
     public void outAArrayAccessExpression(final AArrayAccessExpression expression) {
         instr("iaload");
+    }
+
+    @Override
+    public void outAArrayLengthExpression(final AArrayLengthExpression expression) {
+        instr("arraylength");
     }
 
     @Override
