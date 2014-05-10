@@ -206,7 +206,7 @@ public class JasminGenerator extends DepthFirstAdapter {
     public void outAMethodDeclaration(final AMethodDeclaration declaration) {
         final Type type = currentMethod.getReturnType();
 
-        instr(type.isClass() || type.isIntArray() ? "areturn" : "ireturn");
+        instr(type.isReference() ? "areturn" : "ireturn");
         direc("end method");
 
         currentMethod.leaveBlock();
@@ -291,12 +291,10 @@ public class JasminGenerator extends DepthFirstAdapter {
 
         if ((localInfo = currentMethod.getLocal(id)) != null) {
             final Type type = localInfo.getType();
-            final String instr = type.isInt() || type.isBoolean() ? "iload" : "aload";
-            instr("%s %d", instr, localInfo.getIndex());
+            instr("%s %d", type.isReference() ? "aload" : "iload", localInfo.getIndex());
         } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
             final Type type = paramInfo.getType();
-            final String instr = type.isInt() || type.isBoolean() ? "iload" : "aload";
-            instr("%s %d", instr, paramInfo.getIndex());
+            instr("%s %d", type.isReference() ? "aload" : "iload", paramInfo.getIndex());
         } else if ((fieldInfo = currentClass.getField(id)) != null) {
             final String typeDescriptor = typeDescriptor(fieldInfo.getType());
             instr("aload_0");
