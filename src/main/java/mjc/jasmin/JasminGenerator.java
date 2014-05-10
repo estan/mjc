@@ -1,8 +1,5 @@
 package mjc.jasmin;
 
-import static mjc.error.MiniJavaErrorType.EXPECTED_VARIABLE_GOT_CLASS;
-import static mjc.error.MiniJavaErrorType.UNDECLARED_IDENTIFIER;
-
 import java.util.Map;
 
 import mjc.analysis.DepthFirstAdapter;
@@ -27,7 +24,6 @@ import mjc.symbol.MethodInfo;
 import mjc.symbol.SymbolTable;
 import mjc.symbol.VariableInfo;
 import mjc.types.Type;
-import mjc.types.UndefinedType;
 
 /**
  * Jasmin code generator.
