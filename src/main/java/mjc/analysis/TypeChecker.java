@@ -212,7 +212,7 @@ public class TypeChecker extends DepthFirstAdapter {
         final int line = statement.getPrintlnKeyword().getLine();
         final int column = statement.getPrintlnKeyword().getPos();
 
-        if (!valueType.isInt() && !valueType.isUndefined()) {
+        if (!valueType.isInt() && !valueType.isBoolean() && !valueType.isUndefined()) {
             error(INVALID_PRINTLN_TYPE.on(line, column, valueType));
         }
     }
