@@ -44,6 +44,13 @@ public class BuiltInTypeTest {
     }
 
     @Test
+    public void testIsReference() {
+        assertThat(BuiltInType.Boolean.isReference(), is(false));
+        assertThat(BuiltInType.Int.isReference(), is(false));
+        assertThat(BuiltInType.IntArray.isReference(), is(true));
+    }
+
+    @Test
     public void testIsAssignableTo() {
         // Boolean
         assertThat(BuiltInType.Boolean.isAssignableTo(BuiltInType.Int), is(false));

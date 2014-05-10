@@ -52,6 +52,13 @@ public abstract class Type {
     }
 
     /**
+     * @return true if this is a reference type.
+     */
+    public boolean isReference() {
+        return false;
+    }
+
+    /**
      * @return true if this type is assignable (=) to @a type.
      */
     public boolean isAssignableTo(final Type type) {

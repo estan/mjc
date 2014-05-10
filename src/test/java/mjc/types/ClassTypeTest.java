@@ -17,6 +17,11 @@ public class ClassTypeTest {
     }
 
     @Test
+    public void testIsReference() {
+        assertThat(classA1.isReference(), is(true));
+    }
+
+    @Test
     public void testIsAssignableTo() {
         assertThat(classA1.isAssignableTo(BuiltInType.Boolean), is(false));
         assertThat(classA1.isAssignableTo(BuiltInType.Int), is(false));

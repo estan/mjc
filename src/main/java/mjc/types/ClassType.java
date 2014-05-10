@@ -26,6 +26,11 @@ public class ClassType extends Type {
     }
 
     @Override
+    public boolean isReference() {
+        return true;
+    }
+
+    @Override
     public boolean isAssignableTo(Type type) {
         return type.isUndefined() || type.isClass() && type.getName().equals(name);
 

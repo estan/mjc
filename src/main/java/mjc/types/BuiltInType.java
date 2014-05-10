@@ -54,6 +54,11 @@ public class BuiltInType extends Type {
     }
 
     @Override
+    public boolean isReference() {
+        return this == IntArray;
+    }
+
+    @Override
     public boolean isAssignableTo(final Type type) {
         return type.isUndefined() || type == this;
     }
