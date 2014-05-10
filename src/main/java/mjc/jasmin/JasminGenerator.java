@@ -58,7 +58,7 @@ public class JasminGenerator extends DepthFirstAdapter {
      * @param directive Directive to add, including any format specifiers.
      * @param args Arguments matching format specifiers in @a directive.
      */
-    void direc(String directive, Object... args) {
+    private void direc(String directive, Object... args) {
         result.append('.' + String.format(directive, args) + '\n');
     }
 
@@ -68,7 +68,7 @@ public class JasminGenerator extends DepthFirstAdapter {
      * @param instruction Instruction to add, including any format specifiers.
      * @param args Arguments matching format specifiers in @a instruction.
      */
-    void instr(String instruction, Object... args) {
+    private void instr(String instruction, Object... args) {
         result.append("    " + String.format(instruction, args) + '\n');
     }
 
@@ -77,14 +77,14 @@ public class JasminGenerator extends DepthFirstAdapter {
      *
      * @param label Label to add.
      */
-    void label(String label) {
+    private void label(String label) {
         result.append(label + ":\n");
     }
 
     /**
      * Adds a newline to the result.
      */
-    void nl() {
+    private void nl() {
         result.append("\n");
     }
 
