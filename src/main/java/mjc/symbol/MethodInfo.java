@@ -137,6 +137,13 @@ public class MethodInfo {
     }
 
     /**
+     * @returns Number of method parameters.
+     */
+    public int getNumParameters() {
+        return parameters.size();
+    }
+
+    /**
      * Returns information about a currently visible local variable.
      *
      * The return value of this method depends on previous calls to {@link #enterBlock()}
@@ -171,6 +178,13 @@ public class MethodInfo {
         VariableInfo local = new VariableInfo(name, type, line, column, nextIndex++, blocks.peek());
         locals.put(name, local);
         return local;
+    }
+
+    /**
+     * @returns Number of local variables.
+     */
+    public int getNumLocals() {
+        return locals.size();
     }
 
     /**
