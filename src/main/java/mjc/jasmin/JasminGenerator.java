@@ -100,7 +100,7 @@ public class JasminGenerator extends DepthFirstAdapter {
         } else if (type.isIntArray()) {
             return "[I";
         } else if (type.isBoolean()) {
-            return "B";
+            return "Z";
         } else if (type.isClass()) {
             return "L" + type.getName() + ";";
         } else {
@@ -240,7 +240,9 @@ public class JasminGenerator extends DepthFirstAdapter {
 
     @Override
     public void outAPrintlnStatement(final APrintlnStatement statement) {
-        instr("invokestatic java/lang/String/valueOf(I)Ljava/lang/String;");
+        String typeDescriptor = typeDescriptor(types.get(statement.getValue()));
+
+        instr("invokestatic java/lang/String/valueOf(%s)Ljava/lang/String;", typeDescriptor);
         instr("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
     }
 
