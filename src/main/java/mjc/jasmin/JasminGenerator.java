@@ -48,9 +48,11 @@ import mjc.symbol.VariableInfo;
 import mjc.types.Type;
 
 /**
- * Jasmin code generator.
+ * The JasminGenerator class generates Jasmin code from the AST.
  *
- * TODO: More docs.
+ * Construct an instance of the class with a {@link JasminHandler} for handling
+ * the output. Then call the {@link #generate(Node, SymbolTable, Map)} method to
+ * start the generation.
  */
 public class JasminGenerator extends AnalysisAdapter {
     private final static String INDENT = "    ";
