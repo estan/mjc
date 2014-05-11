@@ -56,7 +56,6 @@ import mjc.types.Type;
  */
 public class JasminGenerator extends AnalysisAdapter {
     private final static String INDENT = "    ";
-    private final static int MAX_STACK_SIZE = 30; // TODO: Don't hardcode this.
 
     private final JasminHandler handler;
     private StringBuilder result;
@@ -68,10 +67,23 @@ public class JasminGenerator extends AnalysisAdapter {
     private ClassInfo currentClass;
     private MethodInfo currentMethod;
 
+    private int stackSize;
+    private int maxStackSize;
+
     public JasminGenerator(JasminHandler handler) {
         this.handler = handler;
     }
 
+    /**
+     * Generates Jasmin code.
+     *
+     * The handle method of the {@link JasminHandler} passed in during construction
+     * will be called for each generated class.
+     *
+     * @param ast Input AST.
+     * @param symbolTable Input symbol table.
+     * @param types Input AST node to MiniJava type map.
+     */
     public void generate(Node ast, SymbolTable symbolTable, Map<Node, Type> types) {
         this.symbolTable = symbolTable;
         this.types = types;
@@ -86,9 +98,14 @@ public class JasminGenerator extends AnalysisAdapter {
         result.append('.' + String.format(directive, args) + '\n');
     }
 
-    /** Adds a Jasmin @a instruction formatted with @a args. */
-    private void instr(String instruction, Object... args) {
+    /**
+     * Adds a Jasmin @a instruction formatted with @a args that changes the stack
+     * size by @a stackChange.
+     */
+    private void instr(int stackChange, String instruction, Object... args) {
         result.append(INDENT + String.format(instruction, args) + '\n');
+        stackSize += stackChange;
+        maxStackSize = Math.max(maxStackSize, stackSize);
     }
 
     /** Adds a Jasmin @a label. */
@@ -119,50 +136,50 @@ public class JasminGenerator extends AnalysisAdapter {
             final ALessThanExpression lt = (ALessThanExpression) expression;
             lt.getLeft().apply(this);
             lt.getRight().apply(this);
-            instr("if_icmplt %s", trueLabel);
-            instr("goto %s", falseLabel);
+            instr(-2, "if_icmplt %s", trueLabel);
+            instr(0, "goto %s", falseLabel);
         } else if (expression instanceof ALessEqualThanExpression) {
             final ALessEqualThanExpression le = (ALessEqualThanExpression) expression;
             le.getLeft().apply(this);
             le.getRight().apply(this);
-            instr("if_icmple %s", trueLabel);
-            instr("goto %s", falseLabel);
+            instr(-2, "if_icmple %s", trueLabel);
+            instr(0, "goto %s", falseLabel);
         } else if (expression instanceof AGreaterThanExpression) {
             final AGreaterThanExpression gt = (AGreaterThanExpression) expression;
             gt.getLeft().apply(this);
             gt.getRight().apply(this);
-            instr("if_icmpgt %s", trueLabel);
-            instr("goto %s", falseLabel);
+            instr(-2, "if_icmpgt %s", trueLabel);
+            instr(0, "goto %s", falseLabel);
         } else if (expression instanceof AGreaterEqualThanExpression) {
             final AGreaterEqualThanExpression ge = (AGreaterEqualThanExpression) expression;
             ge.getLeft().apply(this);
             ge.getRight().apply(this);
-            instr("if_icmpge %s", trueLabel);
-            instr("goto %s", falseLabel);
+            instr(-2, "if_icmpge %s", trueLabel);
+            instr(0, "goto %s", falseLabel);
         } else if (expression instanceof AEqualExpression) {
             final AEqualExpression eq = (AEqualExpression) expression;
             eq.getLeft().apply(this);
             eq.getRight().apply(this);
-            instr("if_%scmpeq %s", types.get(eq.getLeft()).isReference() ? 'a' : 'i', trueLabel);
-            instr("goto %s", falseLabel);
+            instr(-2, "if_%scmpeq %s", types.get(eq.getLeft()).isReference() ? 'a' : 'i', trueLabel);
+            instr(0, "goto %s", falseLabel);
         } else if (expression instanceof ANotEqualExpression) {
             final ANotEqualExpression ne = (ANotEqualExpression) expression;
             ne.getLeft().apply(this);
             ne.getRight().apply(this);
-            instr("if_%scmpne %s", types.get(ne.getLeft()).isReference() ? 'a' : 'i', trueLabel);
-            instr("goto %s", falseLabel);
+            instr(-2, "if_%scmpne %s", types.get(ne.getLeft()).isReference() ? 'a' : 'i', trueLabel);
+            instr(0, "goto %s", falseLabel);
         } else if (expression instanceof ANotExpression) {
             jump(((ANotExpression) expression).getExpression(), falseLabel, trueLabel);
         } else if (expression instanceof AIdentifierExpression ||
                    expression instanceof AMethodInvocationExpression) {
             expression.apply(this);
-            instr("iconst_0");
-            instr("if_icmpne %s", trueLabel);
-            instr("goto %s", falseLabel);
+            instr(1, "iconst_0");
+            instr(-2, "if_icmpne %s", trueLabel);
+            instr(0, "goto %s", falseLabel);
         } else if (expression instanceof ATrueExpression) {
-            instr("goto %s", trueLabel);
+            instr(0, "goto %s", trueLabel);
         } else if (expression instanceof AFalseExpression) {
-            instr("goto %s", falseLabel);
+            instr(0, "goto %s", falseLabel);
         } else {
             throw new Error("jump: Unknown expression");
         }
@@ -180,10 +197,10 @@ public class JasminGenerator extends AnalysisAdapter {
         jump(expression, trueLabel, falseLabel);
 
         label(trueLabel);
-        instr("iconst_1");
-        instr("goto %s", skipLabel);
+        instr(1, "iconst_1");
+        instr(0, "goto %s", skipLabel);
         label(falseLabel);
-        instr("iconst_0");
+        instr(1, "iconst_0");
         label(skipLabel);
     }
 
@@ -226,24 +243,26 @@ public class JasminGenerator extends AnalysisAdapter {
         nl();
 
         // Default constructor.
+        maxStackSize = 0;
         direc("method public <init>()V");
-        instr("aload_0");
-        instr("invokenonvirtual java/lang/Object/<init>()V");
-        instr("return");
+        instr(1, "aload_0");
+        instr(-1, "invokenonvirtual java/lang/Object/<init>()V");
+        instr(-stackSize, "return");
         direc("end method");
         nl();
 
         // Main method.
+        maxStackSize = 0;
         direc("method public static main([Ljava/lang/String;)V");
         direc("limit locals %d", 1 + currentMethod.getNumVariables());
-        direc("limit stack %d", MAX_STACK_SIZE);
         for (Node variableDeclaration : declaration.getLocals()) {
             variableDeclaration.apply(this);
         }
         for (Node statement : declaration.getStatements()) {
             statement.apply(this);
         }
-        instr("return");
+        instr(-stackSize, "return");
+        direc("limit stack %d", maxStackSize);
         direc("end method");
 
         handler.handle(currentClass.getName(), result);
@@ -267,10 +286,11 @@ public class JasminGenerator extends AnalysisAdapter {
 
         // Default constructor.
         nl();
+        maxStackSize = 0;
         direc("method public <init>()V");
-        instr("aload_0");
-        instr("invokenonvirtual java/lang/Object/<init>()V");
-        instr("return");
+        instr(1, "aload_0");
+        instr(-1, "invokenonvirtual java/lang/Object/<init>()V");
+        instr(-stackSize, "return");
         direc("end method");
         nl();
 
@@ -296,11 +316,11 @@ public class JasminGenerator extends AnalysisAdapter {
         currentMethod = currentClass.getMethod(declaration.getName().getText());
         currentMethod.enterBlock();
         labelCounters.clear();
+        maxStackSize = 0;
 
         nl();
         direc("method public %s%s", currentMethod.getName(), currentMethod.descriptor());
         direc("limit locals %d", 1 + currentMethod.getNumVariables());
-        direc("limit stack %d", MAX_STACK_SIZE);
         for (Node formalDeclaration : declaration.getFormals()) {
             formalDeclaration.apply(this);
         }
@@ -308,7 +328,8 @@ public class JasminGenerator extends AnalysisAdapter {
             statement.apply(this);
         }
         declaration.getReturnExpression().apply(this);
-        instr(currentMethod.getReturnType().isReference() ? "areturn" : "ireturn");
+        instr(-stackSize, currentMethod.getReturnType().isReference() ? "areturn" : "ireturn");
+        direc("limit stack %d", maxStackSize);
         direc("end method");
 
         currentMethod.leaveBlock();
@@ -328,10 +349,10 @@ public class JasminGenerator extends AnalysisAdapter {
     public void caseAPrintlnStatement(final APrintlnStatement statement) {
         String typeDescriptor = types.get(statement.getValue()).descriptor();
 
-        instr("getstatic java/lang/System/out Ljava/io/PrintStream;");
+        instr(1, "getstatic java/lang/System/out Ljava/io/PrintStream;");
         statement.getValue().apply(this);
-        instr("invokestatic java/lang/String/valueOf(%s)Ljava/lang/String;", typeDescriptor);
-        instr("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
+        instr(0, "invokestatic java/lang/String/valueOf(%s)Ljava/lang/String;", typeDescriptor);
+        instr(-2, "invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
     }
 
     @Override
@@ -354,7 +375,7 @@ public class JasminGenerator extends AnalysisAdapter {
         jump(statement.getCondition(), trueLabel, falseLabel);
         label(trueLabel);
         statement.getThen().apply(this);
-        instr("goto %s", endLabel);
+        instr(0, "goto %s", endLabel);
         label(falseLabel);
         statement.getElse().apply(this);
         label(endLabel);
@@ -370,7 +391,7 @@ public class JasminGenerator extends AnalysisAdapter {
         jump(statement.getCondition(), trueLabel, endLabel);
         label(trueLabel);
         statement.getStatement().apply(this);
-        instr("goto %s", loopLabel);
+        instr(0, "goto %s", loopLabel);
         label(endLabel);
     }
 
@@ -382,16 +403,16 @@ public class JasminGenerator extends AnalysisAdapter {
         if ((localInfo = currentMethod.getLocal(id)) != null) {
             final Type type = localInfo.getType();
             statement.getValue().apply(this);
-            instr("%s %d", type.isReference() ? "astore" : "istore", localInfo.getIndex());
+            instr(-1, "%s %d", type.isReference() ? "astore" : "istore", localInfo.getIndex());
         } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
             final Type type = paramInfo.getType();
             statement.getValue().apply(this);
-            instr("%s %d", type.isReference() ? "astore" : "istore", paramInfo.getIndex());
+            instr(-1, "%s %d", type.isReference() ? "astore" : "istore", paramInfo.getIndex());
         } else if ((fieldInfo = currentClass.getField(id)) != null) {
             final String typeDescriptor = fieldInfo.getType().descriptor();
-            instr("aload_0");
+            instr(1, "aload_0");
             statement.getValue().apply(this);
-            instr("putfield %s/%s %s", currentClass.getName(), id, typeDescriptor);
+            instr(-2, "putfield %s/%s %s", currentClass.getName(), id, typeDescriptor);
         }
     }
 
@@ -401,17 +422,17 @@ public class JasminGenerator extends AnalysisAdapter {
         final VariableInfo localInfo, paramInfo, fieldInfo;
 
         if ((localInfo = currentMethod.getLocal(id)) != null) {
-            instr("aload %d", localInfo.getIndex());
+            instr(1, "aload %d", localInfo.getIndex());
         } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
-            instr("aload %d", paramInfo.getIndex());
+            instr(1, "aload %d", paramInfo.getIndex());
         } else if ((fieldInfo = currentClass.getField(id)) != null) {
             final String typeDescriptor = fieldInfo.getType().descriptor();
-            instr("aload_0");
-            instr("getfield %s/%s %s", currentClass.getName(), id, typeDescriptor);
+            instr(1, "aload_0");
+            instr(0, "getfield %s/%s %s", currentClass.getName(), id, typeDescriptor);
         }
         statement.getIndex().apply(this);
         statement.getValue().apply(this);
-        instr("iastore");
+        instr(-3, "iastore");
     }
 
     @Override
@@ -458,57 +479,57 @@ public class JasminGenerator extends AnalysisAdapter {
     public void caseAPlusExpression(final APlusExpression expression) {
         expression.getLeft().apply(this);
         expression.getRight().apply(this);
-        instr("iadd");
+        instr(-1, "iadd");
     }
 
     @Override
     public void caseAMinusExpression(final AMinusExpression expression) {
         expression.getLeft().apply(this);
         expression.getRight().apply(this);
-        instr("isub");
+        instr(-1, "isub");
     }
 
     @Override
     public void caseATimesExpression(final ATimesExpression expression) {
         expression.getLeft().apply(this);
         expression.getRight().apply(this);
-        instr("imul");
+        instr(-1, "imul");
     }
 
     @Override
     public void caseANewInstanceExpression(final ANewInstanceExpression expression) {
         final String className = expression.getClassName().getText();
-        instr("new '%s'", className);
-        instr("dup");
-        instr("invokespecial %s/<init>()V", className);
+        instr(1, "new '%s'", className);
+        instr(1, "dup");
+        instr(-1, "invokespecial %s/<init>()V", className);
     }
 
     @Override
     public void caseANewIntArrayExpression(final ANewIntArrayExpression expression) {
         expression.getSize().apply(this);
-        instr("newarray int");
+        instr(0, "newarray int");
     }
 
     @Override
     public void caseAIntegerExpression(final AIntegerExpression expression) {
-        instr("ldc %d", Integer.valueOf(expression.getInteger().getText()));
+        instr(1, "ldc %d", Integer.valueOf(expression.getInteger().getText()));
     }
 
     @Override
     public void caseATrueExpression(final ATrueExpression expression) {
-        instr("iconst_1");
+        instr(1, "iconst_1");
     }
 
     @Override
     public void caseAFalseExpression(final AFalseExpression expression) {
-        instr("iconst_0");
+        instr(1, "iconst_0");
     }
 
     @Override
     public void caseANotExpression(final ANotExpression expression) {
-        instr("iconst_1");
+        instr(1, "iconst_1");
         expression.getExpression().apply(this);
-        instr("isub");
+        instr(-1, "isub");
     }
 
     @Override
@@ -521,20 +542,20 @@ public class JasminGenerator extends AnalysisAdapter {
         for (Node actualParameter : expression.getActuals()) {
             actualParameter.apply(this);
         }
-        instr("invokevirtual %s/%s%s", classInfo.getName(), methodInfo.getName(), methodInfo.descriptor());
+        instr(-expression.getActuals().size(), "invokevirtual %s/%s%s", classInfo.getName(), methodInfo.getName(), methodInfo.descriptor());
     }
 
     @Override
     public void caseAArrayAccessExpression(final AArrayAccessExpression expression) {
         expression.getArray().apply(this);
         expression.getIndex().apply(this);
-        instr("iaload");
+        instr(-1, "iaload");
     }
 
     @Override
     public void caseAArrayLengthExpression(final AArrayLengthExpression expression) {
         expression.getArray().apply(this);
-        instr("arraylength");
+        instr(0, "arraylength");
     }
 
     @Override
@@ -544,19 +565,19 @@ public class JasminGenerator extends AnalysisAdapter {
 
         if ((localInfo = currentMethod.getLocal(id)) != null) {
             final Type type = localInfo.getType();
-            instr("%s %d", type.isReference() ? "aload" : "iload", localInfo.getIndex());
+            instr(1, "%s %d", type.isReference() ? "aload" : "iload", localInfo.getIndex());
         } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
             final Type type = paramInfo.getType();
-            instr("%s %d", type.isReference() ? "aload" : "iload", paramInfo.getIndex());
+            instr(1, "%s %d", type.isReference() ? "aload" : "iload", paramInfo.getIndex());
         } else if ((fieldInfo = currentClass.getField(id)) != null) {
             final String typeDescriptor = fieldInfo.getType().descriptor();
-            instr("aload_0");
-            instr("getfield %s/%s %s", currentClass.getName(), id, typeDescriptor);
+            instr(1, "aload_0");
+            instr(0, "getfield %s/%s %s", currentClass.getName(), id, typeDescriptor);
         }
     }
 
     @Override
     public void caseAThisExpression(final AThisExpression expression) {
-        instr("aload_0");
+        instr(1, "aload_0");
     }
 }
