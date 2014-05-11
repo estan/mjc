@@ -32,13 +32,13 @@ The compiler is invoked using the `mjc` script in the top-level directory.
 The available command line options are:
 
     usage: mjc <infile> [options]
-     -S             output Jasmin assembly code
+     -S             only output Jasmin assembly code
      -p             print abstract syntax tree
      -g             print abstract syntax tree in GraphViz format
-     -s             print symbol table
      -h             show help message
 
-For example, type `./mjc foo.java -S` to compile `foo.java`. The result is
-written as a set of Jasmin assembly code files (`.j`) into the current
-working directory, one file for each class.
+For example, type `./mjc foo.java` to compile `foo.java`. The result is
+written as a set of Jasmin assembly code files (`.j`), one file for each
+class, along with corresponding `.class` files from running the Jasmin
+assembler.
 

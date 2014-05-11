@@ -40,19 +40,4 @@ public class SymbolTable {
     public void addClassInfo(String name, ClassInfo info) {
         classes.put(name, info);
     }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[Symbol Table]\n");
-        for (Map.Entry<String, ClassInfo> classEntry : classes.entrySet()) {
-            builder.append(classEntry.getValue().toString().replaceAll("(?m)^", "    "));
-            builder.append(" [KEY: " + classEntry.getKey() + "]\n");
-        }
-        if (!classes.isEmpty()) {
-            // Remove trailing '\n'.
-            builder.deleteCharAt(builder.length() - 1);
-        }
-        return builder.toString();
-    }
 }

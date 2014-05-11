@@ -124,18 +124,4 @@ public class ClassInfo {
         methods.put(name, method);
         return method;
     }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("class " + name + " {");
-        for (VariableInfo field : fields.values()) {
-            builder.append("\n    " + field + ";");
-        }
-        for (Map.Entry<String, MethodInfo> methodEntry : methods.entrySet()) {
-            builder.append("\n    " + methodEntry.getValue() + " [KEY: " + methodEntry.getKey() + "]");
-        }
-        builder.append("\n}");
-        return builder.toString();
-    }
 }

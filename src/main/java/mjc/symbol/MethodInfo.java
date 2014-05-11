@@ -241,32 +241,4 @@ public class MethodInfo {
     private boolean isVisible(final VariableInfo local) {
         return blocks.search(local.getBlock()) != -1;
     }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(returnType + " " + name + "(");
-
-        // Add parameters.
-        for (VariableInfo parameter : parameters) {
-            builder.append(parameter + ", ");
-        }
-        if (!parameters.isEmpty()) {
-            // Remove trailing ", ".
-            builder.delete(builder.length() - 2, builder.length());
-        }
-
-        // Add local variables.
-        builder.append(") {");
-        for (VariableInfo local : locals.values()) {
-            builder.append(local + "; ");
-        }
-        if (!locals.isEmpty()) {
-            // Remove trailing ' '.
-            builder.deleteCharAt(builder.length() - 1);
-        }
-        builder.append("}");
-
-        return builder.toString();
-    }
 }

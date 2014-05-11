@@ -81,9 +81,4 @@ public class VariableInfo {
     public int getIndex() {
         return index;
     }
-
-    @Override
-    public String toString() {
-        return type + " " + name;
-    }
 }

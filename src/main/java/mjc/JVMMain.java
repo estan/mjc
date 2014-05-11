@@ -45,10 +45,9 @@ public class JVMMain {
     private final ASTGraphPrinter graphPrinter = new ASTGraphPrinter();
 
     public JVMMain() {
-        options.addOption("S", false, "output Jasmin assembly code");
+        options.addOption("S", false, "only output Jasmin assembly code");
         options.addOption("p", false, "print abstract syntax tree");
         options.addOption("g", false, "print abstract syntax tree in GraphViz format");
-        options.addOption("s", false, "print symbol table");
         options.addOption("h", false, "show help message");
 
         helpFormatter.setOptionComparator(new OptionComparator<Option>());
@@ -132,9 +131,6 @@ public class JVMMain {
             }
         }
 
-        if (commandLine.hasOption("s"))
-            System.out.println(symbolTable);
-
         // Run type-check.
         final TypeChecker typeChecker = new TypeChecker();
         if (!typeChecker.check(ast, symbolTable)) {
@@ -182,7 +178,7 @@ public class JVMMain {
 
     // Comparator for Options, to get them in the order we want in help output.
     class OptionComparator<T extends Option> implements Comparator<T> {
-        private static final String ORDER = "Spgsh";
+        private static final String ORDER = "Spgh";
 
         @Override
         public int compare(T option1, T option2) {
