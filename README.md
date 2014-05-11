@@ -4,7 +4,7 @@ MiniJava Compiler (`mjc`)
 This is a compiler for a slightly modified version of the MiniJava
 language described in Appel's *Modern Compiler Implementation in Java*.
 It was created as part of the course *DD2488 Compiler Construction* at
-KTH. The compiler supports the basic language described
+KTH. The compiler targets the JVM and supports the basic language described
 [here](http://www.csc.kth.se/utbildning/kth/kurser/DD2488/komp14/project/grammar14v1b.pdf),
 with the following extensions:
 
