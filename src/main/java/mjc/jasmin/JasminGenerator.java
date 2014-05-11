@@ -2,7 +2,7 @@ package mjc.jasmin;
 
 import java.util.Map;
 
-import mjc.analysis.DepthFirstAdapter;
+import mjc.analysis.AnalysisAdapter;
 import mjc.node.AArrayAccessExpression;
 import mjc.node.AArrayAssignStatement;
 import mjc.node.AArrayLengthExpression;
@@ -22,10 +22,12 @@ import mjc.node.ANewIntArrayExpression;
 import mjc.node.ANotExpression;
 import mjc.node.APlusExpression;
 import mjc.node.APrintlnStatement;
+import mjc.node.AProgram;
 import mjc.node.AThisExpression;
 import mjc.node.ATimesExpression;
 import mjc.node.ATrueExpression;
 import mjc.node.Node;
+import mjc.node.Start;
 import mjc.symbol.ClassInfo;
 import mjc.symbol.MethodInfo;
 import mjc.symbol.SymbolTable;
@@ -37,7 +39,7 @@ import mjc.types.Type;
  *
  * TODO: More docs.
  */
-public class JasminGenerator extends DepthFirstAdapter {
+public class JasminGenerator extends AnalysisAdapter {
     private final static int MAX_STACK_SIZE = 30; // TODO: Don't hardcode this.
 
     private final JasminHandler handler;
@@ -102,7 +104,20 @@ public class JasminGenerator extends DepthFirstAdapter {
     // Visitor methods below.
 
     @Override
-    public void inAMainClassDeclaration(final AMainClassDeclaration declaration) {
+    public void caseStart(final Start start) {
+        start.getPProgram().apply(this);
+    }
+
+    @Override
+    public void caseAProgram(final AProgram program) {
+        program.getMainClassDeclaration().apply(this);
+        for (Node classDeclaration : program.getClasses()) {
+            classDeclaration.apply(this);
+        }
+    }
+
+    @Override
+    public void caseAMainClassDeclaration(final AMainClassDeclaration declaration) {
         currentClass = symbolTable.getClassInfo(declaration.getName().getText());
         currentMethod = currentClass.getMethod(declaration.getMethodName().getText());
         currentMethod.enterBlock();
@@ -122,20 +137,19 @@ public class JasminGenerator extends DepthFirstAdapter {
         nl();
 
         // Main method.
+        baseIndex = 0;
         direc("method public static main([Ljava/lang/String;)V");
         direc("limit locals %d", baseIndex + currentMethod.getNextIndex());
         direc("limit stack %d", MAX_STACK_SIZE);
-
-        baseIndex = 0;
-    }
-
-    @Override
-    public void outAMainClassDeclaration(final AMainClassDeclaration declaration) {
-        // End of main method.
+        for (Node variableDeclaration : declaration.getLocals()) {
+            variableDeclaration.apply(this);
+        }
+        for (Node statement : declaration.getStatements()) {
+            statement.apply(this);
+        }
         instr("return");
         direc("end method");
 
-        // Handle the result using the configured handler.
         handler.handle(currentClass.getName(), result);
 
         currentMethod.leaveBlock();
@@ -144,20 +158,17 @@ public class JasminGenerator extends DepthFirstAdapter {
     }
 
     @Override
-    public void inAClassDeclaration(final AClassDeclaration declaration) {
+    public void caseAClassDeclaration(final AClassDeclaration declaration) {
         currentClass = symbolTable.getClassInfo(declaration.getName().getText());
 
         result = new StringBuilder();
 
         direc("class public %s", currentClass.getName());
         direc("super java/lang/Object");
-        nl();
+        for (Node fieldDeclaration : declaration.getFields()) {
+            fieldDeclaration.apply(this);
+        }
 
-        baseIndex = 1;
-    }
-
-    @Override
-    public void outAClassDeclaration(final AClassDeclaration declaration) {
         // Default constructor.
         nl();
         direc("method public <init>()V");
@@ -167,14 +178,18 @@ public class JasminGenerator extends DepthFirstAdapter {
         direc("end method");
         nl();
 
-        // Handle the result using the configured handler.
+        baseIndex = 1;
+        for (Node methodDeclaration : declaration.getMethods()) {
+            methodDeclaration.apply(this);
+        }
+
         handler.handle(currentClass.getName(), result);
 
         currentClass = null;
     }
 
     @Override
-    public void inAFieldDeclaration(final AFieldDeclaration declaration) {
+    public void caseAFieldDeclaration(final AFieldDeclaration declaration) {
         final String fieldName = declaration.getName().getText();
         final Type fieldType = currentClass.getField(fieldName).getType();
 
@@ -182,7 +197,7 @@ public class JasminGenerator extends DepthFirstAdapter {
     }
 
     @Override
-    public void inAMethodDeclaration(final AMethodDeclaration declaration) {
+    public void caseAMethodDeclaration(final AMethodDeclaration declaration) {
         currentMethod = currentClass.getMethod(declaration.getName().getText());
         currentMethod.enterBlock();
 
@@ -190,13 +205,14 @@ public class JasminGenerator extends DepthFirstAdapter {
         direc("method public %s%s", currentMethod.getName(), currentMethod.descriptor());
         direc("limit locals %d", baseIndex + currentMethod.getNextIndex());
         direc("limit stack %d", MAX_STACK_SIZE);
-    }
-
-    @Override
-    public void outAMethodDeclaration(final AMethodDeclaration declaration) {
-        final Type type = currentMethod.getReturnType();
-
-        instr(type.isReference() ? "areturn" : "ireturn");
+        for (Node formalDeclaration : declaration.getFormals()) {
+            formalDeclaration.apply(this);
+        }
+        for (Node statement : declaration.getStatements()) {
+            statement.apply(this);
+        }
+        declaration.getReturnExpression().apply(this);
+        instr(currentMethod.getReturnType().isReference() ? "areturn" : "ireturn");
         direc("end method");
 
         currentMethod.leaveBlock();
@@ -204,57 +220,47 @@ public class JasminGenerator extends DepthFirstAdapter {
     }
 
     @Override
-    public void inABlockStatement(final ABlockStatement block) {
+    public void caseABlockStatement(final ABlockStatement block) {
         currentMethod.enterBlock();
-    }
-
-    @Override
-    public void outABlockStatement(final ABlockStatement block) {
+        for (Node statement : block.getStatements()) {
+            statement.apply(this);
+        }
         currentMethod.leaveBlock();
     }
 
     @Override
-    public void inAPrintlnStatement(final APrintlnStatement statement) {
-        instr("getstatic java/lang/System/out Ljava/io/PrintStream;");
-    }
-
-    @Override
-    public void outAPrintlnStatement(final APrintlnStatement statement) {
+    public void caseAPrintlnStatement(final APrintlnStatement statement) {
         String typeDescriptor = types.get(statement.getValue()).descriptor();
 
+        instr("getstatic java/lang/System/out Ljava/io/PrintStream;");
+        statement.getValue().apply(this);
         instr("invokestatic java/lang/String/valueOf(%s)Ljava/lang/String;", typeDescriptor);
         instr("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
     }
 
     @Override
-    public void inAAssignStatement(final AAssignStatement statement) {
-        final String id = statement.getName().getText();
-
-        if (currentMethod.getLocal(id) == null && currentMethod.getParameter(id) == null) {
-            // Load this pointer in preparation for putfield.
-            instr("aload_0");
-        }
-    }
-
-    @Override
-    public void outAAssignStatement(final AAssignStatement statement) {
+    public void caseAAssignStatement(final AAssignStatement statement) {
         final String id = statement.getName().getText();
         final VariableInfo localInfo, paramInfo, fieldInfo;
 
         if ((localInfo = currentMethod.getLocal(id)) != null) {
             final Type type = localInfo.getType();
+            statement.getValue().apply(this);
             instr("%s %d", type.isReference() ? "astore" : "istore", baseIndex + localInfo.getIndex());
         } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
             final Type type = paramInfo.getType();
+            statement.getValue().apply(this);
             instr("%s %d", type.isReference() ? "astore" : "istore", baseIndex + paramInfo.getIndex());
         } else if ((fieldInfo = currentClass.getField(id)) != null) {
             final String typeDescriptor = fieldInfo.getType().descriptor();
+            instr("aload_0");
+            statement.getValue().apply(this);
             instr("putfield %s/%s %s", currentClass.getName(), id, typeDescriptor);
         }
     }
 
     @Override
-    public void inAArrayAssignStatement(final AArrayAssignStatement statement) {
+    public void caseAArrayAssignStatement(final AArrayAssignStatement statement) {
         final String id = statement.getName().getText();
         final VariableInfo localInfo, paramInfo, fieldInfo;
 
@@ -267,89 +273,96 @@ public class JasminGenerator extends DepthFirstAdapter {
             instr("aload_0");
             instr("getfield %s/%s %s", currentClass.getName(), id, typeDescriptor);
         }
-    }
-
-    @Override
-    public void outAArrayAssignStatement(final AArrayAssignStatement statement) {
+        statement.getIndex().apply(this);
+        statement.getValue().apply(this);
         instr("iastore");
     }
 
     @Override
-    public void outAPlusExpression(final APlusExpression expression) {
+    public void caseAPlusExpression(final APlusExpression expression) {
+        expression.getLeft().apply(this);
+        expression.getRight().apply(this);
         instr("iadd");
     }
 
     @Override
-    public void outAMinusExpression(final AMinusExpression expression) {
+    public void caseAMinusExpression(final AMinusExpression expression) {
+        expression.getLeft().apply(this);
+        expression.getRight().apply(this);
         instr("isub");
     }
 
     @Override
-    public void outATimesExpression(final ATimesExpression expression) {
+    public void caseATimesExpression(final ATimesExpression expression) {
+        expression.getLeft().apply(this);
+        expression.getRight().apply(this);
         instr("imul");
     }
 
     @Override
-    public void outANewInstanceExpression(final ANewInstanceExpression expression) {
+    public void caseANewInstanceExpression(final ANewInstanceExpression expression) {
         final String className = expression.getClassName().getText();
         instr("new %s", className);
-
-        // Call default constructor.
         instr("dup");
         instr("invokespecial %s/<init>()V", className);
     }
 
     @Override
-    public void outANewIntArrayExpression(final ANewIntArrayExpression expression) {
+    public void caseANewIntArrayExpression(final ANewIntArrayExpression expression) {
+        expression.getSize().apply(this);
         instr("newarray int");
     }
 
     @Override
-    public void outAIntegerExpression(final AIntegerExpression expression) {
+    public void caseAIntegerExpression(final AIntegerExpression expression) {
         instr("ldc %d", Integer.valueOf(expression.getInteger().getText()));
     }
 
     @Override
-    public void outATrueExpression(final ATrueExpression expression) {
+    public void caseATrueExpression(final ATrueExpression expression) {
         instr("iconst_1");
     }
 
     @Override
-    public void outAFalseExpression(final AFalseExpression expression) {
+    public void caseAFalseExpression(final AFalseExpression expression) {
         instr("iconst_0");
     }
 
     @Override
-    public void inANotExpression(final ANotExpression expression) {
+    public void caseANotExpression(final ANotExpression expression) {
         instr("iconst_1");
-    }
-
-    @Override
-    public void outANotExpression(final ANotExpression expression) {
+        expression.getExpression().apply(this);
         instr("isub");
     }
 
     @Override
-    public void outAMethodInvocationExpression(final AMethodInvocationExpression expression) {
+    public void caseAMethodInvocationExpression(final AMethodInvocationExpression expression) {
         final Type type = types.get(expression.getInstance());
         final ClassInfo classInfo = symbolTable.getClassInfo(type.getName());
         final MethodInfo methodInfo = classInfo.getMethod(expression.getName().getText());
 
+        expression.getInstance().apply(this);
+        for (Node actualParameter : expression.getActuals()) {
+            actualParameter.apply(this);
+        }
         instr("invokevirtual %s/%s%s", classInfo.getName(), methodInfo.getName(), methodInfo.descriptor());
     }
 
     @Override
-    public void outAArrayAccessExpression(final AArrayAccessExpression expression) {
+    public void caseAArrayAccessExpression(final AArrayAccessExpression expression) {
+        expression.getArray().apply(this);
+        expression.getIndex().apply(this);
         instr("iaload");
     }
 
     @Override
-    public void outAArrayLengthExpression(final AArrayLengthExpression expression) {
+    public void caseAArrayLengthExpression(final AArrayLengthExpression expression) {
+        expression.getArray().apply(this);
         instr("arraylength");
     }
 
     @Override
-    public void outAIdentifierExpression(final AIdentifierExpression expression) {
+    public void caseAIdentifierExpression(final AIdentifierExpression expression) {
         final String id = expression.getIdentifier().getText();
         final VariableInfo localInfo, paramInfo, fieldInfo;
 
@@ -367,7 +380,7 @@ public class JasminGenerator extends DepthFirstAdapter {
     }
 
     @Override
-    public void outAThisExpression(final AThisExpression expression) {
+    public void caseAThisExpression(final AThisExpression expression) {
         instr("aload_0");
     }
 }
