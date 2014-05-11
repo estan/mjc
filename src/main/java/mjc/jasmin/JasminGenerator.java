@@ -542,7 +542,8 @@ public class JasminGenerator extends AnalysisAdapter {
         for (Node actualParameter : expression.getActuals()) {
             actualParameter.apply(this);
         }
-        instr(-expression.getActuals().size(), "invokevirtual %s/%s%s", classInfo.getName(), methodInfo.getName(), methodInfo.descriptor());
+        instr(-expression.getActuals().size(), "invokevirtual %s/%s%s",
+                classInfo.getName(), methodInfo.getName(), methodInfo.descriptor());
     }
 
     @Override
