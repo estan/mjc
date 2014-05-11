@@ -219,7 +219,7 @@ public class JasminGenerator extends AnalysisAdapter {
 
         result = new StringBuilder();
 
-        direc("class public %s", currentClass.getName());
+        direc("class public '%s'", currentClass.getName());
         direc("super java/lang/Object");
         nl();
 
@@ -257,7 +257,7 @@ public class JasminGenerator extends AnalysisAdapter {
 
         result = new StringBuilder();
 
-        direc("class public %s", currentClass.getName());
+        direc("class public '%s'", currentClass.getName());
         direc("super java/lang/Object");
         for (Node fieldDeclaration : declaration.getFields()) {
             fieldDeclaration.apply(this);
@@ -286,7 +286,7 @@ public class JasminGenerator extends AnalysisAdapter {
         final String fieldName = declaration.getName().getText();
         final Type fieldType = currentClass.getField(fieldName).getType();
 
-        direc("field protected %s %s", fieldName, fieldType.descriptor());
+        direc("field protected '%s' %s", fieldName, fieldType.descriptor());
     }
 
     @Override
@@ -476,7 +476,7 @@ public class JasminGenerator extends AnalysisAdapter {
     @Override
     public void caseANewInstanceExpression(final ANewInstanceExpression expression) {
         final String className = expression.getClassName().getText();
-        instr("new %s", className);
+        instr("new '%s'", className);
         instr("dup");
         instr("invokespecial %s/<init>()V", className);
     }
