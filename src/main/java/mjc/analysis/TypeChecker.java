@@ -601,7 +601,6 @@ public class TypeChecker extends DepthFirstAdapter {
 
     @Override
     public void outAThisExpression(final AThisExpression expression) {
-        // TODO: Check if we're in main class.
         types.put(expression, currentClass.getType());
     }
 }
