@@ -219,6 +219,20 @@ public class MethodInfo {
     }
 
     /**
+     * @return a Jasmin method signature descriptor for the method.
+     */
+    public String descriptor() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("(");
+        for (VariableInfo param : getParameters()) {
+            builder.append(param.getType().descriptor());
+        }
+        builder.append(")");
+        builder.append(getReturnType().descriptor());
+        return builder.toString();
+    }
+
+    /**
      * Returns true if the local variable @a local is currently visible.
      *
      * @param local A local variable of this method.

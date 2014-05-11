@@ -1,12 +1,14 @@
 package mjc.symbol;
 
 import mjc.types.BuiltInType;
+import mjc.types.ClassType;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.CoreMatchers.is;
 
 public class MethodInfoTest {
 
@@ -110,5 +112,18 @@ public class MethodInfoTest {
             assertThat(f.getLocal("l3"), nullValue());          // No longer visible.
             assertThat(f.getLocal("l4"), nullValue());          // No longer visible.
         }
+    }
+
+    @Test
+    public void testDescriptor() {
+        ClassType classA = new ClassType("ClassA");
+
+        MethodInfo f = new MethodInfo("f", BuiltInType.Int, 42, 42);
+        f.addParameter("p1", BuiltInType.IntArray, 42, 42);
+        f.addParameter("p2", BuiltInType.Boolean, 42, 42);
+        f.addParameter("p3", BuiltInType.Int, 42, 42);
+        f.addParameter("p4", classA, 42, 42);
+
+        assertThat(f.descriptor(), is("([IZILClassA;)I"));
     }
 }

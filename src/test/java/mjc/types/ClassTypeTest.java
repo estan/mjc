@@ -41,4 +41,9 @@ public class ClassTypeTest {
         assertThat(classA1.isEqualComparableTo(classB), is(false)); // Different class
     }
 
+    @Test
+    public void testDescriptor() {
+        assertThat(classA1.descriptor(), is("LClassA;"));
+        assertThat(classB.descriptor(), is("LClassB;"));
+    }
 }

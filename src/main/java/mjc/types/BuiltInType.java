@@ -97,4 +97,17 @@ public class BuiltInType extends Type {
     public boolean isConjunctableWith(final Type type) {
         return type.isUndefined() || type.isBoolean() && isBoolean();
     }
+
+    @Override
+    public String descriptor() {
+        if (this == Int) {
+            return "I";
+        } else if (this == IntArray) {
+            return "[I";
+        } else if (this == Boolean) {
+            return "Z";
+        } else {
+            throw new Error("Unknown type");
+        }
+    }
 }

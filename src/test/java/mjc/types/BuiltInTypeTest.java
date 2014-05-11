@@ -249,4 +249,11 @@ public class BuiltInTypeTest {
         assertThat(BuiltInType.Int.isUndefined(), is(false));
         assertThat(BuiltInType.IntArray.isUndefined(), is(false));
     }
+
+    @Test
+    public void testDescriptor() {
+        assertThat(BuiltInType.Boolean.descriptor(), is("Z"));
+        assertThat(BuiltInType.Int.descriptor(), is("I"));
+        assertThat(BuiltInType.IntArray.descriptor(), is("[I"));
+    }
 }

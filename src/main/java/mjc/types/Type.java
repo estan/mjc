@@ -114,6 +114,13 @@ public abstract class Type {
         return false;
     }
 
+    /**
+     * @return a Jasmin type descriptor for this type.
+     */
+    public String descriptor() {
+        return null;
+    }
+
     @Override
     public String toString() {
         return getName();
