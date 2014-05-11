@@ -1,0 +1,28 @@
+%
+% Some initialization stuff.
+%
+
+% Custom title command with subtitle support.
+\newcommand{\Title}[2]{\title{#1\\\textsc{\large #2}}}
+
+\hypersetup{
+    % Disable red boxes around hyperlinks.
+    pdfborder = {0 0 0}
+}
+
+\lstset{
+    % Settings for listings package.
+    language=Java,
+    frame=single,
+    frameround=tttt,
+    xleftmargin=2.5em,
+    xrightmargin=2em,
+    basicstyle=\ttfamily,
+    showstringspaces=false,
+    captionpos=b,
+    aboveskip=1.5em,
+    belowcaptionskip=0pt,
+    belowskip=1em,
+    numbers=left,
+    numberstyle=\ttfamily\color{Gray}
+}
