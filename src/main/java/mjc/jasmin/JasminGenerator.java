@@ -1,25 +1,34 @@
 package mjc.jasmin;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import mjc.analysis.AnalysisAdapter;
+import mjc.node.AAndExpression;
 import mjc.node.AArrayAccessExpression;
 import mjc.node.AArrayAssignStatement;
 import mjc.node.AArrayLengthExpression;
 import mjc.node.AAssignStatement;
 import mjc.node.ABlockStatement;
 import mjc.node.AClassDeclaration;
+import mjc.node.AEqualExpression;
 import mjc.node.AFalseExpression;
 import mjc.node.AFieldDeclaration;
+import mjc.node.AGreaterEqualThanExpression;
+import mjc.node.AGreaterThanExpression;
 import mjc.node.AIdentifierExpression;
 import mjc.node.AIntegerExpression;
+import mjc.node.ALessEqualThanExpression;
+import mjc.node.ALessThanExpression;
 import mjc.node.AMainClassDeclaration;
 import mjc.node.AMethodDeclaration;
 import mjc.node.AMethodInvocationExpression;
 import mjc.node.AMinusExpression;
 import mjc.node.ANewInstanceExpression;
 import mjc.node.ANewIntArrayExpression;
+import mjc.node.ANotEqualExpression;
 import mjc.node.ANotExpression;
+import mjc.node.AOrExpression;
 import mjc.node.APlusExpression;
 import mjc.node.APrintlnStatement;
 import mjc.node.AProgram;
@@ -27,6 +36,7 @@ import mjc.node.AThisExpression;
 import mjc.node.ATimesExpression;
 import mjc.node.ATrueExpression;
 import mjc.node.Node;
+import mjc.node.PExpression;
 import mjc.node.Start;
 import mjc.symbol.ClassInfo;
 import mjc.symbol.MethodInfo;
@@ -40,10 +50,12 @@ import mjc.types.Type;
  * TODO: More docs.
  */
 public class JasminGenerator extends AnalysisAdapter {
+    private final static String INDENT = "    ";
     private final static int MAX_STACK_SIZE = 30; // TODO: Don't hardcode this.
 
     private final JasminHandler handler;
     private StringBuilder result;
+    private Map<String, Integer> labelCounters = new HashMap<>();
 
     private SymbolTable symbolTable;
     private Map<Node, Type> types;
@@ -62,40 +74,122 @@ public class JasminGenerator extends AnalysisAdapter {
         ast.apply(this);
     }
 
-    /**
-     * Adds a Jasmin directive to the result.
-     *
-     * @param directive Directive to add, including any format specifiers.
-     * @param args Arguments matching format specifiers in @a directive.
-     */
+    // Helper methods.
+
+    /** Adds Jasmin @a directive formatted with @a args. */
     private void direc(String directive, Object... args) {
         result.append('.' + String.format(directive, args) + '\n');
     }
 
-    /**
-     * Adds a Jasmin instruction to the result.
-     *
-     * @param instruction Instruction to add, including any format specifiers.
-     * @param args Arguments matching format specifiers in @a instruction.
-     */
+    /** Adds a Jasmin @a instruction formatted with @a args. */
     private void instr(String instruction, Object... args) {
-        result.append("    " + String.format(instruction, args) + '\n');
+        result.append(INDENT + String.format(instruction, args) + '\n');
     }
 
-    /**
-     * Adds a Jasmin label to the result.
-     *
-     * @param label Label to add.
-     */
+    /** Adds a Jasmin @a label. */
     private void label(String label) {
         result.append(label + ":\n");
     }
 
-    /**
-     * Adds a newline to the result.
-     */
+    /** Adds a newline. */
     private void nl() {
         result.append("\n");
+    }
+
+    /** Adds a jump to @a trueLabel or @a falseLabel based on @a expression. */
+    private void jump(PExpression expression, String trueLabel, String falseLabel) {
+        if (expression instanceof AOrExpression) {
+            final AOrExpression or = (AOrExpression) expression;
+            final String rightLabel = nextLabel("or_right");
+            jump(or.getLeft(), trueLabel, rightLabel);
+            label(rightLabel);
+            jump(or.getRight(), trueLabel, falseLabel);
+        } else if (expression instanceof AAndExpression) {
+            final AAndExpression and = (AAndExpression) expression;
+            final String rightLabel = nextLabel("and_right");
+            jump(and.getLeft(), rightLabel, falseLabel);
+            label(rightLabel);
+            jump(and.getRight(), trueLabel, falseLabel);
+        } else if (expression instanceof ALessThanExpression) {
+            final ALessThanExpression lt = (ALessThanExpression) expression;
+            lt.getLeft().apply(this);
+            lt.getRight().apply(this);
+            instr("if_icmplt %s", trueLabel);
+            instr("goto %s", falseLabel);
+        } else if (expression instanceof ALessEqualThanExpression) {
+            final ALessEqualThanExpression le = (ALessEqualThanExpression) expression;
+            le.getLeft().apply(this);
+            le.getRight().apply(this);
+            instr("if_icmple %s", trueLabel);
+            instr("goto %s", falseLabel);
+        } else if (expression instanceof AGreaterThanExpression) {
+            final AGreaterThanExpression gt = (AGreaterThanExpression) expression;
+            gt.getLeft().apply(this);
+            gt.getRight().apply(this);
+            instr("if_icmpgt %s", trueLabel);
+            instr("goto %s", falseLabel);
+        } else if (expression instanceof AGreaterEqualThanExpression) {
+            final AGreaterEqualThanExpression ge = (AGreaterEqualThanExpression) expression;
+            ge.getLeft().apply(this);
+            ge.getRight().apply(this);
+            instr("if_icmpge %s", trueLabel);
+            instr("goto %s", falseLabel);
+        } else if (expression instanceof AEqualExpression) {
+            final AEqualExpression eq = (AEqualExpression) expression;
+            eq.getLeft().apply(this);
+            eq.getRight().apply(this);
+            instr("if_%scmpeq %s", types.get(eq.getLeft()).isReference() ? 'a' : 'i', trueLabel);
+            instr("goto %s", falseLabel);
+        } else if (expression instanceof ANotEqualExpression) {
+            final ANotEqualExpression ne = (ANotEqualExpression) expression;
+            ne.getLeft().apply(this);
+            ne.getRight().apply(this);
+            instr("if_%scmpne %s", types.get(ne.getLeft()).isReference() ? 'a' : 'i', trueLabel);
+            instr("goto %s", falseLabel);
+        } else if (expression instanceof ANotExpression) {
+            jump(((ANotExpression) expression).getExpression(), falseLabel, trueLabel);
+        } else if (expression instanceof AIdentifierExpression ||
+                   expression instanceof AMethodInvocationExpression) {
+            expression.apply(this);
+            instr("iconst_0");
+            instr("if_icmpne %s", trueLabel);
+            instr("goto %s", falseLabel);
+        } else if (expression instanceof ATrueExpression) {
+            instr("goto %s", trueLabel);
+        } else if (expression instanceof AFalseExpression) {
+            instr("goto %s", falseLabel);
+        } else {
+            throw new Error("jump: Unknown expression");
+        }
+    }
+
+    /**
+     * Puts 1 or 0 on the stack based on the boolean value of @a expression, using
+     * @a labelPrefix as prefix for introduced labels.
+     */
+    private void booleanValue(PExpression expression, String labelPrefix) {
+        final String trueLabel = nextLabel(labelPrefix);
+        final String falseLabel = nextLabel("not_" + labelPrefix);
+        final String skipLabel = nextLabel("skip_" + labelPrefix);
+
+        jump(expression, trueLabel, falseLabel);
+
+        label(trueLabel);
+        instr("iconst_1");
+        instr("goto %s", skipLabel);
+        label(falseLabel);
+        instr("iconst_0");
+        label(skipLabel);
+    }
+
+    /** Returns a new unique label with the given @a prefix. */
+    private String nextLabel(String prefix) {
+        Integer number = labelCounters.get(prefix);
+        if (number == null) {
+            number = 0;
+        }
+        labelCounters.put(prefix, number + 1);
+        return prefix + '_' + number;
     }
 
     // Visitor methods below.
@@ -118,6 +212,7 @@ public class JasminGenerator extends AnalysisAdapter {
         currentClass = symbolTable.getClassInfo(declaration.getName().getText());
         currentMethod = currentClass.getMethod(declaration.getMethodName().getText());
         currentMethod.enterBlock();
+        labelCounters.clear();
 
         result = new StringBuilder();
 
@@ -195,6 +290,7 @@ public class JasminGenerator extends AnalysisAdapter {
     public void caseAMethodDeclaration(final AMethodDeclaration declaration) {
         currentMethod = currentClass.getMethod(declaration.getName().getText());
         currentMethod.enterBlock();
+        labelCounters.clear();
 
         nl();
         direc("method public %s%s", currentMethod.getName(), currentMethod.descriptor());
@@ -271,6 +367,46 @@ public class JasminGenerator extends AnalysisAdapter {
         statement.getIndex().apply(this);
         statement.getValue().apply(this);
         instr("iastore");
+    }
+
+    @Override
+    public void caseAAndExpression(final AAndExpression expression) {
+        booleanValue(expression, "and");
+    }
+
+    @Override
+    public void caseAOrExpression(final AOrExpression expression) {
+        booleanValue(expression, "or");
+    }
+
+    @Override
+    public void caseALessThanExpression(final ALessThanExpression expression) {
+        booleanValue(expression, "lt");
+    }
+
+    @Override
+    public void caseALessEqualThanExpression(final ALessEqualThanExpression expression) {
+        booleanValue(expression, "le");
+    }
+
+    @Override
+    public void caseAGreaterThanExpression(final AGreaterThanExpression expression) {
+        booleanValue(expression, "gt");
+    }
+
+    @Override
+    public void caseAGreaterEqualThanExpression(final AGreaterEqualThanExpression expression) {
+        booleanValue(expression, "ge");
+    }
+
+    @Override
+    public void caseAEqualExpression(final AEqualExpression expression) {
+        booleanValue(expression, "eq");
+    }
+
+    @Override
+    public void caseANotEqualExpression(final ANotEqualExpression expression) {
+        booleanValue(expression, "ne");
     }
 
     @Override
