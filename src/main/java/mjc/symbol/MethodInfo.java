@@ -76,7 +76,7 @@ public class MethodInfo {
         this.line = line;
         this.column = column;
 
-        this.nextIndex = 0;
+        this.nextIndex = 1;
         this.nextBlock = 0;
     }
 
@@ -188,9 +188,9 @@ public class MethodInfo {
     }
 
     /**
-     * @return The next index to be used for added fields / local variables.
+     * @return Number of variables (parameters and locals) in the method.
      */
-    public int getNextIndex() {
+    public int getNumVariables() {
         return nextIndex;
     }
 

@@ -51,9 +51,6 @@ public class JasminGenerator extends AnalysisAdapter {
     private ClassInfo currentClass;
     private MethodInfo currentMethod;
 
-    // Index of first user param/local (0 in static methods, 1 in non-static).
-    private int baseIndex = 0;
-
     public JasminGenerator(JasminHandler handler) {
         this.handler = handler;
     }
@@ -137,9 +134,8 @@ public class JasminGenerator extends AnalysisAdapter {
         nl();
 
         // Main method.
-        baseIndex = 0;
         direc("method public static main([Ljava/lang/String;)V");
-        direc("limit locals %d", baseIndex + currentMethod.getNextIndex());
+        direc("limit locals %d", 1 + currentMethod.getNumVariables());
         direc("limit stack %d", MAX_STACK_SIZE);
         for (Node variableDeclaration : declaration.getLocals()) {
             variableDeclaration.apply(this);
@@ -178,7 +174,6 @@ public class JasminGenerator extends AnalysisAdapter {
         direc("end method");
         nl();
 
-        baseIndex = 1;
         for (Node methodDeclaration : declaration.getMethods()) {
             methodDeclaration.apply(this);
         }
@@ -203,7 +198,7 @@ public class JasminGenerator extends AnalysisAdapter {
 
         nl();
         direc("method public %s%s", currentMethod.getName(), currentMethod.descriptor());
-        direc("limit locals %d", baseIndex + currentMethod.getNextIndex());
+        direc("limit locals %d", 1 + currentMethod.getNumVariables());
         direc("limit stack %d", MAX_STACK_SIZE);
         for (Node formalDeclaration : declaration.getFormals()) {
             formalDeclaration.apply(this);
@@ -246,11 +241,11 @@ public class JasminGenerator extends AnalysisAdapter {
         if ((localInfo = currentMethod.getLocal(id)) != null) {
             final Type type = localInfo.getType();
             statement.getValue().apply(this);
-            instr("%s %d", type.isReference() ? "astore" : "istore", baseIndex + localInfo.getIndex());
+            instr("%s %d", type.isReference() ? "astore" : "istore", localInfo.getIndex());
         } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
             final Type type = paramInfo.getType();
             statement.getValue().apply(this);
-            instr("%s %d", type.isReference() ? "astore" : "istore", baseIndex + paramInfo.getIndex());
+            instr("%s %d", type.isReference() ? "astore" : "istore", paramInfo.getIndex());
         } else if ((fieldInfo = currentClass.getField(id)) != null) {
             final String typeDescriptor = fieldInfo.getType().descriptor();
             instr("aload_0");
@@ -265,9 +260,9 @@ public class JasminGenerator extends AnalysisAdapter {
         final VariableInfo localInfo, paramInfo, fieldInfo;
 
         if ((localInfo = currentMethod.getLocal(id)) != null) {
-            instr("aload %d", baseIndex + localInfo.getIndex());
+            instr("aload %d", localInfo.getIndex());
         } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
-            instr("aload %d", baseIndex + paramInfo.getIndex());
+            instr("aload %d", paramInfo.getIndex());
         } else if ((fieldInfo = currentClass.getField(id)) != null) {
             final String typeDescriptor = fieldInfo.getType().descriptor();
             instr("aload_0");
@@ -368,10 +363,10 @@ public class JasminGenerator extends AnalysisAdapter {
 
         if ((localInfo = currentMethod.getLocal(id)) != null) {
             final Type type = localInfo.getType();
-            instr("%s %d", type.isReference() ? "aload" : "iload", baseIndex + localInfo.getIndex());
+            instr("%s %d", type.isReference() ? "aload" : "iload", localInfo.getIndex());
         } else if ((paramInfo = currentMethod.getParameter(id)) != null) {
             final Type type = paramInfo.getType();
-            instr("%s %d", type.isReference() ? "aload" : "iload", baseIndex + paramInfo.getIndex());
+            instr("%s %d", type.isReference() ? "aload" : "iload", paramInfo.getIndex());
         } else if ((fieldInfo = currentClass.getField(id)) != null) {
             final String typeDescriptor = fieldInfo.getType().descriptor();
             instr("aload_0");

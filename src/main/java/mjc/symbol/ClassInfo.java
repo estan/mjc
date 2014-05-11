@@ -34,7 +34,7 @@ public class ClassInfo {
         this.type = type;
         this.line = line;
         this.column = column;
-        this.nextIndex = 0;
+        this.nextIndex = 1;
 
         fields = new HashMap<>();
         methods = new HashMap<>();
