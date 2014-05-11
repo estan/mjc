@@ -93,14 +93,14 @@ public class JasminGenerator extends AnalysisAdapter {
 
     // Helper methods.
 
-    /** Adds Jasmin @a directive formatted with @a args. */
+    /** Adds Jasmin {@code directive} formatted with {@code args}. */
     private void direc(String directive, Object... args) {
         result.append('.' + String.format(directive, args) + '\n');
     }
 
     /**
-     * Adds a Jasmin @a instruction formatted with @a args that changes the stack
-     * size by @a stackChange.
+     * Adds a Jasmin {@code instruction} formatted with {@code args} that changes the stack
+     * size by {@code stackChange}.
      */
     private void instr(int stackChange, String instruction, Object... args) {
         result.append(INDENT + String.format(instruction, args) + '\n');
@@ -108,7 +108,7 @@ public class JasminGenerator extends AnalysisAdapter {
         maxStackSize = Math.max(maxStackSize, stackSize);
     }
 
-    /** Adds a Jasmin @a label. */
+    /** Adds a Jasmin {@code label}. */
     private void label(String label) {
         result.append(label + ":\n");
     }
@@ -118,7 +118,7 @@ public class JasminGenerator extends AnalysisAdapter {
         result.append("\n");
     }
 
-    /** Adds a jump to @a trueLabel or @a falseLabel based on @a expression. */
+    /** Adds a jump to {@code trueLabel} or {@code falseLabel} based on {@code expression}. */
     private void jump(PExpression expression, String trueLabel, String falseLabel) {
         if (expression instanceof AOrExpression) {
             final AOrExpression or = (AOrExpression) expression;
@@ -186,8 +186,8 @@ public class JasminGenerator extends AnalysisAdapter {
     }
 
     /**
-     * Puts 1 or 0 on the stack based on the boolean value of @a expression, using
-     * @a labelPrefix as prefix for introduced labels.
+     * Puts 1 or 0 on the stack based on the boolean value of {@code expression}, using
+     * {@code labelPrefix} as prefix for introduced labels.
      */
     private void booleanValue(PExpression expression, String labelPrefix) {
         final String trueLabel = nextLabel(labelPrefix);
@@ -204,7 +204,7 @@ public class JasminGenerator extends AnalysisAdapter {
         label(skipLabel);
     }
 
-    /** Returns a new unique label with the given @a prefix. */
+    /** Returns a new unique label with the given {@code prefix}. */
     private String nextLabel(String prefix) {
         Integer number = labelCounters.get(prefix);
         if (number == null) {

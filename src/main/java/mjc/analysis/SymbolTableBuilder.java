@@ -316,12 +316,12 @@ public class SymbolTableBuilder {
         /**
          * Helper method: Returns the Type corresponding to an AST type.
          *
-         * If @a abstractType is of class type, but the class is not declared, this method
-         * returns UndefinedType.Instance and adds an error to the error list.
+         * If {@code abstractType} is of class type, but the class is not declared, this
+         * method returns UndefinedType.Instance and adds an error to the error list.
          *
          * @param abstractType Input AST type.
          * @return The corresponding Type, or UndefinedType.Instance if it is undeclared.
-         * @throws RuntimeException if @a abstractType is of unknown PType subclass.
+         * @throws RuntimeException if {@code abstractType} is of unknown PType subclass.
          */
         private Type fromAbstract(final PType abstractType) {
             if (abstractType instanceof AClassType) {

@@ -59,56 +59,56 @@ public abstract class Type {
     }
 
     /**
-     * @return true if this type is assignable (=) to @a type.
+     * @return true if this type is assignable (=) to {@code type}.
      */
     public boolean isAssignableTo(final Type type) {
         return false;
     }
 
     /**
-     * @return true if this type is comparable (==, !=) to @a type.
+     * @return true if this type is comparable (==, !=) to {@code type}.
      */
     public boolean isEqualComparableTo(final Type type) {
         return false;
     }
 
     /**
-     * @return true if this type is comparable (<, <=, >, >=) to @a type.
+     * @return true if this type is comparable (<, <=, >, >=) to {@code type}.
      */
     public boolean isRelationalComparableTo(final Type type) {
         return false;
     }
 
     /**
-     * @return true if this type can be added (+) to @a type.
+     * @return true if this type can be added (+) to {@code type}.
      */
     public boolean isAddableTo(final Type type) {
         return false;
     }
 
     /**
-     * @return true if this type can be subtracted (-) from @a type.
+     * @return true if this type can be subtracted (-) from {@code type}.
      */
     public boolean isSubtractableFrom(final Type type) {
         return false;
     }
 
     /**
-     * @return true if this type can be multiplied (*) by @a type.
+     * @return true if this type can be multiplied (*) by {@code type}.
      */
     public boolean isMultipliableWith(final Type type) {
         return false;
     }
 
     /**
-     * @return true if this type can be combined with @a type using logical OR.
+     * @return true if this type can be combined with {@code type} using logical OR.
      */
     public boolean isDisjunctableWith(final Type type) {
         return false;
     }
 
     /**
-     * @return true if this type can be combined with @a type using logical AND.
+     * @return true if this type can be combined with {@code type} using logical AND.
      */
     public boolean isConjunctableWith(final Type type) {
         return false;

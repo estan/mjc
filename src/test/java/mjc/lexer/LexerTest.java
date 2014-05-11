@@ -98,13 +98,13 @@ public class LexerTest {
     /**
      * Assert correct tokenization.
      *
-     * This helper method asserts that the lexer will tokenize @a input into the
-     * token stream specified by @a tokens.
+     * This helper method asserts that the lexer will tokenize {@code input} into the
+     * token stream specified by {@code tokens}.
      *
      * @param input
      *            An input string.
      * @param tokens
-     *            Token stream to which @a input should be tokenized.
+     *            Token stream to which {@code input} should be tokenized.
      * @throws Exception
      *             If the lexer failed or an I/O error occurred.
      */
