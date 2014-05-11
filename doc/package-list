@@ -1,8 +1,6 @@
 mjc
 mjc.analysis
 mjc.error
+mjc.jasmin
 mjc.symbol
-mjc.temp
-mjc.translate
-mjc.tree
 mjc.types
