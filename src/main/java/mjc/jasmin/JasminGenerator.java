@@ -17,6 +17,8 @@ import mjc.node.AFieldDeclaration;
 import mjc.node.AGreaterEqualThanExpression;
 import mjc.node.AGreaterThanExpression;
 import mjc.node.AIdentifierExpression;
+import mjc.node.AIfElseStatement;
+import mjc.node.AIfStatement;
 import mjc.node.AIntegerExpression;
 import mjc.node.ALessEqualThanExpression;
 import mjc.node.ALessThanExpression;
@@ -35,6 +37,7 @@ import mjc.node.AProgram;
 import mjc.node.AThisExpression;
 import mjc.node.ATimesExpression;
 import mjc.node.ATrueExpression;
+import mjc.node.AWhileStatement;
 import mjc.node.Node;
 import mjc.node.PExpression;
 import mjc.node.Start;
@@ -327,6 +330,46 @@ public class JasminGenerator extends AnalysisAdapter {
         statement.getValue().apply(this);
         instr("invokestatic java/lang/String/valueOf(%s)Ljava/lang/String;", typeDescriptor);
         instr("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
+    }
+
+    @Override
+    public void caseAIfStatement(final AIfStatement statement) {
+        final String trueLabel = nextLabel("if_true");
+        final String falseLabel = nextLabel("if_false");
+
+        jump(statement.getCondition(), trueLabel, falseLabel);
+        label(trueLabel);
+        statement.getStatement().apply(this);
+        label(falseLabel);
+    }
+
+    @Override
+    public void caseAIfElseStatement(final AIfElseStatement statement) {
+        final String trueLabel = nextLabel("if_else_true");
+        final String falseLabel = nextLabel("if_else_false");
+        final String endLabel = nextLabel("if_else_end");
+
+        jump(statement.getCondition(), trueLabel, falseLabel);
+        label(trueLabel);
+        statement.getThen().apply(this);
+        instr("goto %s", endLabel);
+        label(falseLabel);
+        statement.getElse().apply(this);
+        label(endLabel);
+    }
+
+    @Override
+    public void caseAWhileStatement(final AWhileStatement statement) {
+        final String loopLabel = nextLabel("while");
+        final String trueLabel = nextLabel("while_true");
+        final String endLabel = nextLabel("while_end");
+
+        label(loopLabel);
+        jump(statement.getCondition(), trueLabel, endLabel);
+        label(trueLabel);
+        statement.getStatement().apply(this);
+        instr("goto %s", loopLabel);
+        label(endLabel);
     }
 
     @Override
