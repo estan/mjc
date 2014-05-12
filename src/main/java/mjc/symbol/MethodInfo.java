@@ -219,6 +219,16 @@ public class MethodInfo {
     }
 
     /**
+     * Returns true if the local variable {@code local} is currently visible.
+     *
+     * @param local A local variable of this method.
+     * @return true if {@code local} is visible, otherwise false.
+     */
+    private boolean isVisible(final VariableInfo local) {
+        return blocks.search(local.getBlock()) != -1;
+    }
+
+    /**
      * @return a Jasmin method signature descriptor for the method.
      */
     public String descriptor() {
@@ -230,15 +240,5 @@ public class MethodInfo {
         builder.append(")");
         builder.append(getReturnType().descriptor());
         return builder.toString();
-    }
-
-    /**
-     * Returns true if the local variable {@code local} is currently visible.
-     *
-     * @param local A local variable of this method.
-     * @return true if {@code local} is visible, otherwise false.
-     */
-    private boolean isVisible(final VariableInfo local) {
-        return blocks.search(local.getBlock()) != -1;
     }
 }
