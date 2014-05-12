@@ -43,7 +43,7 @@ The available command line options are:
      -h             show help message
 
 For example, type `./mjc foo.java` to compile `foo.java`. The result is
-written as a set of Jasmin assembly code files (`.j`), one file for each
-class, along with corresponding `.class` files from running the Jasmin
-assembler.
+written into the current working directory as a set of Jasmin assembly
+code files (`.j`), one file for each class, along with corresponding
+`.class` files from running the Jasmin assembler.
 
