@@ -3,7 +3,7 @@
  *
  * This is a grammar for a slightly modified version of the MiniJava language [1].
  *
- * [1] http://www.csc.kth.se/utbildning/kth/kurser/DD2488/komp14/project/grammar14v1.pdf
+ * [1] http://www.csc.kth.se/utbildning/kth/kurser/DD2488/komp14/project/grammar14v1b.pdf
  */
 
 Package mjc;
