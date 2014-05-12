@@ -239,10 +239,7 @@
                  token="@EMAIL@"
                  value="${tigris.email}"/>
 
-        <!-- Create compressed TAR file and print what we included -->
-        <tar destfile="${output-tar}"
-             basedir="${temp-dir}"
-             compression="gzip"/>
+        <tar destfile="${output-tar}" basedir="${temp-dir}" compression="gzip"/>
 
         <delete dir="${temp-dir}"/>
         <echo>Successfully generated ${output-tar}</echo>
