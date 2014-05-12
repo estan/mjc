@@ -16,6 +16,11 @@ with the following extensions:
 | **CLE CGT CGE CEQ CNE** | comparison operators                         |
 | **BDJ**                 | logical OR connective                        |
 
+Documentation
+-------------
+ * [Project Report (PDF)](https://github.com/estan/mjc/blob/master/report.pdf?raw=true)
+ * [JavaDoc Documentation](http://estan.github.io/mjc/doc/)
+
 Building
 --------
 
