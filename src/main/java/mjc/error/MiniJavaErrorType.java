@@ -67,7 +67,7 @@ public enum MiniJavaErrorType {
      * The slightly weird method name is because it feels kind of natural to do e.g:
      *
      * <code>
-     *     System.out.println(WRONG_RETURN_TYPE.on(line, column, type));
+     *     System.out.println(INVALID_RETURN_TYPE.on(line, column, type));
      * </code>
      *
      * Also, it's short :)
