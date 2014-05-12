@@ -111,6 +111,7 @@
                  destdir="${doc-dir}"
                  doclet="mjc.doclets.TextDoclet"
                  docletpath="${lib-dir}/mjc-doclets.jar"
+                 overview="${main-src-dir}/overview.html"
                  includenosourcepackages="true"
                  Private="true">
             <classpath refid="project-classpath"/>
