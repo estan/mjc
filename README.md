@@ -19,7 +19,7 @@ with the following extensions:
 Building
 --------
 
-The compiler requires Java 7 and is built using Apache Ant.
+The compiler requires Java 7 and uses the Apache Ant build system.
 
 Type `ant` in the top-level directory. The default ANT target builds the
 compiler, runs the unit tests, and produces the compiler JAR file (`mjc.jar`).
