@@ -15,7 +15,7 @@
 
 \Title{MiniJava Compiler (\texttt{mjc})}{DD2488 -- Project Report}
 
-\date{XX May 2014}
+\date{15 May 2014}
 
 \author{Daniel Månsson\\dmans@kth.se \and Elvis Stansvik\\stansvik@kth.se}
 
@@ -39,9 +39,9 @@ and conclude with some thoughts on possible future improvements.
 
 \section{Introduction}
 
-MiniJava is a subset of the Java programming language presented in \cite{appel}
-\footnote{Not exactly true: A Java compiler checks that variables are initialized before
-use, while in MiniJava this is simply undefined run-time behavior.} The original language
+MiniJava is a subset\footnote{Not exactly true: A Java compiler checks that variables are
+initialized before use, while in MiniJava this is simply undefined run-time behavior.} of
+the Java programming language presented in \cite{appel} The original language
 supports the built-in types \texttt{int}, \texttt{int[]} and \texttt{boolean} as well as
 user defined class types. There is no support for inheritance or method overloading.
 Operators \texttt{+}, \texttt{-}, \texttt{*} and \texttt{<} are defined on integers.
@@ -165,6 +165,23 @@ match. This essentially makes local variable look-up an $O(nm)$ operation in the
 worst case, where $n$ is the number of local variables in the method and $m$ is
 the maximum block nesting depth.
 
+Figure~\ref{fig:locals} shows a simplified illustration of local variables being
+added to the \texttt{MethodInfo} for a small MiniJava method. The mappings in the
+figure only show the block number for the variable, not the full \texttt{VariableInfo}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics{figures/locals.pdf}
+    \caption{Adding of local variables to a \texttt{MethodInfo}.}
+    \label{fig:locals}
+\end{figure}
+
+The figure only shows the adding of local variables, but as an example, when the
+symbol \texttt{b} in \lstinline{b = 3;} on line 11 is looked up, \texttt{getLocal(..)}
+will find the mappings \texttt{(b,1)} and \texttt{(b,3)} in the multimap, and determine
+that the second one is the one in scope, since its block value (3) is currently on the
+stack (which contains blocks 0 and 3 at that point).
+
 With these data structures in place, we built a class \texttt{SymbolTableBuilder}
 which traverses the AST in two passes to build the symbol table. In the first pass,
 information about declared classes is entered into the table. In the second pass the
@@ -195,10 +212,8 @@ intended, it will assume the \texttt{UndefinedType}, effectively suppressing any
 further errors involving the expression. This hopefully lets the user focus on the
 real error without being bothered with secondary errors.
 
-If no errors were encountered during symbol table construction and type-checking,
-compilation proceeds to the next phase. Otherwise compilation is aborted at this point.
-
 \subsection{Code Generation}
+\vspace*{-0.3em}
 
 In the final phase, the compiler generates Jasmin code. For this, we wrote a class
 \texttt{JasminGenerator} which takes the AST, the symbol table and a class implementing
@@ -207,21 +222,23 @@ the \texttt{JasminHandler} interface as input. For each generated class, the
 name of the class and the resulting Jasmin code as parameters.
 
 \texttt{JasminGenerator} visits each node in the AST and outputs the appropriate
-Jasmin statements. Since the JVM was originally designed for the Java language, many convenient
-instructions were available to us, such as \texttt{new}, \texttt{newarray} and \texttt{arraylength}
-which all map directly to MiniJava constructs.
+Jasmin statements. Since the JVM was originally designed for the Java language, many
+convenient instructions were available to us, such as \texttt{new}, \texttt{newarray}
+and \texttt{arraylength}, which all map directly to MiniJava constructs.
 
 Since JVM is a stack-based machine, all operations work with values on
-the stack. Apart from generating the necessary Jasmin instructions, \texttt{JasminGenerator} also
-keeps track of the current stack size in the currently generated method, to be
-able to set an appropriate maximum stack size for the method with the
-\texttt{.limit stack} directive.
+the stack. Apart from generating the necessary Jasmin instructions,
+\texttt{JasminGenerator} also keeps track of the current stack size in the currently
+generated method, to be able to set an appropriate maximum stack size for the method
+with the \texttt{.limit stack} directive.
 
 \section{Using the Compiler}
+\vspace*{-0.3em}
 
 \label{sec:using}
 
 \subsection{Building}
+\vspace*{-0.3em}
 
 The compiler uses Apache Ant as build system. The default Ant target, invoked
 by running \texttt{ant} in the top-level project directory, builds the compiler,
@@ -229,6 +246,7 @@ executes the unit tests and produces the compiler JAR file \texttt{mjc.jar}. See
 \texttt{ant -projecthelp} for other available Ant targets.
 
 \subsection{Running}
+\vspace*{-0.3em}
 
 The compiler is invoked by running the \texttt{mjc} shell script in the top-level
 project directory. The default action is to compile the given input file to Jasmin
