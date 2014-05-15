@@ -191,7 +191,7 @@ public class MethodInfo {
      * @return Number of variables (parameters and locals) in the method.
      */
     public int getNumVariables() {
-        return nextIndex;
+        return parameters.size() + locals.size();
     }
 
     /**

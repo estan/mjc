@@ -119,11 +119,29 @@ public class MethodInfoTest {
         ClassType classA = new ClassType("ClassA");
 
         MethodInfo f = new MethodInfo("f", BuiltInType.Int, 42, 42);
+
+        f.enterBlock();
         f.addParameter("p1", BuiltInType.IntArray, 42, 42);
         f.addParameter("p2", BuiltInType.Boolean, 42, 42);
         f.addParameter("p3", BuiltInType.Int, 42, 42);
         f.addParameter("p4", classA, 42, 42);
+        f.leaveBlock();
 
         assertThat(f.descriptor(), is("([IZILClassA;)I"));
+    }
+
+    @Test
+    public void testGetNumVariables() {
+        MethodInfo f = new MethodInfo("f", BuiltInType.Int, 42, 42);
+
+        f.enterBlock();
+        f.addParameter("p1", BuiltInType.IntArray, 42, 42);
+        f.addParameter("p2", BuiltInType.Boolean, 42, 42);
+        f.addLocal("l1", BuiltInType.Int, 9, 12);
+        f.addLocal("l2", BuiltInType.Int, 9, 12);
+        f.addLocal("l3", BuiltInType.Int, 9, 12);
+        f.leaveBlock();
+
+        assertThat(f.getNumVariables(), is(5));
     }
 }
