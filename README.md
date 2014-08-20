@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/estan/mjc.svg?branch=master)](https://travis-ci.org/estan/mjc)
+
 MiniJava Compiler (`mjc`)
 =========================
 
